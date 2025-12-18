@@ -1,0 +1,25 @@
+{
+    "name": "dealnews/datocms-cma-client",
+    "description": "Unofficial DatoCMS API Client for the Content Management API",
+    "type": "library",
+    "license": "BSD-3-Clause",
+    "autoload": {
+        "psr-4": {
+            "DealNews\\DatoCMS\\CMA\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "DealNews\\DatoCMS\\CMA\\Tests\\": "tests/"
+        }
+    },
+    "require": {
+        "php": "^8.4",
+        "guzzlehttp/guzzle": "^7.10",
+        "moonspot/value-objects": "^2.3",
+        "psr/log": "^3.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^11.5"
+    }
+}

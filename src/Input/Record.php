@@ -75,7 +75,7 @@ class Record extends ValueObject {
                     } elseif ($attribute_value instanceof \JsonSerializable) {
                         $array['attributes'][$attribute_name] = $attribute_value->jsonSerialize();
                     } else {
-                        throw new \LogicException("Attribute $attribute_name is an object and does not implement the Export or JsonSerializable interface");
+                        throw new \LogicException("Attribute '$attribute_name' is an object and does not implement the Export or JsonSerializable interface");
                     }
                 }
 

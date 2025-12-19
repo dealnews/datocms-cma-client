@@ -30,7 +30,7 @@ class Color extends Common {
             throw new \InvalidArgumentException('Value not in expected format');
         }
         foreach (['red', 'green', 'blue', 'alpha'] as $color) {
-            if (!array_key_exists($color, $value) || filter_var($value[$color], FILTER_VALIDATE_INT, ['min_range' => 0, 'max_range' => 255]) === false) {
+            if (!array_key_exists($color, $value) || filter_var($value[$color], FILTER_VALIDATE_INT, ['options' => ['min_range' => 0, 'max_range' => 255]]) === false) {
                 throw new \InvalidArgumentException("Invalid color attribute: '{$color}'");
             }
         }

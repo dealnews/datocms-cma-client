@@ -42,10 +42,8 @@ class ExternalVideo extends Common {
                 throw new \InvalidArgumentException('provider must be "youtube" or "vimeo" or "facebook"');
             } elseif (($key === 'width' || $key === 'height') && filter_var($value[$key], FILTER_VALIDATE_INT) === false) {
                 throw new \InvalidArgumentException($key .' must be an integer');
-            } else {
-                if (!is_string($value[$key])) {
-                    throw new \InvalidArgumentException($key . ' must be a string');
-                }
+            } elseif ($key !== 'width' && $key !== 'height' && !is_string($value[$key])) {
+                throw new \InvalidArgumentException($key . ' must be a string');
             }
         }
     }

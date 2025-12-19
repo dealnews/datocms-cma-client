@@ -27,9 +27,9 @@ class Location extends Common {
         foreach (['latitude', 'longitude'] as $key) {
             if (!array_key_exists($key, $value)) {
                 throw new \InvalidArgumentException('Value not in expected format');
-            } elseif ($key === 'latitude' && !filter_var($value[$key], FILTER_VALIDATE_FLOAT, ['min_range' => -90, 'max_range' => 90])) {
+            } elseif ($key === 'latitude' && filter_var($value[$key], FILTER_VALIDATE_FLOAT, ['options' => ['min_range' => -90, 'max_range' => 90]]) === false) {
                 throw new \InvalidArgumentException('Latitude not in the expected format');
-            } elseif ($key === 'longitude' && !filter_var($value[$key], FILTER_VALIDATE_FLOAT, ['min_range' => -180, 'max_range' => 180])) {
+            } elseif ($key === 'longitude' && filter_var($value[$key], FILTER_VALIDATE_FLOAT, ['options' => ['min_range' => -180, 'max_range' => 180]]) === false) {
                 throw new \InvalidArgumentException('Longitude not in the expected format');
             }
         }

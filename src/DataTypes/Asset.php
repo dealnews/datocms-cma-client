@@ -51,17 +51,18 @@ class Asset extends Common {
                     throw new \InvalidArgumentException('focal_point not in expected format');
                 } elseif (
                     $key === 'focal_point' &&
+                    !is_null($value[$key]) &&
                     (
                         !array_key_exists('x', $value[$key]) ||
                         !array_key_exists('y', $value[$key]) ||
-                        filter_var($value[$key]['x'], FILTER_VALIDATE_FLOAT, ['min_range' => 0, 'max_range' => 1]) === false ||
-                        filter_var($value[$key]['y'], FILTER_VALIDATE_FLOAT, ['min_range' => 0, 'max_range' => 1]) === false
+                        filter_var($value[$key]['x'], FILTER_VALIDATE_FLOAT, ['options' => ['min_range' => 0, 'max_range' => 1]]) === false ||
+                        filter_var($value[$key]['y'], FILTER_VALIDATE_FLOAT, ['options' => ['min_range' => 0, 'max_range' => 1]]) === false
                     )
                 ) {
                     throw new \InvalidArgumentException('focal_point not in expected format');
                 } elseif ($key === 'custom_data' && !is_array($value[$key])) {
                     throw new \InvalidArgumentException('custom_data not in expected format');
-                } elseif (!is_string($value[$key])) {
+                } elseif ($key !== 'focal_point' && $key !== 'custom_data' && !is_string($value[$key])) {
                     throw new \InvalidArgumentException("$key is not a string");
                 }
             }

@@ -3,6 +3,7 @@
 namespace DealNews\DatoCMS\CMA\API;
 
 use DealNews\DatoCMS\CMA\Parameters\Record as RecordParameter;
+use DealNews\DatoCMS\CMA\Input\Record as RecordInput;
 
 class Record extends Base {
 
@@ -25,11 +26,14 @@ class Record extends Base {
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/item/create?language=http
      *
-     * @param   array   $data       The record/item data to create the item (method will auto-wrap in {data: <your-data>})
+     * @param   array|RecordInput   $data       The record/item data to create the item (method will auto-wrap in {data: <your-data>})
      *
-     * @return  array               If successful, will return the record/item
+     * @return  array                           If successful, will return the record/item
      */
-    public function create(array $data): array {
+    public function create(array|RecordInput $data): array {
+        if (!is_array($data)) {
+            $data = $data->toArray();
+        }
         return $this->handler->execute('POST', '/items', [], ['data' => $data]);
     }
 
@@ -51,12 +55,15 @@ class Record extends Base {
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/item/update?language=http
      *
-     * @param   string  $record_id      The id of the record/item you wish to update
-     * @param   array   $data           The record/item data to update the item (method will auto-wrap in {data: <your-data>})
+     * @param   string              $record_id      The id of the record/item you wish to update
+     * @param   array|RecordInput   $data           The record/item data to update the item (method will auto-wrap in {data: <your-data>})
      *
-     * @return  array                   If successful, will return the updated record/item
+     * @return  array                               If successful, will return the updated record/item
      */
-    public function update(string $record_id, array $data): array {
+    public function update(string $record_id, array|RecordInput $data): array {
+        if (!is_array($data)) {
+            $data = $data->toArray();
+        }
         return $this->handler->execute('POST', '/items/' . $record_id, ['data' => $data]);
     }
 

@@ -28,6 +28,8 @@ class Config {
     /**
      * Singleton instance
      *
+     * Nullable to allow the reset() method to clear the instance for testing.
+     *
      * @var Config|null
      */
     protected static ?Config $instance = null;

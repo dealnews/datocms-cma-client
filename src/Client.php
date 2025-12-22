@@ -6,10 +6,27 @@ use DealNews\DatoCMS\CMA\API\Record;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
+/**
+ * Main entry point for the DatoCMS Content Management API client
+ *
+ * Provides access to DatoCMS API endpoints for managing records/items. Configure
+ * via constructor parameters or environment variables (DN_DATOCMS_API_TOKEN,
+ * DN_DATOCMS_ENVIRONMENT, DN_DATOCMS_BASE_URL, DN_DATOCMS_LOG_LEVEL).
+ *
+ * Usage:
+ * ```php
+ * $client = new Client('your-api-token', 'your-environment');
+ * $records = $client->record->list();
+ * ```
+ *
+ * @see https://www.datocms.com/docs/content-management-api
+ */
 class Client {
 
     /**
-     * Performs requests related to records/items
+     * API endpoint for record/item operations
+     *
+     * @var Record
      */
     public readonly Record $record;
 

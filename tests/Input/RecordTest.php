@@ -215,7 +215,8 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testToArrayThrowsExceptionForInvalidObject() {
         $this->expectException(\LogicException::class);
-        // Note: Error message comes from the vendor ValueObject class; keep this string in sync with the vendor implementation.
+        // Note: Error message comes from the vendor ValueObject class which
+        // processes the object before our toArray() method does.
         $this->expectExceptionMessage('Propety invalid_field does not implement the Export or JsonSerializable interface');
         
         $record = new Record('model_123');

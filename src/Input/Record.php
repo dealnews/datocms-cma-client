@@ -7,17 +7,40 @@ use DealNews\DatoCMS\CMA\Input\Parts\Relationships;
 use Moonspot\ValueObjects\Interfaces\Export;
 use Moonspot\ValueObjects\ValueObject;
 
+/**
+ * Input object for creating and updating DatoCMS records/items
+ *
+ * Represents the data structure for record operations. Supports both
+ * scalar attributes and DataType objects for field values.
+ *
+ * Usage:
+ * ```php
+ * $record = new Record('item-type-id');
+ * $record->attributes['title'] = 'Hello World';
+ * $record->attributes['color'] = Color::init()->setColor(255, 0, 0, 255);
+ * $result = $client->record->create($record);
+ * ```
+ *
+ * @see https://www.datocms.com/docs/content-management-api/resources/item/create
+ */
 class Record extends ValueObject {
 
     /**
-     * Optional.
+     * Optional UUID for the record/item
      *
-     * An uuid for this record/item
+     * When creating, leave null to auto-generate. When updating, this is
+     * typically not needed as the ID is passed to the update method.
+     *
+     * @var string|null
      */
     public ?string $id = null;
 
     /**
-     * Should always be "item"
+     * Record type, always "item"
+     *
+     * Enforced by setter - attempting to set any other value throws an exception.
+     *
+     * @var string
      */
     public string $type = 'item' {
         set {
@@ -29,25 +52,36 @@ class Record extends ValueObject {
     }
 
     /**
-     * An associative array of field-names and field-values to set for this record/item
+     * Field values for the record
+     *
+     * Keys are field API names, values can be scalars, arrays, or DataType objects.
+     * DataType objects are automatically serialized via Export or JsonSerializable.
+     *
+     * @var array<string, mixed>
      */
     public array $attributes = [];
 
     /**
-     * Optional.
+     * Record metadata (created_at, first_published_at, current_version, stage)
      *
-     * Set certain "meta" values for the record (like "created_at", "first_published_at", etc...)
+     * Excluded from output if no properties are set.
      *
-     * If no properties are set on this object, then the "meta" object will be excluded from the API input data
+     * @var Meta
      */
     public Meta $meta;
 
     /**
-     * Defines relationships for this record such as what "item_type" it should belong to and information
-     * on who was the original "creator" of this record (creator is optional)
+     * Record relationships (item_type and optional creator)
+     *
+     * @var Relationships
      */
     public Relationships $relationships;
 
+    /**
+     * Creates a new Record input object
+     *
+     * @param string|null $item_type_id The item_type (model) ID for this record
+     */
     public function __construct(?string $item_type_id = null) {
         $this->meta = new Meta();
         $this->relationships = new Relationships();
@@ -57,6 +91,18 @@ class Record extends ValueObject {
         }
     }
 
+    /**
+     * Converts the record to an array for API submission
+     *
+     * Excludes empty id, meta, and attributes. Serializes DataType objects
+     * in attributes via their Export or JsonSerializable interfaces.
+     *
+     * @param array<string, mixed>|null $data Optional data override
+     *
+     * @return array<string, mixed> API-ready array structure
+     *
+     * @throws \LogicException If an attribute object lacks Export/JsonSerializable
+     */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
         if (empty($array['id'])) {

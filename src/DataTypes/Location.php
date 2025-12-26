@@ -2,21 +2,53 @@
 
 namespace DealNews\DatoCMS\CMA\DataTypes;
 
+/**
+ * DataType for geographic location field values
+ *
+ * Represents coordinates with latitude (-90 to 90) and longitude (-180 to 180).
+ *
+ * Usage:
+ * ```php
+ * $location = Location::init()->setLocation(40.7128, -74.0060); // NYC
+ * // or
+ * $location = Location::init()->set([
+ *     'latitude' => 40.7128,
+ *     'longitude' => -74.0060
+ * ]);
+ * ```
+ *
+ * @see https://www.datocms.com/docs/content-management-api/resources/item
+ */
 class Location extends Common {
 
     /**
-     * @param   float       $latitude       Float between -90.0 to 90
-     * @param   float       $longitude      Float between -180.0 to 180
+     * Sets the location using latitude and longitude
      *
-     * @return  Location
+     * @param float $latitude  Latitude (-90.0 to 90.0)
+     * @param float $longitude Longitude (-180.0 to 180.0)
+     *
+     * @return static This instance for method chaining
+     *
+     * @throws \InvalidArgumentException If coordinates are out of range
      */
-    public function setLocation(float $latitude, float $longitude) : static {
+    public function setLocation(float $latitude, float $longitude): static {
         return $this->set([
             'latitude' => $latitude,
             'longitude' => $longitude,
         ]);
     }
 
+    /**
+     * Validates the location value format
+     *
+     * Requires an array with 'latitude' (-90 to 90) and 'longitude' (-180 to 180).
+     *
+     * @param mixed $value Value to validate
+     *
+     * @return void
+     *
+     * @throws \InvalidArgumentException If format is invalid or values out of range
+     */
     protected function validateValue(mixed $value): void {
         if (is_null($value)) {
             return;

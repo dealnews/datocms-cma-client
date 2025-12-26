@@ -15,21 +15,67 @@ use GuzzleHttp\MessageFormatter;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
+/**
+ * HTTP request handler for DatoCMS API communication
+ *
+ * Wraps Guzzle HTTP client with automatic retry on rate limits (HTTP 429),
+ * request/response logging, and JSON encoding/decoding. Handles authentication
+ * headers and environment configuration.
+ *
+ * Features:
+ * - Automatic retry on HTTP 429 with configurable delay
+ * - PSR-3 compatible logging
+ * - JSON-API compliant headers
+ *
+ * @see https://www.datocms.com/docs/content-management-api
+ */
 class Handler {
 
     /**
-     * How many retries will we do when the API reports an API Limit has been hit
+     * Maximum number of retry attempts for rate-limited requests
+     *
+     * @var int
      */
     const int MAX_RETRIES = 5;
 
+    /**
+     * Default DatoCMS API base URL
+     *
+     * @var string
+     */
     const string DEFAULT_BASE_URI = 'https://site-api.datocms.com';
 
+    /**
+     * Placeholder value for null environment in instance cache key
+     *
+     * @var string
+     */
     const string ENVIRONMENT_PLACEHOLDER = 'DEALNEWS-NULL-NN-984562910-NN-NULL-DEALNEWS';
 
+    /**
+     * Cache of Handler instances keyed by [apiToken][environment][base_url]
+     *
+     * @var array<string, array<string, array<string, self>>>
+     */
     protected static array $instances = [];
 
+    /**
+     * Guzzle HTTP client instance
+     *
+     * @var Client
+     */
     protected Client $client;
 
+    /**
+     * Creates a new HTTP handler
+     *
+     * @param string               $apiToken    DatoCMS API token
+     * @param string|null          $environment DatoCMS environment name
+     * @param LoggerInterface|null $logger      PSR-3 logger for request logging
+     * @param string               $log_level   PSR-3 log level (default: info)
+     * @param string|null          $base_url    Custom base URL for proxies
+     * @param Client|null          $client      Pre-configured Guzzle client
+     */
     public function __construct(
         string $apiToken,
         ?string $environment = null,
@@ -67,7 +113,28 @@ class Handler {
     }
 
 
-    public function execute(string $method, string $path, array $query_params = [], array $post_data = [], array $accepted_http_status = []): array {
+    /**
+     * Executes an HTTP request to the DatoCMS API
+     *
+     * @param string               $method              HTTP method (GET, POST, PUT, DELETE)
+     * @param string               $path                API endpoint path
+     * @param array<string, mixed> $query_params        Query string parameters
+     * @param array<string, mixed> $post_data           Request body data (JSON encoded)
+     * @param array<int>           $accepted_http_status Additional HTTP status codes to accept
+     *
+     * @return array<string, mixed> Decoded JSON response body
+     *
+     * @throws API     When API returns an error status code
+     * @throws Decode  When JSON response cannot be decoded
+     * @throws Unknown When an unexpected error occurs
+     */
+    public function execute(
+        string $method,
+        string $path,
+        array $query_params = [],
+        array $post_data = [],
+        array $accepted_http_status = []
+    ): array {
         $request_options = [];
 
         if (!empty($query_params)) {
@@ -98,25 +165,60 @@ class Handler {
     }
 
 
-    public static function init(string $apiToken, ?string $environment = null, ?string $base_url = null): self {
+    /**
+     * Returns a cached Handler instance or creates a new one
+     *
+     * Instances are cached by apiToken, environment, and base_url combination.
+     *
+     * @param string      $apiToken    DatoCMS API token
+     * @param string|null $environment DatoCMS environment name
+     * @param string|null $base_url    Custom base URL
+     *
+     * @return self Cached or new Handler instance
+     */
+    public static function init(
+        string $apiToken,
+        ?string $environment = null,
+        ?string $base_url = null
+    ): self {
         if (empty(self::$instances[$apiToken][$environment ?? self::ENVIRONMENT_PLACEHOLDER][$base_url ?? self::DEFAULT_BASE_URI])) {
-            self::$instances[$apiToken][$environment ?? self::ENVIRONMENT_PLACEHOLDER][$base_url ?? self::DEFAULT_BASE_URI] = new self($apiToken, $environment, $base_url);
+            self::$instances[$apiToken][$environment ?? self::ENVIRONMENT_PLACEHOLDER][$base_url ?? self::DEFAULT_BASE_URI] = new self(
+                $apiToken,
+                $environment,
+                null,
+                LogLevel::INFO,
+                $base_url
+            );
         }
 
         return self::$instances[$apiToken][$environment ?? self::ENVIRONMENT_PLACEHOLDER][$base_url ?? self::DEFAULT_BASE_URI];
     }
 
+    /**
+     * Resets the instance cache (for testing purposes only)
+     *
+     * @return void
+     */
+    public static function reset(): void {
+        self::$instances = [];
+    }
+
 
     /**
-     * Adds a Middleware retry method to a Guzzle Handler Stack. This retry method will automatically retry sending the last
-     * API request if the server responded with an HTTP code of 429 (Too Many Requests) after a set number of seconds.
+     * Configures automatic retry middleware for rate-limited requests
      *
-     * @param   int                 $seconds            The number of seconds that should pass before we auto-retry the API request
-     * @param   HandlerStack|null   $handler_stack      A Guzzle handler stack to add the retry method to (if one is not provided, a new stack will be created)
+     * Adds Guzzle middleware that retries requests when the server responds
+     * with HTTP 429 (Too Many Requests) after a configurable delay.
      *
-     * @return  HandlerStack                            A Guzzle handler stack with the retry method in the stack
+     * @param int              $seconds       Delay between retries (default: 3)
+     * @param HandlerStack|null $handler_stack Existing handler stack to modify
+     *
+     * @return HandlerStack Handler stack with retry middleware added
      */
-    protected function autoRetry(int $seconds = 3, ?HandlerStack $handler_stack = null) : HandlerStack {
+    protected function autoRetry(
+        int $seconds = 3,
+        ?HandlerStack $handler_stack = null
+    ): HandlerStack {
         if (empty($handler_stack)) {
             $handler_stack = HandlerStack::create();
         }
@@ -131,16 +233,24 @@ class Handler {
     }
 
     /**
-     * A method that decides whether we should retry the last API request or not.
+     * Determines whether a failed request should be retried
      *
-     * @param   int                     $retries        The number of retries that have been performed already
-     * @param   Request                 $request        The API request
-     * @param   Response|null           $response       The server's response
-     * @param   RequestException|null   $exception      Any exception that has occurred
+     * Called by Guzzle retry middleware. Returns true for HTTP 429 responses
+     * when retry count is below MAX_RETRIES.
      *
-     * @return  bool
+     * @param int                   $retries   Number of retries already attempted
+     * @param Request               $request   The HTTP request
+     * @param Response|null         $response  The HTTP response, if available
+     * @param RequestException|null $exception Any exception that occurred
+     *
+     * @return bool True if request should be retried
      */
-    public static function autoRetryDecider(int $retries, Request $request, ?Response $response = null, ?RequestException $exception = null) : bool {
+    public static function autoRetryDecider(
+        int $retries,
+        Request $request,
+        ?Response $response = null,
+        ?RequestException $exception = null
+    ): bool {
         if (
             $retries < self::MAX_RETRIES &&
             !empty($response) &&
@@ -153,7 +263,23 @@ class Handler {
     }
 
 
-    protected function httpLogger(LoggerInterface $logger, string $log_level, ?HandlerStack $handler_stack = null) : HandlerStack {
+    /**
+     * Configures HTTP request/response logging middleware
+     *
+     * Adds Guzzle middleware for logging requests and responses. Uses SHORT
+     * format for INFO/NOTICE levels, DEBUG format for all other levels.
+     *
+     * @param LoggerInterface   $logger        PSR-3 logger instance
+     * @param string            $log_level     PSR-3 log level
+     * @param HandlerStack|null $handler_stack Existing handler stack to modify
+     *
+     * @return HandlerStack Handler stack with logging middleware added
+     */
+    protected function httpLogger(
+        LoggerInterface $logger,
+        string $log_level,
+        ?HandlerStack $handler_stack = null
+    ): HandlerStack {
         if (empty($handler_stack)) {
             $handler_stack = HandlerStack::create();
         }

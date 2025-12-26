@@ -7,6 +7,11 @@ use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Client;
 use DealNews\DatoCMS\CMA\Config;
 use DealNews\DatoCMS\CMA\API\Record;
+use DealNews\DatoCMS\CMA\API\Upload;
+use DealNews\DatoCMS\CMA\API\UploadCollection;
+use DealNews\DatoCMS\CMA\API\UploadRequest;
+use DealNews\DatoCMS\CMA\API\UploadSmartTag;
+use DealNews\DatoCMS\CMA\API\UploadTag;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -30,6 +35,41 @@ class ClientTest extends TestCase {
         $client = new Client('test-token');
 
         $this->assertInstanceOf(Record::class, $client->record);
+    }
+
+    #[Group('unit')]
+    public function testConstructorCreatesUploadApi() {
+        $client = new Client('test-token');
+
+        $this->assertInstanceOf(Upload::class, $client->upload);
+    }
+
+    #[Group('unit')]
+    public function testConstructorCreatesUploadRequestApi() {
+        $client = new Client('test-token');
+
+        $this->assertInstanceOf(UploadRequest::class, $client->upload_request);
+    }
+
+    #[Group('unit')]
+    public function testConstructorCreatesUploadCollectionApi() {
+        $client = new Client('test-token');
+
+        $this->assertInstanceOf(UploadCollection::class, $client->upload_collection);
+    }
+
+    #[Group('unit')]
+    public function testConstructorCreatesUploadTagApi() {
+        $client = new Client('test-token');
+
+        $this->assertInstanceOf(UploadTag::class, $client->upload_tag);
+    }
+
+    #[Group('unit')]
+    public function testConstructorCreatesUploadSmartTagApi() {
+        $client = new Client('test-token');
+
+        $this->assertInstanceOf(UploadSmartTag::class, $client->upload_smart_tag);
     }
 
     #[Group('unit')]
@@ -93,6 +133,11 @@ class ClientTest extends TestCase {
         $this->assertEquals(LogLevel::WARNING, $config->log_level);
         $this->assertEquals('https://custom.api.com', $config->base_url);
         $this->assertInstanceOf(Record::class, $client->record);
+        $this->assertInstanceOf(Upload::class, $client->upload);
+        $this->assertInstanceOf(UploadRequest::class, $client->upload_request);
+        $this->assertInstanceOf(UploadCollection::class, $client->upload_collection);
+        $this->assertInstanceOf(UploadTag::class, $client->upload_tag);
+        $this->assertInstanceOf(UploadSmartTag::class, $client->upload_smart_tag);
     }
 
     #[Group('unit')]
@@ -114,6 +159,51 @@ class ClientTest extends TestCase {
         $client = new Client('token');
 
         $reflection = new \ReflectionProperty($client, 'record');
+
+        $this->assertTrue($reflection->isReadOnly());
+    }
+
+    #[Group('unit')]
+    public function testUploadPropertyIsReadonly() {
+        $client = new Client('token');
+
+        $reflection = new \ReflectionProperty($client, 'upload');
+
+        $this->assertTrue($reflection->isReadOnly());
+    }
+
+    #[Group('unit')]
+    public function testUploadRequestPropertyIsReadonly() {
+        $client = new Client('token');
+
+        $reflection = new \ReflectionProperty($client, 'upload_request');
+
+        $this->assertTrue($reflection->isReadOnly());
+    }
+
+    #[Group('unit')]
+    public function testUploadCollectionPropertyIsReadonly() {
+        $client = new Client('token');
+
+        $reflection = new \ReflectionProperty($client, 'upload_collection');
+
+        $this->assertTrue($reflection->isReadOnly());
+    }
+
+    #[Group('unit')]
+    public function testUploadTagPropertyIsReadonly() {
+        $client = new Client('token');
+
+        $reflection = new \ReflectionProperty($client, 'upload_tag');
+
+        $this->assertTrue($reflection->isReadOnly());
+    }
+
+    #[Group('unit')]
+    public function testUploadSmartTagPropertyIsReadonly() {
+        $client = new Client('token');
+
+        $reflection = new \ReflectionProperty($client, 'upload_smart_tag');
 
         $this->assertTrue($reflection->isReadOnly());
     }

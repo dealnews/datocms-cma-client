@@ -33,7 +33,7 @@ class ScheduledUnpublishing extends Base {
      * @throws \DealNews\DatoCMS\CMA\Exception\API     On HTTP error responses
      * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
      * @throws \DealNews\DatoCMS\CMA\Exception\Unknown On unexpected errors
-     * @throws \InvalidArgumentException               If publication_scheduled_at is not set
+     * @throws \InvalidArgumentException               If unpublishing_scheduled_at is not set
      */
     public function create(string $record_id, array|ScheduledUnpublishingInput $data): array {
         if (!is_array($data)) {

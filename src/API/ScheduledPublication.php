@@ -7,7 +7,7 @@ use DealNews\DatoCMS\CMA\Input\ScheduledPublication as ScheduledPublicationInput
 /**
  * API handler for DatoCMS record/item scheduled publication operations
  *
- * Provides methods for all scheduling publication of records/items
+ * Provides methods for scheduling publication of records/items
  *
  * Usage:
  * ```php

@@ -29,7 +29,7 @@ jobs:
       - name: PHPUnit tests
         uses: php-actions/phpunit@v4
         with:
-          php_extensions: "yaml"
+          php_extensions: "yaml pcov"
           version: "11.5"
           php_version: ${{ matrix.php-versions }}
 

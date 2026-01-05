@@ -13,9 +13,11 @@ use Moonspot\ValueObjects\ValueObject;
  * Usage:
  * ```php
  * $scheduled_publication = new ScheduledPublication();
- * $scheduled_publication->attributes['name'] = 'Blog Post';
- * $scheduled_publication->attributes['api_key'] = 'blog_post';
- * $scheduled_publication->attributes['singleton'] = false;
+ * $scheduled_publication->attributes['publication_scheduled_at'] = '2025-01-01T10:00:00Z';
+ * $scheduled_publication->attributes['selective_publication'] = [
+ *     'content_in_locales' => ['en', 'it'],
+ *     'non_localized_content' => true,
+ * ];
  * $result = $client->scheduled_publication->create('record_id', $scheduled_publication);
  * ```
  *

@@ -121,7 +121,7 @@ class ScheduledPublicationTest extends TestCase {
         $scheduled_publication = new ScheduledPublication($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('publication_scheduled_at must set to an ISO 8601 date/time in the \'attributes\'');
+        $this->expectExceptionMessage('publication_scheduled_at must be set to an ISO 8601 date/time in the \'attributes\'');
 
         $scheduled_publication->create('record-123', $data);
     }
@@ -137,7 +137,7 @@ class ScheduledPublicationTest extends TestCase {
         $scheduled_publication = new ScheduledPublication($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('publication_scheduled_at must set to an ISO 8601 date/time in the \'attributes\'');
+        $this->expectExceptionMessage('publication_scheduled_at must be set to an ISO 8601 date/time in the \'attributes\'');
 
         $scheduled_publication->create('record-123', $data);
     }
@@ -152,7 +152,7 @@ class ScheduledPublicationTest extends TestCase {
         $scheduled_publication = new ScheduledPublication($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('publication_scheduled_at must set to an ISO 8601 date/time in the \'attributes\'');
+        $this->expectExceptionMessage('publication_scheduled_at must be set to an ISO 8601 date/time in the \'attributes\'');
 
         $scheduled_publication->create('record-123', $data);
     }

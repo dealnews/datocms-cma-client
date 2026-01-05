@@ -34,6 +34,4 @@ jobs:
           php_version: ${{ matrix.php-versions }}
 
       - name: Run Phan
-        uses: docker://jakzal/phpqa:php8.4-alpine
-        with:
-          args: "phan --long-progress-bar --minimum-severity 5"
+        run: docker run --init -it --rm -v "$(pwd):/project" -w /project jakzal/phpqa:php${{ matrix.php-versions }}-alpine phan --long-progress-bar --minimum-severity 5

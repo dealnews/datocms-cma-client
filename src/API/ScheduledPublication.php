@@ -12,7 +12,7 @@ use DealNews\DatoCMS\CMA\Input\ScheduledPublication as ScheduledPublicationInput
  * Usage:
  * ```php
  * $client = new Client($token);
- * $scheduled_publication = $client->scheduled_publication->create('record-id', ['attributes' => ['publication_scheduled_at' => '2030-09-01T12:00:00Z']]);
+ * $scheduled_publication = $client->scheduled_publication->create('record-id', ['type' => 'scheduled_publication', 'attributes' => ['publication_scheduled_at' => '2030-09-01T12:00:00Z']]);
  * $record = $client->scheduled_publication->delete('record-id');
  * ```
  *

@@ -124,5 +124,5 @@ return [
     // as variables (like `$class->$property` or
     // `$class->$method()`) in ways that we're unable
     // to make sense of.
-    'dead_code_detection' => true,
+    'dead_code_detection' => false, // set to false since this is a library and a lot of code looks like "dead code"
 ];

@@ -18,7 +18,7 @@ use Moonspot\ValueObjects\ValueObject;
  * $result = $client->scheduled_unpublishing->create('record_id', $scheduled_unpublishing);
  * ```
  *
- * @see https://www.datocms.com/docs/content-management-api/resources/scheduled-publication/create
+ * @see https://www.datocms.com/docs/content-management-api/resources/scheduled-unpublishing/create
  */
 class ScheduledUnpublishing extends ValueObject {
 

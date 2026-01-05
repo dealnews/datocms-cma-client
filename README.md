@@ -126,6 +126,8 @@ The library provides the following DataTypes classes for structured field values
 
 All DataTypes support localization via the `addLocale()` method for multilingual content.
 
+---
+
 ### Models (Item-Types)
 
 Models define the content types in your DatoCMS project. The DatoCMS API refers to these as "item-types".
@@ -191,3 +193,148 @@ Common model attributes include:
 | `ordering_direction` | string | `asc` or `desc` |
 | `collection_appearance` | string | `compact` or `table` |
 | `hint` | string | Editor hint text |
+
+---
+
+### Uploads
+
+The library provides a complete Upload API for managing media assets in DatoCMS.
+
+#### Upload a File
+
+The simplest way to upload a file is with the `uploadFile()` helper method:
+
+```php
+// Upload a local file
+$upload = $client->upload->uploadFile('/path/to/image.jpg');
+
+// Upload with metadata
+$upload = $client->upload->uploadFile('/path/to/image.jpg', [
+    'author'    => 'John Doe',
+    'copyright' => '© 2025 Company',
+    'notes'     => 'Internal notes about this file',
+    'tags'      => ['banner', 'hero', 'featured'],
+    'default_field_metadata' => [
+        'en' => ['alt' => 'Hero banner image', 'title' => 'Main Banner'],
+        'es' => ['alt' => 'Imagen de banner', 'title' => 'Banner Principal'],
+    ],
+]);
+
+// Upload to a specific collection (folder)
+$upload = $client->upload->uploadFile('/path/to/image.jpg', null, 'collection-id');
+```
+
+#### Upload from URL
+
+Upload a file directly from a remote URL:
+
+```php
+// Upload from URL
+$upload = $client->upload->uploadFromUrl('https://example.com/image.jpg');
+
+// With custom filename and metadata
+$upload = $client->upload->uploadFromUrl(
+    'https://example.com/image.jpg',
+    'custom-filename.jpg',
+    ['author' => 'Jane Doe']
+);
+```
+
+#### List and Filter Uploads
+
+```php
+use DealNews\DatoCMS\CMA\Parameters\Upload;
+
+$params = new Upload();
+$params->filter->type = 'image';           // Filter by type: image, video, audio, etc.
+$params->filter->query = 'banner';          // Full-text search
+$params->filter->tags = ['hero', 'featured']; // Filter by tags
+$params->filter->upload_collection_id = 'collection-123'; // Filter by folder
+$params->order_by->addOrderByField('created_at', 'DESC');
+$params->page->limit = 25;
+
+$uploads = $client->upload->list($params);
+```
+
+#### Upload Collections (Folders)
+
+Organize uploads into folders:
+
+```php
+use DealNews\DatoCMS\CMA\Input\UploadCollection;
+
+// List collections
+$collections = $client->upload_collection->list();
+
+// Create a collection
+$collection = new UploadCollection();
+$collection->attributes['label'] = 'Product Images';
+$result = $client->upload_collection->create($collection);
+
+// Create a nested collection
+$subcollection = new UploadCollection();
+$subcollection->attributes['label'] = 'Thumbnails';
+$subcollection->parent_id = $result['data']['id'];
+$client->upload_collection->create($subcollection);
+
+// Delete a collection
+$client->upload_collection->delete($collection_id);
+```
+
+#### Upload Tags
+
+Manage user-defined tags for uploads:
+
+```php
+// List all tags
+$tags = $client->upload_tag->list();
+
+// Create a tag
+$tag = $client->upload_tag->create('featured');
+
+// Delete a tag
+$client->upload_tag->delete($tag['data']['id']);
+```
+
+#### Smart Tags
+
+List auto-detected smart tags (read-only):
+
+```php
+$smart_tags = $client->upload_smart_tag->list();
+```
+
+#### Bulk Operations
+
+```php
+// Bulk delete uploads
+$client->upload->deleteBulk(['upload-1', 'upload-2', 'upload-3']);
+
+// Bulk update metadata
+$client->upload->updateBulk(
+    ['upload-1', 'upload-2'],
+    ['author' => 'Updated Author', 'copyright' => '© 2025']
+);
+```
+
+#### Manual Upload Flow
+
+For advanced use cases, you can use the low-level upload flow:
+
+```php
+use DealNews\DatoCMS\CMA\Input\Upload;
+
+// Step 1: Request upload permission
+$request = $client->upload_request->create('image.jpg');
+$s3_url = $request['data']['attributes']['url'];
+$s3_headers = $request['data']['attributes']['request_headers'];
+
+// Step 2: Upload to S3 (using your own HTTP client)
+// PUT $s3_url with file contents and $s3_headers
+
+// Step 3: Register the upload in DatoCMS
+$upload = new Upload();
+$upload->attributes->path = $request['data']['id'];
+$upload->attributes->author = 'John Doe';
+$result = $client->upload->create($upload);
+```

@@ -4,20 +4,27 @@ namespace DealNews\DatoCMS\CMA;
 
 use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
+use DealNews\DatoCMS\CMA\API\Upload;
+use DealNews\DatoCMS\CMA\API\UploadCollection;
+use DealNews\DatoCMS\CMA\API\UploadRequest;
+use DealNews\DatoCMS\CMA\API\UploadSmartTag;
+use DealNews\DatoCMS\CMA\API\UploadTag;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
  * Main entry point for the DatoCMS Content Management API client
  *
- * Provides access to DatoCMS API endpoints for managing records/items. Configure
- * via constructor parameters or environment variables (DN_DATOCMS_API_TOKEN,
- * DN_DATOCMS_ENVIRONMENT, DN_DATOCMS_BASE_URL, DN_DATOCMS_LOG_LEVEL).
+ * Provides access to DatoCMS API endpoints for managing records/items and
+ * uploads. Configure via constructor parameters or environment variables
+ * (DN_DATOCMS_API_TOKEN, DN_DATOCMS_ENVIRONMENT, DN_DATOCMS_BASE_URL,
+ * DN_DATOCMS_LOG_LEVEL).
  *
  * Usage:
  * ```php
  * $client = new Client('your-api-token', 'your-environment');
  * $records = $client->record->list();
+ * $upload = $client->upload->uploadFile('/path/to/image.jpg');
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api
@@ -39,11 +46,52 @@ class Client {
     public readonly Model $model;
 
     /**
-     * @param   string|null             $apiToken       API Token for access your DatoCMS project's Content Management API
-     * @param   string|null             $environment    The name of the environment to connect to in DatoCMS (defaults to the main/primary environment)
-     * @param   LoggerInterface|null    $logger         Optional logger to log API requests/responses
-     * @param   string                  $log_level      PSR-3 LogLevel (defaults to "info")
-     * @param   string|null             $base_url       Optional base url to use instead of default. (Useful for proxies)
+     * API endpoint for upload operations
+     *
+     * Includes helper methods uploadFile() and uploadFromUrl() for complete
+     * upload workflow.
+     *
+     * @var Upload
+     */
+    public readonly Upload $upload;
+
+    /**
+     * API endpoint for upload request operations
+     *
+     * Used to request S3 upload permissions. For most use cases, use
+     * $upload->uploadFile() or $upload->uploadFromUrl() instead.
+     *
+     * @var UploadRequest
+     */
+    public readonly UploadRequest $upload_request;
+
+    /**
+     * API endpoint for upload collection (folder) operations
+     *
+     * @var UploadCollection
+     */
+    public readonly UploadCollection $upload_collection;
+
+    /**
+     * API endpoint for upload tag operations
+     *
+     * @var UploadTag
+     */
+    public readonly UploadTag $upload_tag;
+
+    /**
+     * API endpoint for upload smart tag operations (read-only)
+     *
+     * @var UploadSmartTag
+     */
+    public readonly UploadSmartTag $upload_smart_tag;
+
+    /**
+     * @param string|null          $apiToken    API Token for your DatoCMS project
+     * @param string|null          $environment The DatoCMS environment name
+     * @param LoggerInterface|null $logger      Optional logger for API requests
+     * @param string               $log_level   PSR-3 LogLevel (default: "info")
+     * @param string|null          $base_url    Optional custom base URL for proxies
      */
     public function __construct(
         ?string             $apiToken = null,
@@ -72,6 +120,11 @@ class Client {
 
         $this->record = new Record();
         $this->model = new Model();
+        $this->upload = new Upload();
+        $this->upload_request = new UploadRequest();
+        $this->upload_collection = new UploadCollection();
+        $this->upload_tag = new UploadTag();
+        $this->upload_smart_tag = new UploadSmartTag();
     }
 
 }

@@ -26,7 +26,12 @@ src/
 ├── API/                    # API endpoint handlers
 │   ├── Base.php           # Abstract base for all API classes
 │   ├── Model.php          # Model/item-type CRUD operations (6 methods)
-│   └── Record.php         # Record/item CRUD operations (13 methods)
+│   ├── Record.php         # Record/item CRUD operations (13 methods)
+│   ├── Upload.php         # Upload CRUD + helper methods (uploadFile, uploadFromUrl)
+│   ├── UploadCollection.php # Upload folder CRUD operations
+│   ├── UploadRequest.php  # S3 upload permission requests
+│   ├── UploadSmartTag.php # Auto-detected smart tags (read-only)
+│   └── UploadTag.php      # User-defined upload tags CRUD
 ├── DataTypes/             # Value objects for DatoCMS field types
 │   ├── Common.php         # Abstract base with localization support
 │   ├── Scalar.php         # Simple string/int/float/bool values
@@ -38,28 +43,37 @@ src/
 ├── Exception/             # Custom exceptions
 │   ├── API.php            # API errors (stores response body)
 │   ├── Decode.php         # JSON decode failures
+│   ├── S3Upload.php       # S3 upload failures
 │   └── Unknown.php        # Unexpected errors
 ├── HTTP/
 │   └── Handler.php        # Guzzle wrapper with auto-retry on 429
 ├── Input/                 # Objects for create/update operations
 │   ├── Model.php          # Main input object for models
 │   ├── Record.php         # Main input object for records
+│   ├── Upload.php         # Input for upload create/update
+│   ├── UploadCollection.php # Input for collection create/update
 │   └── Parts/             # Sub-components
 │       ├── Meta.php       # Record metadata (created_at, stage, etc.)
 │       ├── Relationships.php
-│       └── Relationships/
-│           ├── Creator.php
-│           └── ItemType.php
+│       ├── Relationships/
+│       │   ├── Creator.php
+│       │   └── ItemType.php
+│       └── Upload/
+│           ├── Attributes.php        # Upload attributes (path, author, etc.)
+│           └── DefaultFieldMetadata.php # Localized alt/title per locale
 ├── Parameters/            # Query parameter objects for API filtering
 │   ├── Common.php         # Abstract base with pagination
 │   ├── CommonWithLocale.php
 │   ├── Model.php          # Parameters for listing models
 │   ├── Record.php         # Parameters for listing records
+│   ├── Upload.php         # Parameters for listing uploads
+│   ├── UploadCollection.php # Parameters for listing collections
 │   └── Parts/
 │       ├── Filter.php
 │       ├── FilterFields.php
 │       ├── OrderBy.php
-│       └── Page.php
+│       ├── Page.php
+│       └── UploadFilter.php # Upload-specific filter options
 ├── Client.php             # Main entry point
 └── Config.php             # Singleton configuration
 
@@ -67,21 +81,37 @@ tests/
 ├── API/                   # Unit tests for API classes
 │   ├── BaseTest.php       # Tests Base constructor with mocked Handler
 │   ├── ModelTest.php      # Tests all 6 Model API methods
-│   └── RecordTest.php     # Tests all 13 Record API methods
+│   ├── RecordTest.php     # Tests all 13 Record API methods
+│   ├── UploadTest.php     # Tests Upload API + helper methods
+│   ├── UploadCollectionTest.php
+│   ├── UploadRequestTest.php
+│   ├── UploadSmartTagTest.php
+│   └── UploadTagTest.php
 ├── DataTypes/             # Unit tests for DataType classes
 │   └── CommonTest.php     # Tests abstract Common class edge cases
 ├── Exception/             # Unit tests for exception classes
 │   ├── APITest.php
 │   ├── DecodeTest.php
+│   ├── S3UploadTest.php
 │   └── UnknownTest.php
 ├── HTTP/                  # Unit tests for HTTP layer
 │   └── HandlerTest.php    # Tests execute(), retry logic, caching
 ├── Input/                 # Unit tests for Input classes
 │   ├── ModelTest.php      # Tests Model input serialization
-│   └── RecordTest.php     # Tests Record input serialization
+│   ├── RecordTest.php     # Tests Record input serialization
+│   ├── UploadTest.php
+│   ├── UploadCollectionTest.php
+│   └── Parts/
+│       └── Upload/
+│           ├── AttributesTest.php
+│           └── DefaultFieldMetadataTest.php
 ├── Parameters/            # Unit tests for Parameter classes
 │   ├── ModelTest.php      # Tests Model parameters
-│   └── RecordTest.php     # Tests Record parameters with version validation
+│   ├── RecordTest.php     # Tests Record parameters with version validation
+│   ├── UploadTest.php
+│   ├── UploadCollectionTest.php
+│   └── Parts/
+│       └── UploadFilterTest.php
 ├── ClientTest.php         # Tests Client constructor and config integration
 ├── ConfigTest.php         # Tests singleton, env vars, magic methods
 └── bootstrap.php          # Autoloader setup
@@ -110,15 +140,26 @@ Configuration is managed via a singleton that reads from environment variables:
 
 ### API Layer
 
-All API classes extend `API\Base`, which initializes the HTTP handler.
+All API classes extend `API\Base`, which initializes the HTTP handler. The following API classes are implemented:
 
-**`API\Record`** — Record/item operations:
+**Record API** (`API\Record`):
 - `list()`, `retrieve()`, `create()`, `update()`, `delete()`, `duplicate()`
 - `publish()`, `unpublish()`, `references()`
 - Bulk operations: `publishBulk()`, `unpublishBulk()`, `deleteBulk()`, `moveToStageBulk()`
 
-**`API\Model`** — Model/item-type operations:
+**Model API** (`API\Model`):
 - `list()`, `retrieve()`, `create()`, `update()`, `delete()`, `duplicate()`
+
+**Upload API** (`API\Upload`):
+- `list()`, `retrieve()`, `create()`, `update()`, `delete()`, `references()`
+- Bulk operations: `deleteBulk()`, `updateBulk()`
+- Helper methods: `uploadFile()`, `uploadFromUrl()` — handle complete upload workflow
+
+**Upload Support APIs**:
+- `API\UploadRequest` — Request S3 upload permissions (`create()`)
+- `API\UploadCollection` — Folder management (`list()`, `retrieve()`, `create()`, `update()`, `delete()`)
+- `API\UploadTag` — User tag management (`list()`, `retrieve()`, `create()`, `delete()`)
+- `API\UploadSmartTag` — Auto-detected tags (`list()` only)
 
 ### HTTP Handler
 
@@ -323,6 +364,7 @@ When serialized, `Input\Record` produces JSON-API compliant structure:
 RuntimeException
 ├── API         — HTTP errors; call getResponseBody() for details
 ├── Decode      — JSON parse failures; call getRawJson() for original
+├── S3Upload    — S3 upload failures; call getResponseBody() for S3 error
 └── Unknown     — Unexpected errors (wraps original exception)
 ```
 
@@ -405,10 +447,9 @@ public function testPublishWithSelectivePublishing() { }
 ## Known Limitations
 
 1. **Structured Text**: Not yet implemented in DataTypes
-2. **Upload API**: Not implemented (only record management)
-3. **Fields API**: Not implemented (cannot manage fields within models)
-4. **Webhooks**: Not implemented
-5. **Protected methods in Handler**: `autoRetry()` and `httpLogger()` are protected and cannot be directly unit tested; they are covered indirectly via integration-style tests
+2. **Fields API**: Not implemented (cannot manage fields within models)
+3. **Webhooks**: Not implemented
+4. **Protected methods in Handler**: `autoRetry()` and `httpLogger()` are protected and cannot be directly unit tested; they are covered indirectly via integration-style tests
 
 ---
 
@@ -524,6 +565,61 @@ $params = new ModelParams();
 $params->page->limit = 50;
 
 $models = $client->model->list($params);
+```
+
+### Upload a File
+
+```php
+use DealNews\DatoCMS\CMA\Client;
+
+$client = new Client($token, $env);
+
+// Simple upload from local file
+$upload = $client->upload->uploadFile('/path/to/image.jpg');
+
+// Upload with metadata
+$upload = $client->upload->uploadFile('/path/to/image.jpg', [
+    'author'    => 'John Doe',
+    'copyright' => '© 2025',
+    'tags'      => ['banner', 'hero'],
+    'default_field_metadata' => [
+        'en' => ['alt' => 'Banner image', 'title' => 'Hero Banner'],
+        'es' => ['alt' => 'Imagen de banner', 'title' => 'Banner Principal'],
+    ],
+]);
+
+// Upload from URL
+$upload = $client->upload->uploadFromUrl('https://example.com/image.jpg');
+```
+
+### List and Filter Uploads
+
+```php
+use DealNews\DatoCMS\CMA\Parameters\Upload as UploadParams;
+
+$params = new UploadParams();
+$params->filter->type = 'image';
+$params->filter->query = 'banner';
+$params->filter->tags = ['hero', 'featured'];
+$params->order_by->addOrderByField('created_at', 'DESC');
+$params->page->limit = 25;
+
+$uploads = $client->upload->list($params);
+```
+
+### Manage Upload Collections
+
+```php
+use DealNews\DatoCMS\CMA\Input\UploadCollection;
+
+// Create a folder
+$collection = new UploadCollection();
+$collection->attributes['label'] = 'Product Images';
+$result = $client->upload_collection->create($collection);
+
+// Upload to a specific folder
+$upload = $client->upload->uploadFile('/path/to/product.jpg', null, $result['data']['id']);
+```
 ```
 
 ---

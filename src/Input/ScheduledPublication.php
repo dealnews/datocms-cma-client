@@ -57,7 +57,7 @@ class ScheduledPublication extends ValueObject {
     /**
      * Converts the ScheduledPublication to an array for API submission
      *
-     * Excludes empty id and attributes.
+     * Removes the `non_localized_content` attribute when it is empty.
      *
      * @param array<string, mixed>|null $data Optional data override
      *

@@ -2,6 +2,7 @@
 
 namespace DealNews\DatoCMS\CMA;
 
+use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\Upload;
 use DealNews\DatoCMS\CMA\API\UploadCollection;
@@ -36,6 +37,13 @@ class Client {
      * @var Record
      */
     public readonly Record $record;
+
+    /**
+     * API endpoint for model/item-type operations
+     *
+     * @var Model
+     */
+    public readonly Model $model;
 
     /**
      * API endpoint for upload operations
@@ -111,6 +119,7 @@ class Client {
         }
 
         $this->record = new Record();
+        $this->model = new Model();
         $this->upload = new Upload();
         $this->upload_request = new UploadRequest();
         $this->upload_collection = new UploadCollection();

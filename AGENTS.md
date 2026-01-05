@@ -25,6 +25,7 @@
 src/
 ├── API/                    # API endpoint handlers
 │   ├── Base.php           # Abstract base for all API classes
+│   ├── Model.php          # Model/item-type CRUD operations (6 methods)
 │   ├── Record.php         # Record/item CRUD operations (13 methods)
 │   ├── Upload.php         # Upload CRUD + helper methods (uploadFile, uploadFromUrl)
 │   ├── UploadCollection.php # Upload folder CRUD operations
@@ -47,6 +48,7 @@ src/
 ├── HTTP/
 │   └── Handler.php        # Guzzle wrapper with auto-retry on 429
 ├── Input/                 # Objects for create/update operations
+│   ├── Model.php          # Main input object for models
 │   ├── Record.php         # Main input object for records
 │   ├── Upload.php         # Input for upload create/update
 │   ├── UploadCollection.php # Input for collection create/update
@@ -62,6 +64,7 @@ src/
 ├── Parameters/            # Query parameter objects for API filtering
 │   ├── Common.php         # Abstract base with pagination
 │   ├── CommonWithLocale.php
+│   ├── Model.php          # Parameters for listing models
 │   ├── Record.php         # Parameters for listing records
 │   ├── Upload.php         # Parameters for listing uploads
 │   ├── UploadCollection.php # Parameters for listing collections
@@ -77,6 +80,7 @@ src/
 tests/
 ├── API/                   # Unit tests for API classes
 │   ├── BaseTest.php       # Tests Base constructor with mocked Handler
+│   ├── ModelTest.php      # Tests all 6 Model API methods
 │   ├── RecordTest.php     # Tests all 13 Record API methods
 │   ├── UploadTest.php     # Tests Upload API + helper methods
 │   ├── UploadCollectionTest.php
@@ -93,7 +97,8 @@ tests/
 ├── HTTP/                  # Unit tests for HTTP layer
 │   └── HandlerTest.php    # Tests execute(), retry logic, caching
 ├── Input/                 # Unit tests for Input classes
-│   ├── RecordTest.php
+│   ├── ModelTest.php      # Tests Model input serialization
+│   ├── RecordTest.php     # Tests Record input serialization
 │   ├── UploadTest.php
 │   ├── UploadCollectionTest.php
 │   └── Parts/
@@ -101,6 +106,7 @@ tests/
 │           ├── AttributesTest.php
 │           └── DefaultFieldMetadataTest.php
 ├── Parameters/            # Unit tests for Parameter classes
+│   ├── ModelTest.php      # Tests Model parameters
 │   ├── RecordTest.php     # Tests Record parameters with version validation
 │   ├── UploadTest.php
 │   ├── UploadCollectionTest.php
@@ -140,6 +146,9 @@ All API classes extend `API\Base`, which initializes the HTTP handler. The follo
 - `list()`, `retrieve()`, `create()`, `update()`, `delete()`, `duplicate()`
 - `publish()`, `unpublish()`, `references()`
 - Bulk operations: `publishBulk()`, `unpublishBulk()`, `deleteBulk()`, `moveToStageBulk()`
+
+**Model API** (`API\Model`):
+- `list()`, `retrieve()`, `create()`, `update()`, `delete()`, `duplicate()`
 
 **Upload API** (`API\Upload`):
 - `list()`, `retrieve()`, `create()`, `update()`, `delete()`, `references()`
@@ -200,13 +209,23 @@ $record->attributes['brand_color'] = $color;
 
 **Serialization**: `toArray()` recursively converts DataType objects via `Export` or `JsonSerializable` interfaces.
 
+`Input\Model` represents data for creating/updating models. It extends `Moonspot\ValueObjects\ValueObject` and uses:
+- `$type` — Always `'item_type'` (enforced via setter)
+- `$id` — Optional model ID
+- `$attributes` — Associative array of model configuration (name, api_key, singleton, etc.)
+
 ### Parameter Objects
 
-Used for filtering/sorting/paginating API requests. `Parameters\Record` extends `CommonWithLocale` and includes:
+Used for filtering/sorting/paginating API requests.
+
+`Parameters\Record` extends `CommonWithLocale` and includes:
 - `$nested` — Include nested data structures
 - `$version` — `'published'` or `'current'`
 - `$order_by` — `Parts\OrderBy` object
 - `$filter` — `Parts\Filter` object (ids, type, query, fields, only_valid)
+- `$page` — `Parts\Page` object (offset, limit)
+
+`Parameters\Model` extends `Common` and includes:
 - `$page` — `Parts\Page` object (offset, limit)
 
 ---
@@ -428,7 +447,7 @@ public function testPublishWithSelectivePublishing() { }
 ## Known Limitations
 
 1. **Structured Text**: Not yet implemented in DataTypes
-2. **Schema API**: Not implemented (cannot manage models/fields)
+2. **Fields API**: Not implemented (cannot manage fields within models)
 3. **Webhooks**: Not implemented
 4. **Protected methods in Handler**: `autoRetry()` and `httpLogger()` are protected and cannot be directly unit tested; they are covered indirectly via integration-style tests
 
@@ -523,6 +542,31 @@ $title = Scalar::init()
 $record->attributes['title'] = $title;
 ```
 
+### Create a Model
+
+```php
+use DealNews\DatoCMS\CMA\Client;
+use DealNews\DatoCMS\CMA\Input\Model;
+
+$client = new Client($token, $env);
+$model = new Model();
+$model->attributes['name'] = 'Blog Post';
+$model->attributes['api_key'] = 'blog_post';
+$model->attributes['singleton'] = false;
+$result = $client->model->create($model);
+```
+
+### List Models
+
+```php
+use DealNews\DatoCMS\CMA\Parameters\Model as ModelParams;
+
+$params = new ModelParams();
+$params->page->limit = 50;
+
+$models = $client->model->list($params);
+```
+
 ### Upload a File
 
 ```php
@@ -575,6 +619,7 @@ $result = $client->upload_collection->create($collection);
 
 // Upload to a specific folder
 $upload = $client->upload->uploadFile('/path/to/product.jpg', null, $result['data']['id']);
+```
 ```
 
 ---

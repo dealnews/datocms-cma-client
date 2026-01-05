@@ -6,6 +6,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Client;
 use DealNews\DatoCMS\CMA\Config;
+use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\Upload;
 use DealNews\DatoCMS\CMA\API\UploadCollection;
@@ -35,6 +36,13 @@ class ClientTest extends TestCase {
         $client = new Client('test-token');
 
         $this->assertInstanceOf(Record::class, $client->record);
+    }
+
+    #[Group('unit')]
+    public function testConstructorCreatesModelApi() {
+        $client = new Client('test-token');
+
+        $this->assertInstanceOf(Model::class, $client->model);
     }
 
     #[Group('unit')]
@@ -133,6 +141,7 @@ class ClientTest extends TestCase {
         $this->assertEquals(LogLevel::WARNING, $config->log_level);
         $this->assertEquals('https://custom.api.com', $config->base_url);
         $this->assertInstanceOf(Record::class, $client->record);
+        $this->assertInstanceOf(Model::class, $client->model);
         $this->assertInstanceOf(Upload::class, $client->upload);
         $this->assertInstanceOf(UploadRequest::class, $client->upload_request);
         $this->assertInstanceOf(UploadCollection::class, $client->upload_collection);
@@ -159,6 +168,15 @@ class ClientTest extends TestCase {
         $client = new Client('token');
 
         $reflection = new \ReflectionProperty($client, 'record');
+
+        $this->assertTrue($reflection->isReadOnly());
+    }
+
+    #[Group('unit')]
+    public function testModelPropertyIsReadonly() {
+        $client = new Client('token');
+
+        $reflection = new \ReflectionProperty($client, 'model');
 
         $this->assertTrue($reflection->isReadOnly());
     }

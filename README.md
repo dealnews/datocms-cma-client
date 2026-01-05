@@ -128,6 +128,74 @@ All DataTypes support localization via the `addLocale()` method for multilingual
 
 ---
 
+### Models (Item-Types)
+
+Models define the content types in your DatoCMS project. The DatoCMS API refers to these as "item-types".
+
+Get a list of models:
+```php
+$models = $client->model->list();
+```
+
+Get a specific model by ID:
+```php
+$model = $client->model->retrieve('model-id');
+```
+
+Create a new model:
+```php
+use DealNews\DatoCMS\CMA\Input\Model;
+
+$model = new Model();
+$model->attributes['name'] = 'Blog Post';
+$model->attributes['api_key'] = 'blog_post';
+$model->attributes['singleton'] = false;
+$model->attributes['sortable'] = true;
+$model->attributes['draft_mode_active'] = true;
+
+$result = $client->model->create($model);
+```
+
+Update a model:
+```php
+use DealNews\DatoCMS\CMA\Input\Model;
+
+$model = new Model();
+$model->attributes['name'] = 'Updated Blog Post';
+
+$result = $client->model->update('model-id', $model);
+```
+
+Delete a model:
+```php
+$result = $client->model->delete('model-id');
+```
+
+Duplicate a model:
+```php
+$result = $client->model->duplicate('model-id');
+```
+
+#### Model Attributes
+
+Common model attributes include:
+
+| Attribute | Type | Description |
+|-----------|------|-------------|
+| `name` | string | Human-readable name |
+| `api_key` | string | Machine-friendly key |
+| `singleton` | bool | Single-instance model |
+| `sortable` | bool | Allow manual record sorting |
+| `modular_block` | bool | Is a block model |
+| `tree` | bool | Hierarchical records |
+| `draft_mode_active` | bool | Enable drafts |
+| `all_locales_required` | bool | Require all locales |
+| `ordering_direction` | string | `asc` or `desc` |
+| `collection_appearance` | string | `compact` or `table` |
+| `hint` | string | Editor hint text |
+
+---
+
 ### Uploads
 
 The library provides a complete Upload API for managing media assets in DatoCMS.

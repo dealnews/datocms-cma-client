@@ -2,6 +2,7 @@
 
 namespace DealNews\DatoCMS\CMA;
 
+use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -29,6 +30,13 @@ class Client {
      * @var Record
      */
     public readonly Record $record;
+
+    /**
+     * API endpoint for model/item-type operations
+     *
+     * @var Model
+     */
+    public readonly Model $model;
 
     /**
      * @param   string|null             $apiToken       API Token for access your DatoCMS project's Content Management API
@@ -63,6 +71,7 @@ class Client {
         }
 
         $this->record = new Record();
+        $this->model = new Model();
     }
 
 }

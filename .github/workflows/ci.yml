@@ -37,5 +37,5 @@ jobs:
         uses: addnab/docker-run-action@v3
         with:
           image: jakzal/phpqa:php${{ matrix.php-versions }}-alpine
-          options: --rm -v ${{ github.workspace }}:/project
+          options: --rm -v ${{ github.workspace }}:/project -w /project
           run: phan --long-progress-bar --minimum-severity 5

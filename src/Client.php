@@ -9,6 +9,7 @@ use DealNews\DatoCMS\CMA\API\UploadCollection;
 use DealNews\DatoCMS\CMA\API\UploadRequest;
 use DealNews\DatoCMS\CMA\API\UploadSmartTag;
 use DealNews\DatoCMS\CMA\API\UploadTag;
+use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -86,6 +87,14 @@ class Client {
      */
     public readonly UploadSmartTag $upload_smart_tag;
 
+
+    /**
+     * API endpoint for scheduling unpublishing operations
+     *
+     * @var ScheduledUnpublishing
+     */
+    public readonly ScheduledUnpublishing $scheduled_unpublishing;
+
     /**
      * @param string|null          $apiToken    API Token for your DatoCMS project
      * @param string|null          $environment The DatoCMS environment name
@@ -125,6 +134,7 @@ class Client {
         $this->upload_collection = new UploadCollection();
         $this->upload_tag = new UploadTag();
         $this->upload_smart_tag = new UploadSmartTag();
+        $this->scheduled_unpublishing = new ScheduledUnpublishing();
     }
 
 }

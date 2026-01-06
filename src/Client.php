@@ -36,14 +36,14 @@ class Client {
      *
      * @var Record
      */
-    public readonly Record $record;
+    protected Record $record;
 
     /**
      * API endpoint for model/item-type operations
      *
      * @var Model
      */
-    public readonly Model $model;
+    protected Model $model;
 
     /**
      * API endpoint for upload operations
@@ -53,7 +53,7 @@ class Client {
      *
      * @var Upload
      */
-    public readonly Upload $upload;
+    protected Upload $upload;
 
     /**
      * API endpoint for upload request operations
@@ -63,28 +63,28 @@ class Client {
      *
      * @var UploadRequest
      */
-    public readonly UploadRequest $upload_request;
+    protected UploadRequest $upload_request;
 
     /**
      * API endpoint for upload collection (folder) operations
      *
      * @var UploadCollection
      */
-    public readonly UploadCollection $upload_collection;
+    protected UploadCollection $upload_collection;
 
     /**
      * API endpoint for upload tag operations
      *
      * @var UploadTag
      */
-    public readonly UploadTag $upload_tag;
+    protected UploadTag $upload_tag;
 
     /**
      * API endpoint for upload smart tag operations (read-only)
      *
      * @var UploadSmartTag
      */
-    public readonly UploadSmartTag $upload_smart_tag;
+    protected UploadSmartTag $upload_smart_tag;
 
     /**
      * @param string|null          $apiToken    API Token for your DatoCMS project
@@ -117,14 +117,42 @@ class Client {
         if (!is_null($base_url)) {
             $config->base_url = $base_url;
         }
-
-        $this->record = new Record();
-        $this->model = new Model();
-        $this->upload = new Upload();
-        $this->upload_request = new UploadRequest();
-        $this->upload_collection = new UploadCollection();
-        $this->upload_tag = new UploadTag();
-        $this->upload_smart_tag = new UploadSmartTag();
     }
 
+
+    public function __get(string $name): mixed {
+        $classname = null;
+        switch ($name) {
+            case 'record':
+                $classname = Record::class;
+                break;
+            case 'model':
+                $classname = Model::class;
+                break;
+            case 'upload':
+                $classname = Upload::class;
+                break;
+            case 'upload_request':
+                $classname = UploadRequest::class;
+                break;
+            case 'upload_collection':
+                $classname = UploadCollection::class;
+                break;
+            case 'upload_tag':
+                $classname = UploadTag::class;
+                break;
+            case 'upload_smart_tag':
+                $classname = UploadSmartTag::class;
+                break;
+        }
+
+        if (!empty($classname)) {
+            if (empty($this->$name)) {
+                $this->$name = new $classname();
+            }
+            return $this->$name;
+        }
+
+        return null;
+    }
 }

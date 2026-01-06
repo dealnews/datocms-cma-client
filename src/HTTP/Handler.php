@@ -53,9 +53,9 @@ class Handler {
     const string ENVIRONMENT_PLACEHOLDER = 'DEALNEWS-NULL-NN-984562910-NN-NULL-DEALNEWS';
 
     /**
-     * Cache of Handler instances keyed by [apiToken][environment][base_url]
+     * Cache of Handler instances keyed by sha256 of passed parameters to self::init()
      *
-     * @var array<string, array<string, array<string, self>>>
+     * @var array<string, self>
      */
     protected static array $instances = [];
 
@@ -168,30 +168,41 @@ class Handler {
     /**
      * Returns a cached Handler instance or creates a new one
      *
-     * Instances are cached by apiToken, environment, and base_url combination.
+     * Instances are cached by a combination of apiToken, environment, base_url, logger (fully qualified class name), and log_level.
      *
-     * @param string      $apiToken    DatoCMS API token
+     * @param string $apiToken DatoCMS API token
      * @param string|null $environment DatoCMS environment name
-     * @param string|null $base_url    Custom base URL
+     * @param LoggerInterface|null $logger PSR-3 logger for request logging
+     * @param string $log_level PSR-3 log level (default: info)
+     * @param string|null $base_url Custom base URL for proxies
      *
      * @return self Cached or new Handler instance
      */
     public static function init(
         string $apiToken,
         ?string $environment = null,
+        ?LoggerInterface $logger = null,
+        string $log_level = LogLevel::INFO,
         ?string $base_url = null
     ): self {
-        if (empty(self::$instances[$apiToken][$environment ?? self::ENVIRONMENT_PLACEHOLDER][$base_url ?? self::DEFAULT_BASE_URI])) {
-            self::$instances[$apiToken][$environment ?? self::ENVIRONMENT_PLACEHOLDER][$base_url ?? self::DEFAULT_BASE_URI] = new self(
+        $key = $apiToken;
+        $key .= '_' . $environment ?? self::ENVIRONMENT_PLACEHOLDER;
+        $key .= '_' . $base_url ?? self::DEFAULT_BASE_URI;
+        $key .= '_' . $log_level;
+        $key .= '_' . (!empty($logger) ? $logger::class : '0');
+        $key = hash('sha256', $key);
+
+        if (empty(self::$instances[$key])) {
+            self::$instances[$key] = new self(
                 $apiToken,
                 $environment,
-                null,
-                LogLevel::INFO,
+                $logger,
+                $log_level,
                 $base_url
             );
         }
 
-        return self::$instances[$apiToken][$environment ?? self::ENVIRONMENT_PLACEHOLDER][$base_url ?? self::DEFAULT_BASE_URI];
+        return self::$instances[$key];
     }
 
     /**

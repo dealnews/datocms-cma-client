@@ -13,6 +13,7 @@ use DealNews\DatoCMS\CMA\API\UploadCollection;
 use DealNews\DatoCMS\CMA\API\UploadRequest;
 use DealNews\DatoCMS\CMA\API\UploadSmartTag;
 use DealNews\DatoCMS\CMA\API\UploadTag;
+use DealNews\DatoCMS\CMA\API\ScheduledPublication;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -78,6 +79,13 @@ class ClientTest extends TestCase {
         $client = new Client('test-token');
 
         $this->assertInstanceOf(UploadSmartTag::class, $client->upload_smart_tag);
+    }
+
+    #[Group('unit')]
+    public function testConstructorCreatesScheduledPublicationApi() {
+        $client = new Client('test-token');
+
+        $this->assertInstanceOf(ScheduledPublication::class, $client->scheduled_publication);
     }
 
     #[Group('unit')]
@@ -147,6 +155,7 @@ class ClientTest extends TestCase {
         $this->assertInstanceOf(UploadCollection::class, $client->upload_collection);
         $this->assertInstanceOf(UploadTag::class, $client->upload_tag);
         $this->assertInstanceOf(UploadSmartTag::class, $client->upload_smart_tag);
+        $this->assertInstanceOf(ScheduledPublication::class, $client->scheduled_publication);
     }
 
     #[Group('unit')]
@@ -222,6 +231,15 @@ class ClientTest extends TestCase {
         $client = new Client('token');
 
         $reflection = new \ReflectionProperty($client, 'upload_smart_tag');
+
+        $this->assertTrue($reflection->isReadOnly());
+    }
+
+    #[Group('unit')]
+    public function testScheduledPublicationPropertyIsReadonly() {
+        $client = new Client('token');
+
+        $reflection = new \ReflectionProperty($client, 'scheduled_publication');
 
         $this->assertTrue($reflection->isReadOnly());
     }

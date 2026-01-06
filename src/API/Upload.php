@@ -344,6 +344,7 @@ class Upload extends Base {
             }
         }
 
+        /** @phan-suppress-next-line PhanPossiblyUndeclaredVariable */
         return $result;
     }
 

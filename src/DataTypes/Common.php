@@ -18,6 +18,8 @@ use Moonspot\ValueObjects\Interfaces\Export;
  *     ->addLocale('en', 'Hello')
  *     ->addLocale('es', 'Hola');
  * ```
+ *
+ * @suppress PhanRedefinedInheritedInterface
  */
 abstract class Common implements \JsonSerializable {
 

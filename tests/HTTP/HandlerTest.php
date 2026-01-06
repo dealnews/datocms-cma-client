@@ -364,4 +364,44 @@ class HandlerTest extends TestCase {
 
         $this->assertNotSame($handler1, $handler2);
     }
+
+    #[Group('unit')]
+    public function testInitReturnsDifferentInstancesForDifferentLogLevels() {
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $handler1 = Handler::init('same-token', 'same-env', $logger, LogLevel::INFO);
+        $handler2 = Handler::init('same-token', 'same-env', $logger, LogLevel::DEBUG);
+
+        $this->assertNotSame($handler1, $handler2);
+    }
+
+    #[Group('unit')]
+    public function testInitReturnsDifferentInstancesForDifferentBaseUrls() {
+        $handler1 = Handler::init('same-token', 'same-env', null, LogLevel::INFO, 'https://api1.example.com');
+        $handler2 = Handler::init('same-token', 'same-env', null, LogLevel::INFO, 'https://api2.example.com');
+
+        $this->assertNotSame($handler1, $handler2);
+    }
+
+    #[Group('unit')]
+    public function testInitReturnsCachedInstanceWithAllParameters() {
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $handler1 = Handler::init(
+            'token',
+            'production',
+            $logger,
+            LogLevel::DEBUG,
+            'https://custom.api.com'
+        );
+        $handler2 = Handler::init(
+            'token',
+            'production',
+            $logger,
+            LogLevel::DEBUG,
+            'https://custom.api.com'
+        );
+
+        $this->assertSame($handler1, $handler2);
+    }
 }

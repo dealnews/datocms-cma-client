@@ -8,6 +8,7 @@ use DealNews\DatoCMS\CMA\Client;
 use DealNews\DatoCMS\CMA\Config;
 use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
+use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
 use DealNews\DatoCMS\CMA\API\Upload;
 use DealNews\DatoCMS\CMA\API\UploadCollection;
 use DealNews\DatoCMS\CMA\API\UploadRequest;
@@ -236,10 +237,27 @@ class ClientTest extends TestCase {
     }
 
     #[Group('unit')]
+    public function testConstructorCreatesScheduledUnpublishingApi() {
+        $client = new Client('test-token');
+
+        $this->assertInstanceOf(ScheduledUnpublishing::class, $client->scheduled_unpublishing);
+    }
+
+    #[Group('unit')]
+    public function testScheduledUnpublishingPropertyIsReadonly() {
+        $client = new Client('token');
+
+        $reflection = new \ReflectionProperty($client, 'scheduled_unpublishing');
+
+        $this->assertTrue($reflection->isReadOnly());
+    }
+
+    #[Group('unit')]
     public function testScheduledPublicationPropertyIsReadonly() {
         $client = new Client('token');
 
         $reflection = new \ReflectionProperty($client, 'scheduled_publication');
+
 
         $this->assertTrue($reflection->isReadOnly());
     }

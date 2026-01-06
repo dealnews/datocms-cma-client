@@ -186,8 +186,8 @@ class Handler {
         ?string $base_url = null
     ): self {
         $key = $apiToken;
-        $key .= '_' . $environment ?? self::ENVIRONMENT_PLACEHOLDER;
-        $key .= '_' . $base_url ?? self::DEFAULT_BASE_URI;
+        $key .= '_' . ($environment ?? self::ENVIRONMENT_PLACEHOLDER);
+        $key .= '_' . ($base_url ?? self::DEFAULT_BASE_URI);
         $key .= '_' . $log_level;
         $key .= '_' . (!empty($logger) ? $logger::class : '0');
         $key = hash('sha256', $key);

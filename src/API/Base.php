@@ -41,7 +41,7 @@ abstract class Base {
             $logger = Config::init()->logger;
             $log_level = Config::init()->log_level;
 
-            $this->handler = new Handler(
+            $this->handler = Handler::init(
                 $apiToken,
                 $environment,
                 $logger,

@@ -30,22 +30,44 @@ use Psr\Log\LogLevel;
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api
+ *
+ * @property-read   Record                      $record                         API endpoint for record/item operations
+ * @property-read   Model                       $model                          API endpoint for model/item-type operations
+ * @property-read   Upload                      $upload                         API endpoint for upload operations
+ * @property-read   UploadRequest               $upload_request                 API endpoint for upload request operations
+ * @property-read   UploadCollection            $upload_collection              API endpoint for upload collection (folder) operations
+ * @property-read   UploadTag                   $upload_tag                     API endpoint for upload tag operations
+ * @property-read   UploadSmartTag              $upload_smart_tag               API endpoint for upload smart tag operations (read-only)
+ * @property-read   ScheduledUnpublishing       $scheduled_unpublishing         API endpoint for scheduling unpublishing operations
+ * @property-read   ScheduledPublication        $scheduled_publication          API endpoint for scheduled publication operations
  */
 class Client {
+
+    protected const array PROPERTY_MAPPING = [
+        'record' => Record::class,
+        'model' => Model::class,
+        'upload' => Upload::class,
+        'upload_request' => UploadRequest::class,
+        'upload_collection' => UploadCollection::class,
+        'upload_smart_tag' => UploadSmartTag::class,
+        'upload_tag' => UploadTag::class,
+        'scheduled_publication' => ScheduledPublication::class,
+        'scheduled_unpublishing' => ScheduledUnpublishing::class,
+    ];
 
     /**
      * API endpoint for record/item operations
      *
      * @var Record
      */
-    public readonly Record $record;
+    protected Record $record;
 
     /**
      * API endpoint for model/item-type operations
      *
      * @var Model
      */
-    public readonly Model $model;
+    protected Model $model;
 
     /**
      * API endpoint for upload operations
@@ -55,7 +77,7 @@ class Client {
      *
      * @var Upload
      */
-    public readonly Upload $upload;
+    protected Upload $upload;
 
     /**
      * API endpoint for upload request operations
@@ -65,28 +87,28 @@ class Client {
      *
      * @var UploadRequest
      */
-    public readonly UploadRequest $upload_request;
+    protected UploadRequest $upload_request;
 
     /**
      * API endpoint for upload collection (folder) operations
      *
      * @var UploadCollection
      */
-    public readonly UploadCollection $upload_collection;
+    protected UploadCollection $upload_collection;
 
     /**
      * API endpoint for upload tag operations
      *
      * @var UploadTag
      */
-    public readonly UploadTag $upload_tag;
+    protected UploadTag $upload_tag;
 
     /**
      * API endpoint for upload smart tag operations (read-only)
      *
      * @var UploadSmartTag
      */
-    public readonly UploadSmartTag $upload_smart_tag;
+    protected UploadSmartTag $upload_smart_tag;
 
 
     /**
@@ -94,14 +116,14 @@ class Client {
      *
      * @var ScheduledUnpublishing
      */
-    public readonly ScheduledUnpublishing $scheduled_unpublishing;
+    protected ScheduledUnpublishing $scheduled_unpublishing;
 
     /**
      * API endpoint for scheduled publication operations
      *
      * @var ScheduledPublication
      */
-    public readonly ScheduledPublication $scheduled_publication;
+    protected ScheduledPublication $scheduled_publication;
 
     /**
      * @param string|null          $apiToken    API Token for your DatoCMS project
@@ -134,16 +156,50 @@ class Client {
         if (!is_null($base_url)) {
             $config->base_url = $base_url;
         }
-
-        $this->record = new Record();
-        $this->model = new Model();
-        $this->upload = new Upload();
-        $this->upload_request = new UploadRequest();
-        $this->upload_collection = new UploadCollection();
-        $this->upload_tag = new UploadTag();
-        $this->upload_smart_tag = new UploadSmartTag();
-        $this->scheduled_publication = new ScheduledPublication();
-        $this->scheduled_unpublishing = new ScheduledUnpublishing();
     }
 
+
+    public function __get(string $name): mixed {
+        $value = $this->getAPIProperty($name);
+
+        if (is_null($value)) {
+            trigger_error(
+                'Undefined property: ' . static::class . '::$' . $name,
+                E_USER_WARNING
+            );
+        }
+
+        return $value;
+    }
+
+
+    public function __isset(string $name): bool {
+        $value = $this->getAPIProperty($name);
+
+        return !is_null($value);
+    }
+
+
+    /**
+     * Logic for loading property classes at the last minute.
+     *
+     * @param   string  $name   The name of the property to retrieve
+     *
+     * @return  mixed           The property value or null if not found
+     */
+    protected function getAPIProperty(string $name): mixed {
+        $classname = null;
+        if (array_key_exists($name, self::PROPERTY_MAPPING)) {
+            $classname = self::PROPERTY_MAPPING[$name];
+        }
+
+        if (!empty($classname)) {
+            if (empty($this->$name)) {
+                $this->$name = new $classname();
+            }
+            return $this->$name;
+        }
+
+        return null;
+    }
 }

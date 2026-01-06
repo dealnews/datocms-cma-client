@@ -22,6 +22,12 @@ use Psr\Log\LogLevel;
  * $config->apiToken = 'your-token';
  * echo $config->apiToken;
  * ```
+ *
+ * @property    string|null             $apiToken           DatoCMS API token for authentication
+ * @property    string|null             $environment        DatoCMS environment name (defaults to main/primary environment)
+ * @property    string|null             $base_url           Custom base URL for API requests (useful for proxies)
+ * @property    LoggerInterface|null    $logger             PSR-3 compatible logger instance
+ * @property    string|null             $log_level          PSR-3 log level for API request/response logging
  */
 class Config {
 

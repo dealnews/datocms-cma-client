@@ -2,6 +2,7 @@
 
 namespace DealNews\DatoCMS\CMA\Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Client;
@@ -33,61 +34,6 @@ class ClientTest extends TestCase {
         Config::reset();
     }
 
-    #[Group('unit')]
-    public function testConstructorCreatesRecordApi() {
-        $client = new Client('test-token');
-
-        $this->assertInstanceOf(Record::class, $client->record);
-    }
-
-    #[Group('unit')]
-    public function testConstructorCreatesModelApi() {
-        $client = new Client('test-token');
-
-        $this->assertInstanceOf(Model::class, $client->model);
-    }
-
-    #[Group('unit')]
-    public function testConstructorCreatesUploadApi() {
-        $client = new Client('test-token');
-
-        $this->assertInstanceOf(Upload::class, $client->upload);
-    }
-
-    #[Group('unit')]
-    public function testConstructorCreatesUploadRequestApi() {
-        $client = new Client('test-token');
-
-        $this->assertInstanceOf(UploadRequest::class, $client->upload_request);
-    }
-
-    #[Group('unit')]
-    public function testConstructorCreatesUploadCollectionApi() {
-        $client = new Client('test-token');
-
-        $this->assertInstanceOf(UploadCollection::class, $client->upload_collection);
-    }
-
-    #[Group('unit')]
-    public function testConstructorCreatesUploadTagApi() {
-        $client = new Client('test-token');
-
-        $this->assertInstanceOf(UploadTag::class, $client->upload_tag);
-    }
-
-    #[Group('unit')]
-    public function testConstructorCreatesUploadSmartTagApi() {
-        $client = new Client('test-token');
-
-        $this->assertInstanceOf(UploadSmartTag::class, $client->upload_smart_tag);
-    }
-
-    #[Group('unit')]
-    public function testConstructorCreatesScheduledPublicationApi() {
-        $client = new Client('test-token');
-
-        $this->assertInstanceOf(ScheduledPublication::class, $client->scheduled_publication);
-    }
 
     #[Group('unit')]
     public function testConstructorSetsApiToken() {
@@ -149,14 +95,6 @@ class ClientTest extends TestCase {
         $this->assertSame($logger, $config->logger);
         $this->assertEquals(LogLevel::WARNING, $config->log_level);
         $this->assertEquals('https://custom.api.com', $config->base_url);
-        $this->assertInstanceOf(Record::class, $client->record);
-        $this->assertInstanceOf(Model::class, $client->model);
-        $this->assertInstanceOf(Upload::class, $client->upload);
-        $this->assertInstanceOf(UploadRequest::class, $client->upload_request);
-        $this->assertInstanceOf(UploadCollection::class, $client->upload_collection);
-        $this->assertInstanceOf(UploadTag::class, $client->upload_tag);
-        $this->assertInstanceOf(UploadSmartTag::class, $client->upload_smart_tag);
-        $this->assertInstanceOf(ScheduledPublication::class, $client->scheduled_publication);
     }
 
     #[Group('unit')]
@@ -173,92 +111,32 @@ class ClientTest extends TestCase {
         $this->assertEquals('existing-env', $config->environment);
     }
 
+
     #[Group('unit')]
-    public function testRecordPropertyIsReadonly() {
-        $client = new Client('token');
+    #[DataProvider('provideMagicMethods')]
+    public function testGetMagicMethod(string $property, string $expected_class) {
+        // Set values in config first
+        $config = Config::init();
+        $config->apiToken = 'existing-token';
+        $config->environment = 'existing-env';
 
-        $reflection = new \ReflectionProperty($client, 'record');
+        $client = new Client();
 
-        $this->assertTrue($reflection->isReadOnly());
+        $class = $client->$property;
+        $this->assertInstanceOf($expected_class, $class);
     }
 
-    #[Group('unit')]
-    public function testModelPropertyIsReadonly() {
-        $client = new Client('token');
-
-        $reflection = new \ReflectionProperty($client, 'model');
-
-        $this->assertTrue($reflection->isReadOnly());
-    }
-
-    #[Group('unit')]
-    public function testUploadPropertyIsReadonly() {
-        $client = new Client('token');
-
-        $reflection = new \ReflectionProperty($client, 'upload');
-
-        $this->assertTrue($reflection->isReadOnly());
-    }
-
-    #[Group('unit')]
-    public function testUploadRequestPropertyIsReadonly() {
-        $client = new Client('token');
-
-        $reflection = new \ReflectionProperty($client, 'upload_request');
-
-        $this->assertTrue($reflection->isReadOnly());
-    }
-
-    #[Group('unit')]
-    public function testUploadCollectionPropertyIsReadonly() {
-        $client = new Client('token');
-
-        $reflection = new \ReflectionProperty($client, 'upload_collection');
-
-        $this->assertTrue($reflection->isReadOnly());
-    }
-
-    #[Group('unit')]
-    public function testUploadTagPropertyIsReadonly() {
-        $client = new Client('token');
-
-        $reflection = new \ReflectionProperty($client, 'upload_tag');
-
-        $this->assertTrue($reflection->isReadOnly());
-    }
-
-    #[Group('unit')]
-    public function testUploadSmartTagPropertyIsReadonly() {
-        $client = new Client('token');
-
-        $reflection = new \ReflectionProperty($client, 'upload_smart_tag');
-
-        $this->assertTrue($reflection->isReadOnly());
-    }
-
-    #[Group('unit')]
-    public function testConstructorCreatesScheduledUnpublishingApi() {
-        $client = new Client('test-token');
-
-        $this->assertInstanceOf(ScheduledUnpublishing::class, $client->scheduled_unpublishing);
-    }
-
-    #[Group('unit')]
-    public function testScheduledUnpublishingPropertyIsReadonly() {
-        $client = new Client('token');
-
-        $reflection = new \ReflectionProperty($client, 'scheduled_unpublishing');
-
-        $this->assertTrue($reflection->isReadOnly());
-    }
-
-    #[Group('unit')]
-    public function testScheduledPublicationPropertyIsReadonly() {
-        $client = new Client('token');
-
-        $reflection = new \ReflectionProperty($client, 'scheduled_publication');
-
-
-        $this->assertTrue($reflection->isReadOnly());
+    public static function provideMagicMethods(): array {
+        return [
+            ['record', Record::class],
+            ['model', Model::class],
+            ['upload', Upload::class],
+            ['upload_request', UploadRequest::class],
+            ['upload_collection', UploadCollection::class],
+            ['upload_tag', UploadTag::class],
+            ['upload_smart_tag', UploadSmartTag::class],
+            ['scheduled_unpublishing', ScheduledUnpublishing::class],
+            ['scheduled_publication', ScheduledPublication::class],
+        ];
     }
 }

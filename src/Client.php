@@ -9,6 +9,8 @@ use DealNews\DatoCMS\CMA\API\UploadCollection;
 use DealNews\DatoCMS\CMA\API\UploadRequest;
 use DealNews\DatoCMS\CMA\API\UploadSmartTag;
 use DealNews\DatoCMS\CMA\API\UploadTag;
+use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
+use DealNews\DatoCMS\CMA\API\ScheduledPublication;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -28,6 +30,16 @@ use Psr\Log\LogLevel;
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api
+ *
+ * @property-read   Record                      $record                         API endpoint for record/item operations
+ * @property-read   Model                       $model                          API endpoint for model/item-type operations
+ * @property-read   Upload                      $upload                         API endpoint for upload operations
+ * @property-read   UploadRequest               $upload_request                 API endpoint for upload request operations
+ * @property-read   UploadCollection            $upload_collection              API endpoint for upload collection (folder) operations
+ * @property-read   UploadTag                   $upload_tag                     API endpoint for upload tag operations
+ * @property-read   UploadSmartTag              $upload_smart_tag               API endpoint for upload smart tag operations (read-only)
+ * @property-read   ScheduledUnpublishing       $scheduled_unpublishing         API endpoint for scheduling unpublishing operations
+ * @property-read   ScheduledPublication        $scheduled_publication          API endpoint for scheduled publication operations
  */
 class Client {
 
@@ -86,6 +98,21 @@ class Client {
      */
     protected UploadSmartTag $upload_smart_tag;
 
+
+    /**
+     * API endpoint for scheduling unpublishing operations
+     *
+     * @var ScheduledUnpublishing
+     */
+    protected ScheduledUnpublishing $scheduled_unpublishing;
+
+    /**
+     * API endpoint for scheduled publication operations
+     *
+     * @var ScheduledPublication
+     */
+    protected ScheduledPublication $scheduled_publication;
+
     /**
      * @param string|null          $apiToken    API Token for your DatoCMS project
      * @param string|null          $environment The DatoCMS environment name
@@ -143,6 +170,12 @@ class Client {
                 break;
             case 'upload_smart_tag':
                 $classname = UploadSmartTag::class;
+                break;
+            case 'scheduled_unpublishing':
+                $classname = ScheduledUnpublishing::class;
+                break;
+            case 'scheduled_publication':
+                $classname = ScheduledPublication::class;
                 break;
         }
 

@@ -43,6 +43,18 @@ use Psr\Log\LogLevel;
  */
 class Client {
 
+    protected const array PROPERTY_MAPPING = [
+        'record' => Record::class,
+        'model' => Model::class,
+        'upload' => Upload::class,
+        'upload_request' => UploadRequest::class,
+        'upload_collection' => UploadCollection::class,
+        'upload_smart_tag' => UploadSmartTag::class,
+        'upload_tag' => UploadTag::class,
+        'scheduled_publication' => ScheduledPublication::class,
+        'scheduled_unpublishing' => ScheduledUnpublishing::class,
+    ];
+
     /**
      * API endpoint for record/item operations
      *
@@ -148,35 +160,37 @@ class Client {
 
 
     public function __get(string $name): mixed {
+        $value = $this->getAPIProperty($name);
+
+        if (is_null($value)) {
+            trigger_error(
+                'Undefined property: ' . static::class . '::$' . $name,
+                E_USER_WARNING
+            );
+        }
+
+        return $value;
+    }
+
+
+    public function __isset(string $name): bool {
+        $value = $this->getAPIProperty($name);
+
+        return !is_null($value);
+    }
+
+
+    /**
+     * Logic for loading property classes at the last minute.
+     *
+     * @param   string  $name   The name of the property to retrieve
+     *
+     * @return  mixed           The property value or null if not found
+     */
+    protected function getAPIProperty(string $name): mixed {
         $classname = null;
-        switch ($name) {
-            case 'record':
-                $classname = Record::class;
-                break;
-            case 'model':
-                $classname = Model::class;
-                break;
-            case 'upload':
-                $classname = Upload::class;
-                break;
-            case 'upload_request':
-                $classname = UploadRequest::class;
-                break;
-            case 'upload_collection':
-                $classname = UploadCollection::class;
-                break;
-            case 'upload_tag':
-                $classname = UploadTag::class;
-                break;
-            case 'upload_smart_tag':
-                $classname = UploadSmartTag::class;
-                break;
-            case 'scheduled_unpublishing':
-                $classname = ScheduledUnpublishing::class;
-                break;
-            case 'scheduled_publication':
-                $classname = ScheduledPublication::class;
-                break;
+        if (array_key_exists($name, self::PROPERTY_MAPPING)) {
+            $classname = self::PROPERTY_MAPPING[$name];
         }
 
         if (!empty($classname)) {

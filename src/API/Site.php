@@ -48,7 +48,7 @@ class Site extends Base {
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/site/update
      *
-     * @param   array|SiteInput     $data       Site input data
+     * @param   array<string, mixed>|SiteInput     $data       Site input data
      *
      * @return array<string, mixed>             The updated site information
      *

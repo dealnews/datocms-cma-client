@@ -33,4 +33,23 @@ class Site extends ValueObject {
      *  - account
      */
     public array $include = [];
+
+    /**
+     * Converts parameters to query string array
+     *
+     * Excludes empty values.
+     *
+     * @param array<string, mixed>|null $data Optional data override
+     *
+     * @return array<string, mixed> Query parameters for API request
+     */
+    public function toArray(?array $data = null): array {
+        $array = parent::toArray($data);
+        foreach ($array as $key => $value) {
+            if (empty($value)) {
+                unset($array[$key]);
+            }
+        }
+        return $array;
+    }
 }

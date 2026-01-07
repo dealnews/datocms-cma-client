@@ -10,6 +10,7 @@ use DealNews\DatoCMS\CMA\Config;
 use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
+use DealNews\DatoCMS\CMA\API\Site;
 use DealNews\DatoCMS\CMA\API\Upload;
 use DealNews\DatoCMS\CMA\API\UploadCollection;
 use DealNews\DatoCMS\CMA\API\UploadRequest;
@@ -130,6 +131,7 @@ class ClientTest extends TestCase {
         return [
             ['record', Record::class],
             ['model', Model::class],
+            ['site', Site::class],
             ['upload', Upload::class],
             ['upload_request', UploadRequest::class],
             ['upload_collection', UploadCollection::class],

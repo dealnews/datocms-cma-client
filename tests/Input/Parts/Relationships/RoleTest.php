@@ -6,6 +6,10 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Input\Parts\Relationships\Role;
 
+/**
+ * Tests the Role relationship input part, including default values,
+ * type validation, and array serialization behavior.
+ */
 class RoleTest extends TestCase {
 
     #[Group('unit')]

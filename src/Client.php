@@ -11,6 +11,7 @@ use DealNews\DatoCMS\CMA\API\UploadSmartTag;
 use DealNews\DatoCMS\CMA\API\UploadTag;
 use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
 use DealNews\DatoCMS\CMA\API\ScheduledPublication;
+use DealNews\DatoCMS\CMA\API\Site;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -40,6 +41,7 @@ use Psr\Log\LogLevel;
  * @property-read   UploadSmartTag              $upload_smart_tag               API endpoint for upload smart tag operations (read-only)
  * @property-read   ScheduledUnpublishing       $scheduled_unpublishing         API endpoint for scheduling unpublishing operations
  * @property-read   ScheduledPublication        $scheduled_publication          API endpoint for scheduled publication operations
+ * @property-read   Site                        $site                           API endpoint for site operations
  */
 class Client {
 
@@ -53,6 +55,7 @@ class Client {
         'upload_tag' => UploadTag::class,
         'scheduled_publication' => ScheduledPublication::class,
         'scheduled_unpublishing' => ScheduledUnpublishing::class,
+        'site' => Site::class,
     ];
 
     /**
@@ -124,6 +127,13 @@ class Client {
      * @var ScheduledPublication
      */
     protected ScheduledPublication $scheduled_publication;
+
+    /**
+     * API endpoint for site operations
+     *
+     * @var Site
+     */
+    protected Site $site;
 
     /**
      * @param string|null          $apiToken    API Token for your DatoCMS project

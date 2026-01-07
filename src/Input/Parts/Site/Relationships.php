@@ -17,7 +17,6 @@ class Relationships extends ValueObject {
      */
     public Role $sso_default_role;
 
-
     public function __construct() {
         $this->sso_default_role = new Role();
     }

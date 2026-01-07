@@ -31,6 +31,8 @@ class Site extends ValueObject {
      *  - item_types.fieldsets
      *  - item_types.singleton_item
      *  - account
+     *
+     * @var string[]
      */
     public array $include = [];
 

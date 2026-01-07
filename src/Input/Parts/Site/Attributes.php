@@ -49,7 +49,6 @@ class Attributes extends ValueObject {
      */
     public GlobalSEO|null|false $global_seo = false;
 
-
     /**
      * Site name
      *

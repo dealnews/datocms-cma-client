@@ -1,0 +1,83 @@
+<?php
+
+namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\Relationships;
+
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
+use DealNews\DatoCMS\CMA\Input\Parts\Relationships\Role;
+
+/**
+ * Tests the Role relationship input part, including default values,
+ * type validation, and array serialization behavior.
+ */
+class RoleTest extends TestCase {
+
+    #[Group('unit')]
+    public function testDefaultTypeIsRole() {
+        $role = new Role();
+        
+        $this->assertEquals('role', $role->type);
+    }
+
+    #[Group('unit')]
+    public function testDefaultIdIsEmpty() {
+        $role = new Role();
+        
+        $this->assertEquals('', $role->id);
+    }
+
+    #[Group('unit')]
+    public function testSettingValidId() {
+        $role = new Role();
+        $role->id = 'role_123';
+        
+        $this->assertEquals('role_123', $role->id);
+    }
+
+    #[Group('unit')]
+    public function testCannotChangeTypeFromRole() {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Type must be "role"');
+        
+        $role = new Role();
+        $role->type = 'something_else';
+    }
+
+    #[Group('unit')]
+    public function testToArrayWrapsInDataStructure() {
+        $role = new Role();
+        $role->id = 'role_123';
+        
+        $array = $role->toArray();
+        
+        $this->assertArrayHasKey('data', $array);
+        $this->assertEquals([
+            'data' => [
+                'type' => 'role',
+                'id' => 'role_123',
+            ]
+        ], $array);
+    }
+
+    #[Group('unit')]
+    public function testToArrayWithDefaultValues() {
+        $role = new Role();
+        
+        $array = $role->toArray();
+        
+        $this->assertEquals([
+            'data' => [
+                'type' => 'role',
+                'id' => '',
+            ]
+        ], $array);
+    }
+
+    #[Group('unit')]
+    public function testTypeRemainsRoleAfterSettingSameValue() {
+        $role = new Role();
+        $role->type = 'role';
+        
+        $this->assertEquals('role', $role->type);
+    }
+}

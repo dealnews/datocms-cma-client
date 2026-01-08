@@ -1,8 +1,12 @@
+# Exclude jetbrains IDE files
 .idea
 
+# Exclude composer-related files (besides composer.json)
 /vendor/
 composer.lock
 
+# Exclude testing cache
 .phpunit.cache
 
-/jearle/
+# Directory to store temp files while doing development (AI files, temp test files, etc..)
+/.dev/

@@ -127,6 +127,76 @@ class Validators implements \JsonSerializable {
     protected array $required_seo_fields = [];
 
     /**
+     * Limits the length of the title for a SEO field.
+     *
+     * @var array<string, int>
+     */
+    protected array $title_length = [];
+
+    /**
+     * Limits the length of the description for a SEO field.
+     *
+     * @var array<string, int>
+     */
+    protected array $description_length = [];
+
+    /**
+     * Only accept references to block records of the specified block models (Modular Content fields).
+     *
+     * @var array<string, array<string>>
+     */
+    protected array $rich_text_blocks = [];
+
+    /**
+     * Only accept references to block records of the specified block models (Single Block fields).
+     *
+     * @var array<string, array<string>>
+     */
+    protected array $single_block_blocks = [];
+
+    /**
+     * Checks for the presence of malicious code in HTML fields.
+     *
+     * @var array<string, bool>
+     */
+    protected array $sanitized_html = [];
+
+    /**
+     * Only accept references to block records of the specified block models (Structured Text fields).
+     *
+     * @var array<string, array<string>>
+     */
+    protected array $structured_text_blocks = [];
+
+    /**
+     * Only accept references to inline block records of the specified block models (Structured Text fields).
+     *
+     * @var array<string, array<string>>
+     */
+    protected array $structured_text_inline_blocks = [];
+
+    /**
+     * Only accept itemLink/inlineItem nodes for records of specified models (Structured Text fields).
+     *
+     * @var array<string, string|array<string>>
+     */
+    protected array $structured_text_links = [];
+
+    /**
+     * Only accept a number of items within specified range.
+     *
+     * @var array<string, int>
+     */
+    protected array $size = [];
+
+    /**
+     * Specifies the ID of the Single-line string field used to generate the slug.
+     *
+     * @var array<string, string>
+     */
+    protected array $slug_title_field = [];
+
+    /**
      * Call this method when you want to require the field
      *
      * @return static
@@ -650,8 +720,330 @@ class Validators implements \JsonSerializable {
         return $this;
     }
 
+    /**
+     * Whether the social sharing image must be specified. Calling this method will set it to "true"
+     *
+     * @return static
+     */
+    public function requiresSEOImage(): static {
+        $this->required_seo_fields['image'] = true;
+        return $this;
+    }
+
+    /**
+     * Whether the Twitter card type must be specified. Calling this method will set it to "true"
+     *
+     * @return static
+     */
+    public function requiresSEOTwitterCard(): static {
+        $this->required_seo_fields['twitter_card'] = true;
+        return $this;
+    }
+
+    /**
+     * Set title length limits for SEO field
+     *
+     * Search engines usually truncate title tags to 60 characters.
+     *
+     * @param   int|null    $min    Minimum value
+     * @param   int|null    $max    Maximum value
+     *
+     * @return  static
+     */
+    public function setTitleLength(?int $min = null, ?int $max = null): static {
+        if ($min !== null) {
+            $this->title_length['min'] = $min;
+        }
+        if ($max !== null) {
+            $this->title_length['max'] = $max;
+        }
+        return $this;
+    }
+
+    /**
+     * Set description length limits for SEO field
+     *
+     * Search engines usually truncate description tags to 160 characters.
+     *
+     * @param   int|null    $min    Minimum value
+     * @param   int|null    $max    Maximum value
+     *
+     * @return  static
+     */
+    public function setDescriptionLength(?int $min = null, ?int $max = null): static {
+        if ($min !== null) {
+            $this->description_length['min'] = $min;
+        }
+        if ($max !== null) {
+            $this->description_length['max'] = $max;
+        }
+        return $this;
+    }
+
+    /**
+     * Set allowed block model IDs for Modular Content field
+     *
+     * @param   string[]    $item_types     Set of allowed Block Model IDs
+     *
+     * @return  static
+     */
+    public function setRichTextBlocks(array $item_types): static {
+        $this->rich_text_blocks['item_types'] = $item_types;
+        return $this;
+    }
+
+    /**
+     * Set allowed block model IDs for Single Block field
+     *
+     * @param   string[]    $item_types     Set of allowed Block Model IDs
+     *
+     * @return  static
+     */
+    public function setSingleBlockBlocks(array $item_types): static {
+        $this->single_block_blocks['item_types'] = $item_types;
+        return $this;
+    }
+
+    /**
+     * Enable HTML sanitization validator
+     *
+     * Checks for malicious code in HTML fields.
+     *
+     * @param   bool    $sanitize_before_validation     Content is actively sanitized before validation
+     *
+     * @return  static
+     */
+    public function setSanitizedHtml(bool $sanitize_before_validation): static {
+        $this->sanitized_html['sanitize_before_validation'] = $sanitize_before_validation;
+        return $this;
+    }
+
+    /**
+     * Set allowed block model IDs for Structured Text field blocks
+     *
+     * @param   string[]    $item_types     Set of allowed Block Model IDs
+     *
+     * @return  static
+     */
+    public function setStructuredTextBlocks(array $item_types): static {
+        $this->structured_text_blocks['item_types'] = $item_types;
+        return $this;
+    }
+
+    /**
+     * Set allowed block model IDs for Structured Text inline blocks
+     *
+     * @param   string[]    $item_types     Set of allowed Block Model IDs
+     *
+     * @return  static
+     */
+    public function setStructuredTextInlineBlocks(array $item_types): static {
+        $this->structured_text_inline_blocks['item_types'] = $item_types;
+        return $this;
+    }
+
+    /**
+     * Set allowed model IDs for Structured Text links
+     *
+     * @param   string[]    $item_types     Set of allowed Model IDs
+     *
+     * @return  static
+     */
+    public function setStructuredTextLinks(array $item_types): static {
+        $this->structured_text_links['item_types'] = $item_types;
+        return $this;
+    }
+
+    /**
+     * Set strategy to apply when publishing with unpublished references (Structured Text links)
+     *
+     * @param   string      $strategy       Strategy (fail or publish_references)
+     *
+     * @return  static
+     */
+    public function setStructuredTextLinksOnPublishStrategy(string $strategy): static {
+        if ($strategy !== 'fail' && $strategy !== 'publish_references') {
+            throw new \InvalidArgumentException("Invalid strategy");
+        }
+        $this->structured_text_links['on_publish_with_unpublished_references_strategy'] = $strategy;
+        return $this;
+    }
+
+    /**
+     * Set strategy to apply when unpublishing referenced records (Structured Text links)
+     *
+     * @param   string      $strategy       Strategy (fail, unpublish or delete_references)
+     *
+     * @return  static
+     */
+    public function setStructuredTextLinksOnUnpublishStrategy(string $strategy): static {
+        if ($strategy !== 'fail' && $strategy !== 'unpublish' && $strategy !== 'delete_references') {
+            throw new \InvalidArgumentException("Invalid strategy");
+        }
+        $this->structured_text_links['on_reference_unpublish_strategy'] = $strategy;
+        return $this;
+    }
+
+    /**
+     * Set strategy to apply when deleting referenced records (Structured Text links)
+     *
+     * @param   string      $strategy       Strategy (fail or delete_references)
+     *
+     * @return  static
+     */
+    public function setStructuredTextLinksOnDeleteStrategy(string $strategy): static {
+        if ($strategy !== 'fail' && $strategy !== 'delete_references') {
+            throw new \InvalidArgumentException("Invalid strategy");
+        }
+        $this->structured_text_links['on_reference_delete_strategy'] = $strategy;
+        return $this;
+    }
+
+    /**
+     * Set size range for number of items
+     *
+     * @param   int|null    $min            Minimum number of items
+     * @param   int|null    $max            Maximum number of items
+     *
+     * @return  static
+     */
+    public function setSizeRange(?int $min = null, ?int $max = null): static {
+        if ($min !== null) {
+            $this->size['min'] = $min;
+        }
+        if ($max !== null) {
+            $this->size['max'] = $max;
+        }
+        return $this;
+    }
+
+    /**
+     * Set exact size for number of items
+     *
+     * @param   int         $equal          Exact number of items required
+     *
+     * @return  static
+     */
+    public function setSize(int $equal): static {
+        $this->size['eq'] = $equal;
+        return $this;
+    }
+
+    /**
+     * Set size as multiple of a number
+     *
+     * @param   int         $multiple_of    Number of items must be a multiple of this value
+     *
+     * @return  static
+     */
+    public function setSizeMultipleOf(int $multiple_of): static {
+        $this->size['multiple_of'] = $multiple_of;
+        return $this;
+    }
+
+    /**
+     * Set the field ID that will be used to generate the slug
+     *
+     * @param   string      $title_field_id     The field that will be used to generate the slug
+     *
+     * @return  static
+     */
+    public function setSlugTitleField(string $title_field_id): static {
+        $this->slug_title_field['title_field_id'] = $title_field_id;
+        return $this;
+    }
+
 
     public function jsonSerialize(): array {
-        // TODO: Implement jsonSerialize() method.
+        $validators = [];
+
+        // Boolean validators
+        if ($this->required) {
+            // DatoCMS expects an empty object for required
+            $validators['required'] = "{}";
+        }
+        if ($this->unique) {
+            // DatoCMS expects an empty object for unique
+            $validators['unique'] = "{}";
+        }
+
+        // Array validators (only include if not empty)
+        if (!empty($this->date_range)) {
+            $validators['date_range'] = $this->date_range;
+        }
+        if (!empty($this->date_time_range)) {
+            $validators['date_time_range'] = $this->date_time_range;
+        }
+        if (!empty($this->enum)) {
+            $validators['enum'] = ['values' => $this->enum];
+        }
+        if (!empty($this->extension)) {
+            $validators['extension'] = $this->extension;
+        }
+        if (!empty($this->file_size)) {
+            $validators['file_size'] = $this->file_size;
+        }
+        if (!empty($this->format)) {
+            $validators['format'] = $this->format;
+        }
+        if (!empty($this->slug_format)) {
+            $validators['slug_format'] = $this->slug_format;
+        }
+        if (!empty($this->image_dimensions)) {
+            $validators['image_dimensions'] = $this->image_dimensions;
+        }
+        if (!empty($this->image_aspect_ratio)) {
+            $validators['image_aspect_ratio'] = $this->image_aspect_ratio;
+        }
+        if (!empty($this->item_item_type)) {
+            $validators['item_item_type'] = $this->item_item_type;
+        }
+        if (!empty($this->items_item_type)) {
+            $validators['items_item_type'] = $this->items_item_type;
+        }
+        if (!empty($this->length)) {
+            $validators['length'] = $this->length;
+        }
+        if (!empty($this->number_range)) {
+            $validators['number_range'] = $this->number_range;
+        }
+        if (!empty($this->required_alt_title)) {
+            $validators['required_alt_title'] = $this->required_alt_title;
+        }
+        if (!empty($this->required_seo_fields)) {
+            $validators['required_seo_fields'] = $this->required_seo_fields;
+        }
+        if (!empty($this->title_length)) {
+            $validators['title_length'] = $this->title_length;
+        }
+        if (!empty($this->description_length)) {
+            $validators['description_length'] = $this->description_length;
+        }
+        if (!empty($this->rich_text_blocks)) {
+            $validators['rich_text_blocks'] = $this->rich_text_blocks;
+        }
+        if (!empty($this->single_block_blocks)) {
+            $validators['single_block_blocks'] = $this->single_block_blocks;
+        }
+        if (!empty($this->sanitized_html)) {
+            $validators['sanitized_html'] = $this->sanitized_html;
+        }
+        if (!empty($this->structured_text_blocks)) {
+            $validators['structured_text_blocks'] = $this->structured_text_blocks;
+        }
+        if (!empty($this->structured_text_inline_blocks)) {
+            $validators['structured_text_inline_blocks'] = $this->structured_text_inline_blocks;
+        }
+        if (!empty($this->structured_text_links)) {
+            $validators['structured_text_links'] = $this->structured_text_links;
+        }
+        if (!empty($this->size)) {
+            $validators['size'] = $this->size;
+        }
+        if (!empty($this->slug_title_field)) {
+            $validators['slug_title_field'] = $this->slug_title_field;
+        }
+
+        return $validators;
     }
 }

@@ -65,7 +65,7 @@ class Field extends ValueObject {
      *
      * @param array<string, mixed>|null $data Optional data override
      *
-     * @return array<string, mixed> Appearance for API submission
+     * @return array<string, mixed> Field for API submission
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);

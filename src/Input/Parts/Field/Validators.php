@@ -2,6 +2,21 @@
 
 namespace DealNews\DatoCMS\CMA\Input\Parts\Field;
 
+/**
+ * A class to describe validators for fields
+ *
+ * Usage:
+ * ```php
+ *   $field = new Field();
+ *
+ *   $attributes = new Attributes();
+ *   $attributes->validators = Validators::init()->isRequired()->isUnique;
+ *
+ *   $field->attributes = $attributes;
+ * ```
+ *
+ * @suppress PhanRedefinedInheritedInterface
+ */
 class Validators implements \JsonSerializable {
 
 
@@ -193,6 +208,15 @@ class Validators implements \JsonSerializable {
      * @var array<string, string>
      */
     protected array $slug_title_field = [];
+
+    /**
+     * Factory method for creating a new instance
+     *
+     * @return static New instance of the concrete class
+     */
+    public static function init(): static {
+        return new static();
+    }
 
     /**
      * Call this method when you want to require the field

@@ -8,6 +8,7 @@ use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Client;
 use DealNews\DatoCMS\CMA\Config;
 use DealNews\DatoCMS\CMA\API\FieldSet;
+use DealNews\DatoCMS\CMA\API\Field;
 use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
@@ -141,6 +142,7 @@ class ClientTest extends TestCase {
             ['upload_smart_tag', UploadSmartTag::class],
             ['scheduled_unpublishing', ScheduledUnpublishing::class],
             ['scheduled_publication', ScheduledPublication::class],
+            ['field', Field::class],
         ];
     }
 }

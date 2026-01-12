@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Client;
 use DealNews\DatoCMS\CMA\Config;
+use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
@@ -131,6 +132,7 @@ class ClientTest extends TestCase {
         return [
             ['record', Record::class],
             ['model', Model::class],
+            ['fieldset', FieldSet::class],
             ['site', Site::class],
             ['upload', Upload::class],
             ['upload_request', UploadRequest::class],

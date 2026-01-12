@@ -178,35 +178,37 @@ class Attributes extends ValueObject {
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
-        if ($array['label'] === null) {
-            unset($array['label']);
-        }
-        if ($array['field_type'] === null) {
-            unset($array['field_type']);
-        }
-        if ($array['api_key'] === null) {
-            unset($array['api_key']);
-        }
-        if ($array['localized'] === null) {
-            unset($array['localized']);
-        }
-        if ($array['validators'] === null) {
-            unset($array['validators']);
-        }
-        if ($array['appearance'] === null) {
-            unset($array['appearance']);
-        }
-        if ($array['position'] === null) {
-            unset($array['position']);
-        }
-        if ($array['hint'] === false) {
-            unset($array['hint']);
-        }
-        if (empty($array['default_value']) && is_array($array['default_value'])) {
-            unset($array['default_value']);
-        }
-        if ($array['deep_filtering_enabled'] === null) {
-            unset($array['deep_filtering_enabled']);
+        if ($data === null) {
+            if ($array['label'] === null) {
+                unset($array['label']);
+            }
+            if ($array['field_type'] === null) {
+                unset($array['field_type']);
+            }
+            if ($array['api_key'] === null) {
+                unset($array['api_key']);
+            }
+            if ($array['localized'] === null) {
+                unset($array['localized']);
+            }
+            if ($array['validators'] === null) {
+                unset($array['validators']);
+            }
+            if ($array['appearance'] === null) {
+                unset($array['appearance']);
+            }
+            if ($array['position'] === null) {
+                unset($array['position']);
+            }
+            if ($array['hint'] === false) {
+                unset($array['hint']);
+            }
+            if (empty($array['default_value']) && is_array($array['default_value'])) {
+                unset($array['default_value']);
+            }
+            if ($array['deep_filtering_enabled'] === null) {
+                unset($array['deep_filtering_enabled']);
+            }
         }
         return $array;
     }

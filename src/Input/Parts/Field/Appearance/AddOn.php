@@ -54,8 +54,10 @@ class AddOn extends ValueObject {
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
-        if ($array['field_extension'] === null) {
-            unset($array['field_extension']);
+        if ($data === null) {
+            if ($array['field_extension'] === null) {
+                unset($array['field_extension']);
+            }
         }
         return $array;
     }

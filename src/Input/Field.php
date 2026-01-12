@@ -69,14 +69,16 @@ class Field extends ValueObject {
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
-        if ($array['id'] === null) {
-            unset($array['id']);
-        }
-        if (empty($array['attributes'])) {
-            unset($array['attributes']);
-        }
-        if ($array['relationships'] === null) {
-            unset($array['relationships']);
+        if ($data === null) {
+            if ($array['id'] === null) {
+                unset($array['id']);
+            }
+            if (empty($array['attributes'])) {
+                unset($array['attributes']);
+            }
+            if ($array['relationships'] === null) {
+                unset($array['relationships']);
+            }
         }
         return $array;
     }

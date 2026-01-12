@@ -60,7 +60,7 @@ class RecordVersion extends Base {
      * Retrieve a record version
      *
      * @param   string                          $record_version_id      The unique identifier of the record version to retrieve.
-     * @param   RecordVersionParameter|null     $parameters             Optional parameters to customize the retrieval (get nested structure data).
+     * @param   RecordVersionParameter|null     $parameters             Optional parameters to customize the retrieval (e.g. `nested`). Pagination options in this parameter are ignored for this operation and are only applicable to list operations.
      *
      * @return array<string, mixed>                                     An associative array containing the details of the retrieved record version.
      *

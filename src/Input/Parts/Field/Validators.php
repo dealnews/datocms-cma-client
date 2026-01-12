@@ -2,8 +2,6 @@
 
 namespace DealNews\DatoCMS\CMA\Input\Parts\Field;
 
-use Moonspot\ValueObjects\Interfaces\Export;
-
 class Validators implements \JsonSerializable {
 
 

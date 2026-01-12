@@ -10,7 +10,7 @@ namespace DealNews\DatoCMS\CMA\Input\Parts\Field;
  *   $field = new Field();
  *
  *   $attributes = new Attributes();
- *   $attributes->validators = Validators::init()->isRequired()->isUnique;
+ *   $attributes->validators = Validators::init()->isRequired()->isUnique();
  *
  *   $field->attributes = $attributes;
  * ```

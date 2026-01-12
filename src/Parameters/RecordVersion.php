@@ -11,7 +11,7 @@ namespace DealNews\DatoCMS\CMA\Parameters;
  * ```php
  * $params = new RecordVersion();
  * $params->page->limit = 50;
- * $versions = $client->record_version->list($params);
+ * $versions = $client->record_version->list('record-id', $params);
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api/resources/item-version/instances

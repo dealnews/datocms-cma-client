@@ -8,7 +8,7 @@ use DealNews\DatoCMS\CMA\Input\FieldSet as FieldSetInput;
  * API handler for DatoCMS fieldset operations
  *
  * Provides methods for all fieldset-related CRUD operations including listing,
- *  creating, updating, and deleting fieldsets.
+ * creating, updating, and deleting fieldsets.
  *
  * Usage:
  * ```php

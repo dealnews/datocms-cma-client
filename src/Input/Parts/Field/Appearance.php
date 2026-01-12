@@ -5,6 +5,22 @@ namespace DealNews\DatoCMS\CMA\Input\Parts\Field;
 use Moonspot\ValueObjects\ValueObject;
 use DealNews\DatoCMS\CMA\Input\Parts\Field\Appearance\AddOn;
 
+/**
+ * Defines a field's appearance
+ *
+ * Usage:
+ *  ```php
+ *  $field = new Field();
+ *
+ *  $appearance = new Appearance();
+ *  $appearance->editor = 'single_line';
+ *
+ *  $attributes = new Attributes();
+ *  $attributes->appearance = $appearance;
+ *
+ *  $field->attributes = $attributes;
+ *  ```
+ */
 class Appearance extends ValueObject {
 
     /**

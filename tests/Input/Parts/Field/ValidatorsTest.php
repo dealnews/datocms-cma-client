@@ -321,9 +321,9 @@ class ValidatorsTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testSetSanitizedHTML(): void {
+    public function testSetSanitizedHtml(): void {
         $validators = Validators::init()
-            ->setSanitizedHTML(true);
+            ->setSanitizedHtml(true);
 
         $result = $validators->jsonSerialize();
 
@@ -403,7 +403,7 @@ class ValidatorsTest extends TestCase {
         $this->assertArrayHasKey('unique', $result);
         $this->assertArrayHasKey('length', $result);
         $this->assertArrayHasKey('enum', $result);
-        
+
         // Should not include unset validators
         $this->assertArrayNotHasKey('date_range', $result);
         $this->assertArrayNotHasKey('file_size', $result);

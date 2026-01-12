@@ -6,6 +6,21 @@ use DealNews\DatoCMS\CMA\Input\Parts\Field\Attributes;
 use DealNews\DatoCMS\CMA\Input\Parts\Field\Relationships;
 use Moonspot\ValueObjects\ValueObject;
 
+/**
+ * Input object for creating and updating DatoCMS fields
+ *
+ * Represents the data structure for field operations.
+ *
+ * Usage:
+ * ```php
+ * $field = new Field();
+ * $field->id = 'field-id';
+ * $field->attributes['label'] = 'Hello';
+ * $result = $client->field->create('model-id', $field);
+ * ```
+ *
+ * @see https://www.datocms.com/docs/content-management-api/resources/field/create
+ */
 class Field extends ValueObject {
 
     /**

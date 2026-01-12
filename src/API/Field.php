@@ -4,6 +4,21 @@ namespace DealNews\DatoCMS\CMA\API;
 
 use DealNews\DatoCMS\CMA\Input\Field as FieldInput;
 
+/**
+ * API handler for DatoCMS field operations
+ *
+ * Provides methods for all field-related CRUD operations including listing,
+ * creating, updating, deleting, and duplicating fields.
+ *
+ * Usage:
+ * ```php
+ * $client = new Client($token);
+ * $fields = $client->field->list('model-id');
+ * $field = $client->field->find('field-id');
+ * ```
+ *
+ * @see https://www.datocms.com/docs/content-management-api/resources/field
+ */
 class Field extends Base {
 
     /**

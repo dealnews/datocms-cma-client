@@ -12,6 +12,7 @@ use DealNews\DatoCMS\CMA\API\UploadTag;
 use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
 use DealNews\DatoCMS\CMA\API\ScheduledPublication;
 use DealNews\DatoCMS\CMA\API\Site;
+use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Field;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -43,6 +44,7 @@ use Psr\Log\LogLevel;
  * @property-read   ScheduledUnpublishing       $scheduled_unpublishing         API endpoint for scheduling unpublishing operations
  * @property-read   ScheduledPublication        $scheduled_publication          API endpoint for scheduled publication operations
  * @property-read   Site                        $site                           API endpoint for site operations
+ * @property-read   FieldSet                    $fieldset                       API endpoint for fieldset operations
  * @property-read   Field                       $field                          API endpoint for field operations
  */
 class Client {
@@ -58,6 +60,7 @@ class Client {
         'scheduled_publication' => ScheduledPublication::class,
         'scheduled_unpublishing' => ScheduledUnpublishing::class,
         'site' => Site::class,
+        'fieldset' => FieldSet::class,
         'field' => Field::class,
     ];
 
@@ -139,6 +142,13 @@ class Client {
     protected Site $site;
 
     /**
+     * API endpoint for fieldset operations
+     *
+     * @var FieldSet
+     */
+    protected FieldSet $fieldset;
+
+    /*
      * API endpoint for field operations
      *
      * @var Field

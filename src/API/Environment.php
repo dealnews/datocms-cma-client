@@ -32,7 +32,7 @@ class Environment extends Base {
      * @param   bool                    $force                      Force the start of fast fork, even if there are collaborators editing some records
      *
      * @return  array<string, mixed>                                If immediate_return is true, returns the new forked environment.
-     *                                                              Otherwise, returns information about the "job" that will is running to complete the fork.
+     *                                                              Otherwise, returns information about the "job" that will be running to complete the fork.
      *
      * @throws \DealNews\DatoCMS\CMA\Exception\API     On HTTP error responses
      * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure

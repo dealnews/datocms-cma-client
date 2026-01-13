@@ -14,6 +14,7 @@ use DealNews\DatoCMS\CMA\API\ScheduledPublication;
 use DealNews\DatoCMS\CMA\API\Site;
 use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Field;
+use DealNews\DatoCMS\CMA\API\Environment;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -46,6 +47,7 @@ use Psr\Log\LogLevel;
  * @property-read   Site                        $site                           API endpoint for site operations
  * @property-read   FieldSet                    $fieldset                       API endpoint for fieldset operations
  * @property-read   Field                       $field                          API endpoint for field operations
+ * @property-read   Environment                 $environment                    API endpoint for environment operations
  */
 class Client {
 
@@ -62,6 +64,7 @@ class Client {
         'site' => Site::class,
         'fieldset' => FieldSet::class,
         'field' => Field::class,
+        'environment' => Environment::class,
     ];
 
     /**
@@ -154,6 +157,13 @@ class Client {
      * @var Field
      */
     protected Field $field;
+
+    /**
+     * API endpoint for environment operations
+     *
+     * @var Environment
+     */
+    protected Environment $environment;
 
     /**
      * @param string|null          $apiToken    API Token for your DatoCMS project

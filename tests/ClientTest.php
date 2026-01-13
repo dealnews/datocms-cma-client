@@ -11,6 +11,7 @@ use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Field;
 use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
+use DealNews\DatoCMS\CMA\API\RecordVersion;
 use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
 use DealNews\DatoCMS\CMA\API\Site;
 use DealNews\DatoCMS\CMA\API\Upload;
@@ -132,6 +133,7 @@ class ClientTest extends TestCase {
     public static function provideMagicMethods(): array {
         return [
             ['record', Record::class],
+            ['record_version', RecordVersion::class],
             ['model', Model::class],
             ['fieldset', FieldSet::class],
             ['site', Site::class],

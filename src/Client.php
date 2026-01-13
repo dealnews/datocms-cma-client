@@ -14,6 +14,7 @@ use DealNews\DatoCMS\CMA\API\ScheduledPublication;
 use DealNews\DatoCMS\CMA\API\Site;
 use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Field;
+use DealNews\DatoCMS\CMA\API\Environment;
 use DealNews\DatoCMS\CMA\API\RecordVersion;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -47,6 +48,7 @@ use Psr\Log\LogLevel;
  * @property-read   Site                        $site                           API endpoint for site operations
  * @property-read   FieldSet                    $fieldset                       API endpoint for fieldset operations
  * @property-read   Field                       $field                          API endpoint for field operations
+ * @property-read   Environment                 $environment                    API endpoint for environment operations
  * @property-read   RecordVersion               $record_version                 API endpoint for record version operations
  */
 class Client {
@@ -64,6 +66,7 @@ class Client {
         'site' => Site::class,
         'fieldset' => FieldSet::class,
         'field' => Field::class,
+        'environment' => Environment::class,
         'record_version' => RecordVersion::class,
     ];
 
@@ -159,6 +162,13 @@ class Client {
     protected Field $field;
 
     /**
+     * API endpoint for environment operations
+     *
+     * @var Environment
+     */
+    protected Environment $environment;
+
+    /*
      * API endpoint for record version operations
      *
      * @var RecordVersion

@@ -7,6 +7,7 @@ use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Client;
 use DealNews\DatoCMS\CMA\Config;
+use DealNews\DatoCMS\CMA\API\Environment;
 use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Field;
 use DealNews\DatoCMS\CMA\API\Model;
@@ -143,6 +144,7 @@ class ClientTest extends TestCase {
             ['scheduled_unpublishing', ScheduledUnpublishing::class],
             ['scheduled_publication', ScheduledPublication::class],
             ['field', Field::class],
+            ['environment', Environment::class],
         ];
     }
 }

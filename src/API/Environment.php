@@ -55,7 +55,7 @@ class Environment extends Base {
             $query_params['force'] = $force;
         }
 
-        return $this->handler->execute('POST', '/environments/' . $original_environment_id . '/fork', $query_params, $payload);
+        return $this->handler->execute('POST', '/environments/' . $original_environment_id . '/fork', $query_params, ['data' => $payload]);
     }
 
     /**
@@ -95,7 +95,7 @@ class Environment extends Base {
             'type' => 'environment',
         ];
 
-        return $this->handler->execute('PUT', '/environments/' . $original_environment_id . '/rename', [], $payload);
+        return $this->handler->execute('PUT', '/environments/' . $original_environment_id . '/rename', [], ['data' => $payload]);
     }
 
     /**

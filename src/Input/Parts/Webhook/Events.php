@@ -7,7 +7,7 @@ namespace DealNews\DatoCMS\CMA\Input\Parts\Webhook;
  *
  * @see https://www.datocms.com/docs/content-management-api/resources/webhook
  *
- * Usage:```php
+ * Usage: ```php
  * $attributes = new Attributes();
  *
  * $attributes->events = Events::init()

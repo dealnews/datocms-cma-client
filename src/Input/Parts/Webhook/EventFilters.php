@@ -14,7 +14,7 @@ namespace DealNews\DatoCMS\CMA\Input\Parts\Webhook;
  *                      ->addFilter('environment', ['main'])
  *                      ->addFilter('item_type', ['1234']);
  *
- * $attributes->events = Events::init()->ddEvent('item', ['create'], $event_filters);
+ * $attributes->events = Events::init()->addEvent('item', ['create'], $event_filters);
  * ```
  *
  * @suppress PhanRedefinedInheritedInterface

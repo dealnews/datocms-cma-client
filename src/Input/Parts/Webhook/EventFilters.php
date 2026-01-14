@@ -65,7 +65,7 @@ class EventFilters implements \JsonSerializable {
      *
      * @return  array   Serialized value
      */
-    function jsonSerialize(): array {
+    public function jsonSerialize(): array {
         return $this->filters;
     }
 }

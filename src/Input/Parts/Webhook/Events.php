@@ -12,7 +12,7 @@ namespace DealNews\DatoCMS\CMA\Input\Parts\Webhook;
  *
  * $attributes->events = Events::init()
  *                          ->addEvent('item', ['create', 'update'])
- *                          ->addEvent('upload', ['create', 'update'], EventFilters::init()->addFilter('environment-type', ['primary']));
+ *                          ->addEvent('upload', ['create', 'update'], EventFilters::init()->addFilter('environment_type', ['primary']));
  * ```
  *
  * @suppress PhanRedefinedInheritedInterface

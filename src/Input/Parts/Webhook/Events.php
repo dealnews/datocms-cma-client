@@ -32,7 +32,7 @@ class Events implements \JsonSerializable {
 
     protected array $events = [];
 
-    public static function init(): static  {
+    public static function init(): static {
         return new static();
     }
 

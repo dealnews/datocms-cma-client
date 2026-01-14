@@ -73,7 +73,7 @@ class Events implements \JsonSerializable {
      *
      * @return  array   Serialized value
      */
-    function jsonSerialize(): array {
+    public function jsonSerialize(): array {
         return $this->events;
     }
 }

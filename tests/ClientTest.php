@@ -21,6 +21,7 @@ use DealNews\DatoCMS\CMA\API\UploadRequest;
 use DealNews\DatoCMS\CMA\API\UploadSmartTag;
 use DealNews\DatoCMS\CMA\API\UploadTag;
 use DealNews\DatoCMS\CMA\API\ScheduledPublication;
+use DealNews\DatoCMS\CMA\API\WebhookCall;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -147,6 +148,7 @@ class ClientTest extends TestCase {
             ['scheduled_publication', ScheduledPublication::class],
             ['field', Field::class],
             ['environment', Environment::class],
+            ['webhook_call', WebhookCall::class],
         ];
     }
 }

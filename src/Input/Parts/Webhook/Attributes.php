@@ -144,7 +144,7 @@ class Attributes extends ValueObject {
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
-        if ($data !== null) {
+        if ($data === null) {
             if ($array['name'] === null) {
                 unset($array['name']);
             }

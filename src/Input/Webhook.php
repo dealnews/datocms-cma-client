@@ -51,7 +51,7 @@ class Webhook extends ValueObject {
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
-        if ($data !== null) {
+        if ($data === null) {
             if ($array['id'] === null) {
                 unset($array['id']);
             }

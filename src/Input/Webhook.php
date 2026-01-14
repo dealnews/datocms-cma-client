@@ -43,7 +43,7 @@ class Webhook extends ValueObject {
     /**
      * Converts the webhook to an array for API submission
      *
-     * Excludes empty id.
+     * Excludes empty id and empty attributes.
      *
      * @param array<string, mixed>|null $data Optional data override
      *
@@ -54,6 +54,9 @@ class Webhook extends ValueObject {
         if ($data === null) {
             if ($array['id'] === null) {
                 unset($array['id']);
+            }
+            if (empty($array['attributes'])) {
+                unset($array['attributes']);
             }
         }
         return $array;

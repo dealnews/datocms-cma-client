@@ -3,6 +3,7 @@
 namespace DealNews\DatoCMS\CMA\Input;
 
 use DealNews\DatoCMS\CMA\Input\Parts\Upload\Attributes;
+use DealNews\DatoCMS\CMA\Input\Parts\Upload\Relationships;
 use Moonspot\ValueObjects\ValueObject;
 
 /**
@@ -19,6 +20,7 @@ use Moonspot\ValueObjects\ValueObject;
  * $upload->attributes->author = 'John Doe';
  * $upload->attributes->tags = ['banner', 'hero'];
  * $upload->attributes->default_field_metadata->addLocale('en', 'Alt text', 'Title');
+ * $upload->relationships->upload_collection->id = 'collection-id';
  * $result = $client->upload->create($upload);
  * ```
  *
@@ -57,17 +59,18 @@ class Upload extends ValueObject {
     public Attributes $attributes;
 
     /**
-     * Optional upload collection ID to organize this upload
+     * Upload relationships (upload_collection and creator)
      *
-     * @var string|null
+     * @var Relationships
      */
-    public ?string $upload_collection_id = null;
+    public Relationships $relationships;
 
     /**
      * Creates a new Upload input object
      */
     public function __construct() {
         $this->attributes = new Attributes();
+        $this->relationships = new Relationships();
     }
 
     /**
@@ -89,15 +92,9 @@ class Upload extends ValueObject {
             $array['id'] = $this->id;
         }
 
-        if (!is_null($this->upload_collection_id)) {
-            $array['relationships'] = [
-                'upload_collection' => [
-                    'data' => [
-                        'type' => 'upload_collection',
-                        'id'   => $this->upload_collection_id,
-                    ],
-                ],
-            ];
+        $relationships = $this->relationships->toArray();
+        if (!empty($relationships)) {
+            $array['relationships'] = $relationships;
         }
 
         return $array;

@@ -135,7 +135,7 @@ class RecordTest extends TestCase {
             'attributes' => ['title' => 'Updated Title'],
         ];
         $expected_response = ['data' => ['id' => 'record-123', 'type' => 'item']];
-        $record = $this->createRecordWithMock('POST', '/items/record-123', ['data' => $data], [], $expected_response);
+        $record = $this->createRecordWithMock('PUT', '/items/record-123', [], ['data' => $data], $expected_response);
 
         $result = $record->update('record-123', $data);
 
@@ -147,13 +147,13 @@ class RecordTest extends TestCase {
         $input = new RecordInput('model-123');
         $input->attributes['title'] = 'Updated Title';
 
-        $expected_query = ['data' => $input->toArray()];
+        $expected_data = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => 'record-123', 'type' => 'item']];
 
         $mock_handler = $this->createMock(Handler::class);
         $mock_handler->expects($this->once())
             ->method('execute')
-            ->with('POST', '/items/record-123', $expected_query)
+            ->with('PUT', '/items/record-123', [], $expected_data)
             ->willReturn($expected_response);
 
         $record = new Record($mock_handler);

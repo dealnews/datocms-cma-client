@@ -42,21 +42,21 @@ class SiteTest extends TestCase {
     }
 
     // =========================================================================
-    // find() tests
+    // retrieve() tests
     // =========================================================================
 
     #[Group('unit')]
-    public function testFindWithoutParameters(): void {
+    public function testRetrieveWithoutParameters(): void {
         $expected_response = ['data' => ['id' => '1', 'type' => 'site']];
         $site = $this->createSiteWithMock('GET', '/site', [], [], $expected_response);
 
-        $result = $site->find();
+        $result = $site->retrieve();
 
         $this->assertEquals($expected_response, $result);
     }
 
     #[Group('unit')]
-    public function testFindWithParametersContainingInclude(): void {
+    public function testRetrieveWithParametersContainingInclude(): void {
         $params = new SiteParameters();
         $params->include = ['item_types', 'account'];
 
@@ -64,7 +64,7 @@ class SiteTest extends TestCase {
         $expected_response = ['data' => ['id' => '1', 'type' => 'site']];
         $site = $this->createSiteWithMock('GET', '/site', $expected_query, [], $expected_response);
 
-        $result = $site->find($params);
+        $result = $site->retrieve($params);
 
         $this->assertEquals($expected_response, $result);
     }

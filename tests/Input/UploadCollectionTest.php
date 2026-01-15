@@ -22,7 +22,16 @@ class UploadCollectionTest extends TestCase {
         $this->assertNull($collection->id);
         $this->assertEquals('upload_collection', $collection->type);
         $this->assertEquals([], $collection->attributes);
-        $this->assertNull($collection->parent_id);
+        $this->assertInstanceOf(\DealNews\DatoCMS\CMA\Input\Parts\UploadCollection\Relationships::class, $collection->relationships);
+    }
+
+    #[Group('unit')]
+    public function testConstructorInitializesRelationships() {
+        $collection = new UploadCollection();
+
+        $this->assertInstanceOf(\DealNews\DatoCMS\CMA\Input\Parts\UploadCollection\Relationships::class, $collection->relationships);
+        $this->assertInstanceOf(\DealNews\DatoCMS\CMA\Input\Parts\Relationships\UploadCollection::class, $collection->relationships->parent);
+        $this->assertEquals([], $collection->relationships->children);
     }
 
     // =========================================================================
@@ -80,7 +89,7 @@ class UploadCollectionTest extends TestCase {
     public function testToArrayIncludesParentRelationship() {
         $collection = new UploadCollection();
         $collection->attributes['label'] = 'Subcollection';
-        $collection->parent_id = 'parent-456';
+        $collection->relationships->parent->id = 'parent-456';
 
         $array = $collection->toArray();
 
@@ -99,7 +108,7 @@ class UploadCollectionTest extends TestCase {
         $collection = new UploadCollection();
         $collection->id = 'collection-123';
         $collection->attributes['label'] = 'Full Collection';
-        $collection->parent_id = 'parent-456';
+        $collection->relationships->parent->id = 'parent-456';
 
         $array = $collection->toArray();
 
@@ -124,5 +133,30 @@ class UploadCollectionTest extends TestCase {
 
         $this->assertEquals('upload_collection', $array['type']);
         $this->assertEquals([], $array['attributes']);
+    }
+
+    #[Group('unit')]
+    public function testToArrayIncludesChildrenRelationships() {
+        $collection = new UploadCollection();
+        $collection->attributes['label'] = 'Parent Collection';
+        
+        $child1 = new \DealNews\DatoCMS\CMA\Input\Parts\Relationships\UploadCollection();
+        $child1->id = 'child-1';
+        $collection->relationships->children[] = $child1;
+        
+        $child2 = new \DealNews\DatoCMS\CMA\Input\Parts\Relationships\UploadCollection();
+        $child2->id = 'child-2';
+        $collection->relationships->children[] = $child2;
+
+        $array = $collection->toArray();
+
+        $this->assertArrayHasKey('relationships', $array);
+        $this->assertArrayHasKey('children', $array['relationships']);
+        $this->assertEquals([
+            'data' => [
+                ['type' => 'upload_collection', 'id' => 'child-1'],
+                ['type' => 'upload_collection', 'id' => 'child-2'],
+            ],
+        ], $array['relationships']['children']);
     }
 }

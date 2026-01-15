@@ -157,11 +157,11 @@ class FieldTest extends TestCase {
     }
 
     // =========================================================================
-    // find() tests
+    // retrieve() tests
     // =========================================================================
 
     #[Group('unit')]
-    public function testFind(): void {
+    public function testRetrieve(): void {
         $expected_response = ['data' => ['id' => 'field-123', 'type' => 'field']];
         $field = $this->createFieldWithMock(
             'GET',
@@ -171,7 +171,7 @@ class FieldTest extends TestCase {
             $expected_response
         );
 
-        $result = $field->find('field-123');
+        $result = $field->retrieve('field-123');
 
         $this->assertEquals($expected_response, $result);
     }

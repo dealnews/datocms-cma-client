@@ -162,16 +162,33 @@ class Upload extends Base {
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/upload/references
      *
-     * @param string $upload_id The ID of the upload
+     * @param string      $upload_id The ID of the upload
+     * @param bool        $nested    Include nested data structures (default: false)
+     * @param string|null $version   Version to retrieve: 'published', 'current', or 'published-or-current'
      *
      * @return array<string, mixed> Records referencing this upload
      *
+     * @throws \InvalidArgumentException               If version is invalid
      * @throws \DealNews\DatoCMS\CMA\Exception\API     On HTTP error responses
      * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
      * @throws \DealNews\DatoCMS\CMA\Exception\Unknown On unexpected errors
      */
-    public function references(string $upload_id): array {
-        return $this->handler->execute('GET', '/uploads/' . $upload_id . '/references');
+    public function references(
+        string $upload_id,
+        bool $nested = false,
+        ?string $version = null
+    ): array {
+        $query_params = [];
+        if ($nested) {
+            $query_params['nested'] = true;
+        }
+        if (!empty($version)) {
+            if (!in_array($version, ['published', 'current', 'published-or-current'])) {
+                throw new \InvalidArgumentException('version must be "published", "current", or "published-or-current"');
+            }
+            $query_params['version'] = $version;
+        }
+        return $this->handler->execute('GET', '/uploads/' . $upload_id . '/references', $query_params);
     }
 
     /**
@@ -479,7 +496,7 @@ class Upload extends Base {
         }
 
         if (!empty($upload_collection_id)) {
-            $upload->upload_collection_id = $upload_collection_id;
+            $upload->relationships->upload_collection->id = $upload_collection_id;
         }
 
         return $upload;

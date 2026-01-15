@@ -229,6 +229,55 @@ class UploadTest extends TestCase {
         $this->assertEquals($expected_response, $result);
     }
 
+    #[Group('unit')]
+    public function testReferencesWithNested() {
+        $expected_response = ['data' => []];
+        $upload = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['nested' => true], [], $expected_response);
+
+        $result = $upload->references('upload-123', true);
+
+        $this->assertEquals($expected_response, $result);
+    }
+
+    #[Group('unit')]
+    public function testReferencesWithVersion() {
+        $expected_response = ['data' => []];
+        $upload = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['version' => 'published'], [], $expected_response);
+
+        $result = $upload->references('upload-123', false, 'published');
+
+        $this->assertEquals($expected_response, $result);
+    }
+
+    #[Group('unit')]
+    public function testReferencesWithNestedAndVersion() {
+        $expected_response = ['data' => []];
+        $upload = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['nested' => true, 'version' => 'current'], [], $expected_response);
+
+        $result = $upload->references('upload-123', true, 'current');
+
+        $this->assertEquals($expected_response, $result);
+    }
+
+    #[Group('unit')]
+    public function testReferencesWithPublishedOrCurrent() {
+        $expected_response = ['data' => []];
+        $upload = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['version' => 'published-or-current'], [], $expected_response);
+
+        $result = $upload->references('upload-123', false, 'published-or-current');
+
+        $this->assertEquals($expected_response, $result);
+    }
+
+    #[Group('unit')]
+    public function testReferencesThrowsExceptionForInvalidVersion() {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('version must be "published", "current", or "published-or-current"');
+
+        $upload = new Upload($this->createMock(Handler::class));
+        $upload->references('upload-123', false, 'invalid');
+    }
+
     // =========================================================================
     // deleteBulk() tests
     // =========================================================================

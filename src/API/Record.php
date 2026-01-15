@@ -99,7 +99,7 @@ class Record extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
-        return $this->handler->execute('POST', '/items/' . $record_id, ['data' => $data]);
+        return $this->handler->execute('PUT', '/items/' . $record_id, [], ['data' => $data]);
     }
 
     /**

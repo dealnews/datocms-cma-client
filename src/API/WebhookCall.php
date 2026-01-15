@@ -5,7 +5,7 @@ namespace DealNews\DatoCMS\CMA\API;
 use DealNews\DatoCMS\CMA\Parameters\WebhookCall as WebhookCallParameters;
 
 /**
- * API handler for DatoCMS field operations
+ * API handler for DatoCMS webhook call operations
  *
  * Provides methods for all webhook-call-related operations including listing,
  * retrieving, and re-sending webhook calls.

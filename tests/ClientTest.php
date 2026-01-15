@@ -11,6 +11,7 @@ use DealNews\DatoCMS\CMA\API\Environment;
 use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Field;
 use DealNews\DatoCMS\CMA\API\Job;
+use DealNews\DatoCMS\CMA\API\Maintenance;
 use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\RecordVersion;
@@ -149,6 +150,7 @@ class ClientTest extends TestCase {
             ['field', Field::class],
             ['environment', Environment::class],
             ['job', Job::class],
+            ['maintenance', Maintenance::class],
         ];
     }
 }

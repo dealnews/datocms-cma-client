@@ -17,6 +17,7 @@ use DealNews\DatoCMS\CMA\API\Field;
 use DealNews\DatoCMS\CMA\API\Environment;
 use DealNews\DatoCMS\CMA\API\RecordVersion;
 use DealNews\DatoCMS\CMA\API\Job;
+use DealNews\DatoCMS\CMA\API\Maintenance;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -52,6 +53,7 @@ use Psr\Log\LogLevel;
  * @property-read   Environment                 $environment                    API endpoint for environment operations
  * @property-read   RecordVersion               $record_version                 API endpoint for record version operations
  * @property-read   Job                         $job                            API endpoint for job result operations
+ * @property-read   Maintenance                 $maintenance                    API endpoint for maintenance mode operations
  */
 class Client {
 
@@ -71,6 +73,7 @@ class Client {
         'environment' => Environment::class,
         'record_version' => RecordVersion::class,
         'job' => Job::class,
+        'maintenance' => Maintenance::class,
     ];
 
     /**
@@ -157,7 +160,7 @@ class Client {
      */
     protected FieldSet $fieldset;
 
-    /*
+    /**
      * API endpoint for field operations
      *
      * @var Field
@@ -171,7 +174,7 @@ class Client {
      */
     protected Environment $environment;
 
-    /*
+    /**
      * API endpoint for record version operations
      *
      * @var RecordVersion
@@ -184,6 +187,13 @@ class Client {
      * @var Job
      */
     protected Job $job;
+
+    /**
+     * API endpoint for maintenance mode operations
+     *
+     * @var Maintenance
+     */
+    protected Maintenance $maintenance;
 
     /**
      * @param string|null          $apiToken    API Token for your DatoCMS project

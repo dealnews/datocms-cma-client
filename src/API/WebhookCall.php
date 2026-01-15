@@ -22,7 +22,7 @@ use DealNews\DatoCMS\CMA\Parameters\WebhookCall as WebhookCallParameters;
 class WebhookCall extends Base {
 
     /**
-     * List all webhooks calls
+     * List all webhook calls
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/webhook-call/instances
      *

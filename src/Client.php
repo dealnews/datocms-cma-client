@@ -16,6 +16,7 @@ use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Field;
 use DealNews\DatoCMS\CMA\API\Environment;
 use DealNews\DatoCMS\CMA\API\RecordVersion;
+use DealNews\DatoCMS\CMA\API\Webhook;
 use DealNews\DatoCMS\CMA\API\Job;
 use DealNews\DatoCMS\CMA\API\Maintenance;
 use Psr\Log\LoggerInterface;
@@ -52,6 +53,7 @@ use Psr\Log\LogLevel;
  * @property-read   Field                       $field                          API endpoint for field operations
  * @property-read   Environment                 $environment                    API endpoint for environment operations
  * @property-read   RecordVersion               $record_version                 API endpoint for record version operations
+ * @property-read   Webhook                     $webhook                        API endpoint for webhook operations
  * @property-read   Job                         $job                            API endpoint for job result operations
  * @property-read   Maintenance                 $maintenance                    API endpoint for maintenance mode operations
  */
@@ -72,6 +74,7 @@ class Client {
         'field' => Field::class,
         'environment' => Environment::class,
         'record_version' => RecordVersion::class,
+        'webhook' => Webhook::class,
         'job' => Job::class,
         'maintenance' => Maintenance::class,
     ];
@@ -180,6 +183,13 @@ class Client {
      * @var RecordVersion
      */
     protected RecordVersion $record_version;
+
+    /**
+     * API endpoint for webhook operations
+     *
+     * @var Webhook
+     */
+    protected Webhook $webhook;
 
     /**
      * API endpoint for job result operations

@@ -8,16 +8,16 @@ use DealNews\DatoCMS\CMA\Parameters\Parts\WebhookCallFilter;
 /**
  * Query parameters for listing DatoCMS webhook calls
  *
- * Provides pagination options for the upload collection list API.
+ * Provides pagination options for the webhook call list API.
  *
  * Usage:
  * ```php
- * $params = new UploadCollection();
+ * $params = new WebhookCall();
  * $params->page->limit = 25;
- * $collections = $client->upload_collection->list($params);
+ * $webhookCalls = $client->webhook_calls->list($params);
  * ```
  *
- * @see https://www.datocms.com/docs/content-management-api/resources/upload-collection
+ * @see https://www.datocms.com/docs/content-management-api/resources/webhook-call
  */
 class WebhookCall extends Common {
 

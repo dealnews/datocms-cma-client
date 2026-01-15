@@ -24,12 +24,18 @@ class UploadTest extends TestCase {
     }
 
     #[Group('unit')]
+    public function testConstructorInitializesRelationships() {
+        $upload = new Upload();
+
+        $this->assertInstanceOf(\DealNews\DatoCMS\CMA\Input\Parts\Upload\Relationships::class, $upload->relationships);
+    }
+
+    #[Group('unit')]
     public function testConstructorSetsDefaults() {
         $upload = new Upload();
 
         $this->assertNull($upload->id);
         $this->assertEquals('upload', $upload->type);
-        $this->assertNull($upload->upload_collection_id);
     }
 
     // =========================================================================
@@ -87,7 +93,7 @@ class UploadTest extends TestCase {
     public function testToArrayIncludesUploadCollectionRelationship() {
         $upload = new Upload();
         $upload->attributes->path = '/45/image.jpg';
-        $upload->upload_collection_id = 'collection-456';
+        $upload->relationships->upload_collection->id = 'collection-456';
 
         $array = $upload->toArray();
 
@@ -111,7 +117,7 @@ class UploadTest extends TestCase {
         $upload->attributes->notes = 'Some notes';
         $upload->attributes->tags = ['banner'];
         $upload->attributes->default_field_metadata->addLocale('en', 'Alt text', 'Title');
-        $upload->upload_collection_id = 'collection-456';
+        $upload->relationships->upload_collection->id = 'collection-456';
 
         $array = $upload->toArray();
 

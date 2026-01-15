@@ -2,6 +2,7 @@
 
 namespace DealNews\DatoCMS\CMA\Input;
 
+use DealNews\DatoCMS\CMA\Input\Parts\UploadCollection\Relationships;
 use Moonspot\ValueObjects\ValueObject;
 
 /**
@@ -13,6 +14,7 @@ use Moonspot\ValueObjects\ValueObject;
  * ```php
  * $collection = new UploadCollection();
  * $collection->attributes['label'] = 'Product Images';
+ * $collection->relationships->parent->id = 'parent-collection-id';
  * $result = $client->upload_collection->create($collection);
  * ```
  *
@@ -53,11 +55,18 @@ class UploadCollection extends ValueObject {
     public array $attributes = [];
 
     /**
-     * Optional parent collection ID for nesting
+     * Collection relationships (parent and children)
      *
-     * @var string|null
+     * @var Relationships
      */
-    public ?string $parent_id = null;
+    public Relationships $relationships;
+
+    /**
+     * Constructor - initializes relationships
+     */
+    public function __construct() {
+        $this->relationships = new Relationships();
+    }
 
     /**
      * Converts the collection to an array for API submission
@@ -76,15 +85,9 @@ class UploadCollection extends ValueObject {
             $array['id'] = $this->id;
         }
 
-        if (!is_null($this->parent_id)) {
-            $array['relationships'] = [
-                'parent' => [
-                    'data' => [
-                        'type' => 'upload_collection',
-                        'id'   => $this->parent_id,
-                    ],
-                ],
-            ];
+        $relationships = $this->relationships->toArray();
+        if (!empty($relationships)) {
+            $array['relationships'] = $relationships;
         }
 
         return $array;

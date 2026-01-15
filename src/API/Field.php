@@ -14,7 +14,7 @@ use DealNews\DatoCMS\CMA\Input\Field as FieldInput;
  * ```php
  * $client = new Client($token);
  * $fields = $client->field->list('model-id');
- * $field = $client->field->find('field-id');
+ * $field = $client->field->retrieve('field-id');
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api/resources/field
@@ -110,7 +110,7 @@ class Field extends Base {
      * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
      * @throws \DealNews\DatoCMS\CMA\Exception\Unknown On unexpected errors
      */
-    public function find(string $field_id_or_api_key): array {
+    public function retrieve(string $field_id_or_api_key): array {
         return $this->handler->execute('GET', '/fields/' . $field_id_or_api_key);
     }
 

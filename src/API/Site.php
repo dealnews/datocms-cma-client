@@ -13,7 +13,7 @@ use DealNews\DatoCMS\CMA\Input\Site as SiteInput;
  * Usage:
  * ```php
  * $client = new Client($token);
- * $site_info = $client->site->find();
+ * $site_info = $client->site->retrieve();
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api/resources/site
@@ -33,7 +33,7 @@ class Site extends Base {
      * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
      * @throws \DealNews\DatoCMS\CMA\Exception\Unknown On unexpected errors
      */
-    public function find(?SiteParameters $parameters = null): array {
+    public function retrieve(?SiteParameters $parameters = null): array {
         $query_params = [];
         if (!empty($parameters) && !empty($parameters->include)) {
             $query_params['include'] = implode(',', $parameters->include);

@@ -23,20 +23,14 @@ use Moonspot\ValueObjects\ValueObject;
 class ScheduledUnpublishing extends ValueObject {
 
     /**
-     * Scheduled Unpublication type, always "scheduled_unpublishing"
+     * Scheduled Unpublication type, must always be "scheduled_unpublishing"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "scheduled_unpublishing". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'scheduled_unpublishing' {
-        set {
-            if ($value !== 'scheduled_unpublishing') {
-                throw new \InvalidArgumentException('Type must be "scheduled_unpublishing"');
-            }
-            $this->type = $value;
-        }
-    }
+    public readonly string $type;
 
     /**
      * "ScheduledUnpublishing" configuration attributes
@@ -48,6 +42,10 @@ class ScheduledUnpublishing extends ValueObject {
      * @var array<string, mixed>
      */
     public array $attributes = [];
+
+    public function __construct() {
+        $this->type = 'scheduled_unpublishing';
+    }
 
     /**
      * Converts the ScheduledUnpublishing to an array for API submission

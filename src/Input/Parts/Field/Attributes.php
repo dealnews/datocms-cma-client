@@ -24,8 +24,10 @@ class Attributes extends ValueObject {
 
     /**
      * Valid values for the field_type property
+     *
+     * @var array<int, string>
      */
-    const array VALID_FIELD_TYPES = [
+    const VALID_FIELD_TYPES = [
         'boolean',
         'color',
         'date',
@@ -62,6 +64,12 @@ class Attributes extends ValueObject {
     /**
      * Type of input
      *
+     * WARNING: Must be null or one of: boolean, color, date, date_time, file, float,
+     * gallery, integer, json, lat_lon, link, links, rich_text, seo, single_block,
+     * slug, string, structured_text, text, video
+     *
+     * See VALID_FIELD_TYPES constant for complete list.
+     *
      * Required to be a string for creating fields,
      * Optional when updating fields: Setting to null will exclude this from the request
      *
@@ -69,14 +77,7 @@ class Attributes extends ValueObject {
      *
      * @var string|null
      */
-    public ?string $field_type = null {
-        set {
-            if ($value !== null && !in_array($value, self::VALID_FIELD_TYPES)) {
-                throw new \InvalidArgumentException('field_type must be null or one of: ' . implode(', ', self::VALID_FIELD_TYPES));
-            }
-            $this->field_type = $value;
-        }
-    }
+    public ?string $field_type = null;
 
     /**
      * Field API key

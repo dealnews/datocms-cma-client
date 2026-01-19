@@ -33,20 +33,14 @@ class Field extends ValueObject {
     public ?string $id = null;
 
     /**
-     * Field type, always "field"
+     * Field type, must always be "field"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "field". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'field' {
-        set {
-            if ($value !== 'field') {
-                throw new \InvalidArgumentException('Type must be "field"');
-            }
-            $this->type = $value;
-        }
-    }
+    public readonly string $type;
 
     /**
      * Field attributes
@@ -67,6 +61,10 @@ class Field extends ValueObject {
      * @var null|Relationships
      */
     public ?Relationships $relationships = null;
+
+    public function __construct() {
+        $this->type = 'field';
+    }
 
     /**
      * Converts to API array format

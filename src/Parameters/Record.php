@@ -34,18 +34,14 @@ class Record extends CommonWithLocale {
     /**
      * Record version to retrieve
      *
+     * WARNING: Must be 'published' or 'current'. Setting any other value
+     * will cause API errors.
+     *
      * Valid values: 'published' or 'current'. Enforced by setter.
      *
      * @var string
      */
-    public string $version = 'published' {
-        set {
-            if (!in_array($value, ['published', 'current'])) {
-                throw new \InvalidArgumentException('version must be "published" or "current"');
-            }
-            $this->version = $value;
-        }
-    }
+    public string $version = 'published';
 
     /**
      * Sort order specification

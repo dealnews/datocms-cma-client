@@ -18,7 +18,7 @@ use Moonspot\ValueObjects\ValueObject;
  * ```php
  * // Single collection relationship
  * $uploadCollection->relationships->parent->id = 'parent-collection-id';
- * 
+ *
  * // Upload's collection
  * $upload->relationships->upload_collection->id = 'collection-id';
  * ```
@@ -26,20 +26,14 @@ use Moonspot\ValueObjects\ValueObject;
 class UploadCollection extends ValueObject {
 
     /**
-     * Relationship type, always "upload_collection"
+     * Relationship type, must always be "upload_collection"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "upload_collection". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'upload_collection' {
-        set {
-            if ($value !== 'upload_collection') {
-                throw new \InvalidArgumentException('Type must be "upload_collection".');
-            }
-            $this->type = $value;
-        }
-    }
+    public readonly string $type;
 
     /**
      * Upload collection ID
@@ -49,6 +43,10 @@ class UploadCollection extends ValueObject {
      * @var string
      */
     public string $id = '';
+
+    public function __construct() {
+        $this->type = 'upload_collection';
+    }
 
 
     /**

@@ -21,7 +21,12 @@ namespace DealNews\DatoCMS\CMA\Input\Parts\Webhook;
  */
 class EventFilters implements \JsonSerializable {
 
-    const array VALID_ENTITY_TYPE = [
+    /**
+     * Valid entity types for event filters
+     *
+     * @var array<int, string>
+     */
+    const VALID_ENTITY_TYPE = [
         'item_type',
         'item',
         'build_trigger',

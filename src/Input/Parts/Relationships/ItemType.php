@@ -18,20 +18,14 @@ use Moonspot\ValueObjects\ValueObject;
 class ItemType extends ValueObject {
 
     /**
-     * Relationship type, always "item_type"
+     * Relationship type, must always be "item_type"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "item_type". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'item_type' {
-        set {
-            if ($value !== 'item_type') {
-                throw new \InvalidArgumentException('Type must be "item_type".');
-            }
-            $this->type = $value;
-        }
-    }
+    public readonly string $type;
 
     /**
      * Item type (model) ID
@@ -41,6 +35,10 @@ class ItemType extends ValueObject {
      * @var string
      */
     public string $id = '';
+
+    public function __construct() {
+        $this->type = 'item_type';
+    }
 
 
     /**

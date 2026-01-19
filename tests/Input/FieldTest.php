@@ -24,23 +24,6 @@ class FieldTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testTypeCannotBeChanged(): void {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "field"');
-
-        $field = new Field();
-        $field->type = 'invalid';
-    }
-
-    #[Group('unit')]
-    public function testTypeCanBeSetToField(): void {
-        $field = new Field();
-        $field->type = 'field';
-
-        $this->assertEquals('field', $field->type);
-    }
-
-    #[Group('unit')]
     public function testAttributesCanBeSetAsArray(): void {
         $field = new Field();
         $field->attributes['label'] = 'Title';
@@ -76,6 +59,17 @@ class FieldTest extends TestCase {
         $field->relationships = $relationships;
 
         $this->assertInstanceOf(Relationships::class, $field->relationships);
+    }
+
+    #[Group('unit')]
+    public function testToArrayHasProperTypeSet(): void {
+        $field = new Field();
+        $field->attributes['label'] = 'Test';
+
+        $array = $field->toArray();
+
+        $this->assertArrayHasKey('type', $array);
+        $this->assertEquals('field', $array['type']);
     }
 
     #[Group('unit')]

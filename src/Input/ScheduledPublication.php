@@ -26,20 +26,14 @@ use Moonspot\ValueObjects\ValueObject;
 class ScheduledPublication extends ValueObject {
 
     /**
-     * Scheduled Publication type, always "scheduled_publication"
+     * Scheduled Publication type, must always be "scheduled_publication"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "scheduled_publication". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'scheduled_publication' {
-        set {
-            if ($value !== 'scheduled_publication') {
-                throw new \InvalidArgumentException('Type must be "scheduled_publication"');
-            }
-            $this->type = $value;
-        }
-    }
+    public readonly string $type;
 
     /**
      * "ScheduledPublication" configuration attributes
@@ -53,6 +47,10 @@ class ScheduledPublication extends ValueObject {
      * @var array<string, mixed>
      */
     public array $attributes = [];
+
+    public function __construct() {
+        $this->type = 'scheduled_publication';
+    }
 
     /**
      * Converts the ScheduledPublication to an array for API submission

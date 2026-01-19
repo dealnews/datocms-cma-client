@@ -25,18 +25,8 @@ class SiteTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testTypeCannotBeChanged(): void {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "site"');
-
-        $site = new Site();
-        $site->type = 'invalid';
-    }
-
-    #[Group('unit')]
     public function testTypeCanBeSetToSite(): void {
         $site = new Site();
-        $site->type = 'site';
 
         $this->assertEquals('site', $site->type);
     }
@@ -84,6 +74,16 @@ class SiteTest extends TestCase {
         $site->relationships = $relationships;
 
         $this->assertInstanceOf(Relationships::class, $site->relationships);
+    }
+
+    #[Group('unit')]
+    public function testToArrayTypeProperlySet(): void {
+        $site = new Site();
+
+        $array = $site->toArray();
+
+        $this->assertArrayHasKey('type', $array);
+        $this->assertEquals('site', $array['type']);
     }
 
     #[Group('unit')]

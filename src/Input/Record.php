@@ -36,20 +36,14 @@ class Record extends ValueObject {
     public ?string $id = null;
 
     /**
-     * Record type, always "item"
+     * Record type, must always be "item"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "item". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'item' {
-        set {
-            if ($value !== 'item') {
-                throw new \InvalidArgumentException('Type must be "item"');
-            }
-            $this->type = $value;
-        }
-    }
+    public readonly string $type;
 
     /**
      * Field values for the record
@@ -89,6 +83,7 @@ class Record extends ValueObject {
         if (!empty($item_type_id)) {
             $this->relationships->item_type->id = $item_type_id;
         }
+        $this->type = 'item';
     }
 
     /**

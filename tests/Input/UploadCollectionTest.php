@@ -42,19 +42,7 @@ class UploadCollectionTest extends TestCase {
     public function testTypeCanBeSetToUploadCollection() {
         $collection = new UploadCollection();
 
-        $collection->type = 'upload_collection';
-
         $this->assertEquals('upload_collection', $collection->type);
-    }
-
-    #[Group('unit')]
-    public function testTypeThrowsOnInvalidValue() {
-        $collection = new UploadCollection();
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "upload_collection"');
-
-        $collection->type = 'invalid';
     }
 
     // =========================================================================
@@ -72,6 +60,17 @@ class UploadCollectionTest extends TestCase {
         $this->assertEquals(['label' => 'Product Images'], $array['attributes']);
         $this->assertArrayNotHasKey('id', $array);
         $this->assertArrayNotHasKey('relationships', $array);
+    }
+
+    #[Group('unit')]
+    public function testToArrayTypeProperlySet() {
+        $collection = new UploadCollection();
+        $collection->id = 'collection-123';
+
+        $array = $collection->toArray();
+
+        $this->assertArrayHasKey('type', $array);
+        $this->assertEquals('upload_collection', $array['type']);
     }
 
     #[Group('unit')]
@@ -139,11 +138,11 @@ class UploadCollectionTest extends TestCase {
     public function testToArrayIncludesChildrenRelationships() {
         $collection = new UploadCollection();
         $collection->attributes['label'] = 'Parent Collection';
-        
+
         $child1 = new \DealNews\DatoCMS\CMA\Input\Parts\Relationships\UploadCollection();
         $child1->id = 'child-1';
         $collection->relationships->children[] = $child1;
-        
+
         $child2 = new \DealNews\DatoCMS\CMA\Input\Parts\Relationships\UploadCollection();
         $child2->id = 'child-2';
         $collection->relationships->children[] = $child2;

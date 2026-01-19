@@ -34,20 +34,14 @@ class Model extends ValueObject {
     public ?string $id = null;
 
     /**
-     * Model type, always "item_type"
+     * Model type, must always be "item_type"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "item_type". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'item_type' {
-        set {
-            if ($value !== 'item_type') {
-                throw new \InvalidArgumentException('Type must be "item_type"');
-            }
-            $this->type = $value;
-        }
-    }
+    public readonly string $type;
 
     /**
      * Model configuration attributes
@@ -69,6 +63,10 @@ class Model extends ValueObject {
      * @var array<string, mixed>
      */
     public array $attributes = [];
+
+    public function __construct() {
+        $this->type = 'item_type';
+    }
 
     /**
      * Converts the model to an array for API submission

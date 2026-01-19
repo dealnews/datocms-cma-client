@@ -22,18 +22,8 @@ class FieldSetTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testTypeCannotBeChanged(): void {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "fieldset"');
-
-        $fieldset = new FieldSet();
-        $fieldset->type = 'invalid';
-    }
-
-    #[Group('unit')]
     public function testTypeCanBeSetToFieldSet(): void {
         $fieldset = new FieldSet();
-        $fieldset->type = 'fieldset';
 
         $this->assertEquals('fieldset', $fieldset->type);
     }
@@ -68,6 +58,17 @@ class FieldSetTest extends TestCase {
         $this->assertInstanceOf(Attributes::class, $fieldset->attributes);
         $this->assertEquals('Contact Information', $fieldset->attributes->title);
         $this->assertTrue($fieldset->attributes->collapsible);
+    }
+
+    #[Group('unit')]
+    public function testToArrayTypeProperlySet(): void {
+        $fieldset = new FieldSet();
+        $fieldset->attributes['title'] = 'Test';
+
+        $array = $fieldset->toArray();
+
+        $this->assertArrayHasKey('type', $array);
+        $this->assertEquals('fieldset', $array['type']);
     }
 
     #[Group('unit')]

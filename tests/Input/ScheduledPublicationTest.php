@@ -14,23 +14,14 @@ class ScheduledPublicationTest extends TestCase {
     #[Group('unit')]
     public function testDefaultTypeIsScheduledPublication() {
         $scheduled_publication = new ScheduledPublication();
-        
-        $this->assertEquals('scheduled_publication', $scheduled_publication->type);
-    }
 
-    #[Group('unit')]
-    public function testCannotChangeTypeFromScheduledPublication() {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "scheduled_publication"');
-        
-        $scheduled_publication = new ScheduledPublication();
-        $scheduled_publication->type = 'not_scheduled_publication';
+        $this->assertEquals('scheduled_publication', $scheduled_publication->type);
     }
 
     #[Group('unit')]
     public function testDefaultAttributesIsEmptyArray() {
         $scheduled_publication = new ScheduledPublication();
-        
+
         $this->assertIsArray($scheduled_publication->attributes);
         $this->assertEmpty($scheduled_publication->attributes);
     }
@@ -39,7 +30,7 @@ class ScheduledPublicationTest extends TestCase {
     public function testSettingPublicationScheduledAt() {
         $scheduled_publication = new ScheduledPublication();
         $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
-        
+
         $this->assertEquals('2030-09-01T12:00:00Z', $scheduled_publication->attributes['publication_scheduled_at']);
     }
 
@@ -47,7 +38,7 @@ class ScheduledPublicationTest extends TestCase {
     public function testSettingSelectivePublicationContentInLocales() {
         $scheduled_publication = new ScheduledPublication();
         $scheduled_publication->attributes['selective_publication']['content_in_locales'] = ['en', 'es'];
-        
+
         $this->assertEquals(['en', 'es'], $scheduled_publication->attributes['selective_publication']['content_in_locales']);
     }
 
@@ -55,7 +46,7 @@ class ScheduledPublicationTest extends TestCase {
     public function testSettingSelectivePublicationNonLocalizedContent() {
         $scheduled_publication = new ScheduledPublication();
         $scheduled_publication->attributes['selective_publication']['non_localized_content'] = true;
-        
+
         $this->assertTrue($scheduled_publication->attributes['selective_publication']['non_localized_content']);
     }
 
@@ -63,9 +54,9 @@ class ScheduledPublicationTest extends TestCase {
     public function testToArrayWithMinimalData() {
         $scheduled_publication = new ScheduledPublication();
         $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
-        
+
         $result = $scheduled_publication->toArray();
-        
+
         $this->assertEquals('scheduled_publication', $result['type']);
         $this->assertEquals('2030-09-01T12:00:00Z', $result['attributes']['publication_scheduled_at']);
     }
@@ -74,10 +65,11 @@ class ScheduledPublicationTest extends TestCase {
     public function testToArrayIncludesTypeAndAttributes() {
         $scheduled_publication = new ScheduledPublication();
         $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
-        
+
         $result = $scheduled_publication->toArray();
-        
+
         $this->assertArrayHasKey('type', $result);
+        $this->assertEquals('scheduled_publication', $result['type']);
         $this->assertArrayHasKey('attributes', $result);
     }
 
@@ -86,9 +78,9 @@ class ScheduledPublicationTest extends TestCase {
         $scheduled_publication = new ScheduledPublication();
         $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
         $scheduled_publication->attributes['non_localized_content'] = null;
-        
+
         $result = $scheduled_publication->toArray();
-        
+
         $this->assertArrayNotHasKey('non_localized_content', $result['attributes']);
     }
 
@@ -98,9 +90,9 @@ class ScheduledPublicationTest extends TestCase {
         $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
         $scheduled_publication->attributes['selective_publication']['content_in_locales'] = ['en', 'fr'];
         $scheduled_publication->attributes['non_localized_content'] = true;
-        
+
         $result = $scheduled_publication->toArray();
-        
+
         $this->assertEquals('scheduled_publication', $result['type']);
         $this->assertEquals('2030-09-01T12:00:00Z', $result['attributes']['publication_scheduled_at']);
         $this->assertEquals(['en', 'fr'], $result['attributes']['selective_publication']['content_in_locales']);

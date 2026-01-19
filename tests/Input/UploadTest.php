@@ -46,19 +46,7 @@ class UploadTest extends TestCase {
     public function testTypeCanBeSetToUpload() {
         $upload = new Upload();
 
-        $upload->type = 'upload';
-
         $this->assertEquals('upload', $upload->type);
-    }
-
-    #[Group('unit')]
-    public function testTypeThrowsOnInvalidValue() {
-        $upload = new Upload();
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "upload"');
-
-        $upload->type = 'invalid';
     }
 
     // =========================================================================
@@ -76,6 +64,17 @@ class UploadTest extends TestCase {
         $this->assertArrayHasKey('attributes', $array);
         $this->assertArrayNotHasKey('id', $array);
         $this->assertArrayNotHasKey('relationships', $array);
+    }
+
+    #[Group('unit')]
+    public function testToArrayTypeProperlySet() {
+        $upload = new Upload();
+        $upload->id = 'upload-123';
+
+        $array = $upload->toArray();
+
+        $this->assertArrayHasKey('type', $array);
+        $this->assertEquals('upload', $array['type']);
     }
 
     #[Group('unit')]

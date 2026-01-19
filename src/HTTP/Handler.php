@@ -36,21 +36,21 @@ class Handler {
      *
      * @var int
      */
-    const int MAX_RETRIES = 5;
+    const MAX_RETRIES = 5;
 
     /**
      * Default DatoCMS API base URL
      *
      * @var string
      */
-    const string DEFAULT_BASE_URI = 'https://site-api.datocms.com';
+    const DEFAULT_BASE_URI = 'https://site-api.datocms.com';
 
     /**
      * Placeholder value for null environment in instance cache key
      *
      * @var string
      */
-    const string ENVIRONMENT_PLACEHOLDER = 'DEALNEWS-NULL-NN-984562910-NN-NULL-DEALNEWS';
+    const ENVIRONMENT_PLACEHOLDER = 'DEALNEWS-NULL-NN-984562910-NN-NULL-DEALNEWS';
 
     /**
      * Cache of Handler instances keyed by sha256 of passed parameters to self::init()

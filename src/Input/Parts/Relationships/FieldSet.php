@@ -18,18 +18,14 @@ use Moonspot\ValueObjects\ValueObject;
 class FieldSet extends ValueObject {
 
     /**
-     * FieldSet type, can only be set to "fieldset"
+     * FieldSet type, must always be "fieldset"
+     *
+     * WARNING: This property MUST be set to "fieldset". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'fieldset' {
-        set {
-            if ($value !== 'fieldset') {
-                throw new \InvalidArgumentException('Type must be "fieldset"');
-            }
-            $this->type = $value;
-        }
-    }
+    public string $type = 'fieldset';
 
     /**
      * FieldSet ID

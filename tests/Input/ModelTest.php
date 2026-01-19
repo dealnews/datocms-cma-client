@@ -21,15 +21,6 @@ class ModelTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testTypeCannotBeChanged(): void {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "item_type"');
-
-        $model = new Model();
-        $model->type = 'invalid';
-    }
-
-    #[Group('unit')]
     public function testTypeCanBeSetToItemType(): void {
         $model = new Model();
         $model->type = 'item_type';

@@ -44,14 +44,6 @@ class AttributesTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testFieldTypeRejectsInvalidType(): void {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('field_type must be null or one of:');
-
-        $attributes = new Attributes();
-        $attributes->field_type = 'invalid_type';
-    }
-
     #[Group('unit')]
     public function testFieldTypeCanBeSetToNull(): void {
         $attributes = new Attributes();

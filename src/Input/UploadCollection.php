@@ -30,20 +30,14 @@ class UploadCollection extends ValueObject {
     public ?string $id = null;
 
     /**
-     * Resource type, always "upload_collection"
+     * Resource type, must always be "upload_collection"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "upload_collection". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'upload_collection' {
-        set {
-            if ($value !== 'upload_collection') {
-                throw new \InvalidArgumentException('Type must be "upload_collection"');
-            }
-            $this->type = $value;
-        }
-    }
+    public string $type = 'upload_collection';
 
     /**
      * Collection attributes

@@ -16,15 +16,6 @@ class ScheduledUnpublishingTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testCannotChangeType() {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "scheduled_unpublishing"');
-        
-        $scheduled_unpublishing = new ScheduledUnpublishing();
-        $scheduled_unpublishing->type = 'not_scheduled_unpublishing';
-    }
-
-    #[Group('unit')]
     public function testSettingUnpublishingScheduledAt() {
         $scheduled_unpublishing = new ScheduledUnpublishing();
         $scheduled_unpublishing->attributes['unpublishing_scheduled_at'] = '2030-09-01T12:00:00Z';

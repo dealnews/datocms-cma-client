@@ -35,15 +35,6 @@ class RoleTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testCannotChangeTypeFromRole() {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "role"');
-        
-        $role = new Role();
-        $role->type = 'something_else';
-    }
-
-    #[Group('unit')]
     public function testToArrayWrapsInDataStructure() {
         $role = new Role();
         $role->id = 'role_123';

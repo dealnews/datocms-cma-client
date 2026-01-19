@@ -36,20 +36,14 @@ class Upload extends ValueObject {
     public ?string $id = null;
 
     /**
-     * Resource type, always "upload"
+     * Resource type, must always be "upload"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "upload". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'upload' {
-        set {
-            if ($value !== 'upload') {
-                throw new \InvalidArgumentException('Type must be "upload"');
-            }
-            $this->type = $value;
-        }
-    }
+    public string $type = 'upload';
 
     /**
      * Upload attributes (path, copyright, author, notes, tags, metadata)

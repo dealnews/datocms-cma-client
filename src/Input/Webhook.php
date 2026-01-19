@@ -18,20 +18,14 @@ class Webhook extends ValueObject {
     public ?string $id = null;
 
     /**
-     * Webhook type, always "webhook"
+     * Webhook type, must always be "webhook"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "webhook". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'webhook' {
-        set {
-            if ($value !== 'webhook') {
-                throw new \InvalidArgumentException('Type must be "webhook"');
-            }
-            $this->type = $value;
-        }
-    }
+    public string $type = 'webhook';
 
     /**
      * Attributes for the webhook

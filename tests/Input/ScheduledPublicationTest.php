@@ -19,15 +19,6 @@ class ScheduledPublicationTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testCannotChangeTypeFromScheduledPublication() {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "scheduled_publication"');
-        
-        $scheduled_publication = new ScheduledPublication();
-        $scheduled_publication->type = 'not_scheduled_publication';
-    }
-
-    #[Group('unit')]
     public function testDefaultAttributesIsEmptyArray() {
         $scheduled_publication = new ScheduledPublication();
         

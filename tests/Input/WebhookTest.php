@@ -22,15 +22,6 @@ class WebhookTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testTypeCannotBeChanged(): void {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "webhook"');
-
-        $webhook = new Webhook();
-        $webhook->type = 'invalid';
-    }
-
-    #[Group('unit')]
     public function testTypeCanBeSetToWebhook(): void {
         $webhook = new Webhook();
         $webhook->type = 'webhook';

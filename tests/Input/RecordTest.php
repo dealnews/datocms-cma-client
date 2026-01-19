@@ -58,12 +58,10 @@ class RecordTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testCannotChangeTypeFromItem() {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "item"');
-        
+    public function testDefaultAttributesIsEmptyArray() {
         $record = new Record();
-        $record->type = 'not_item';
+        
+        $this->assertEquals([], $record->attributes);
     }
 
     #[Group('unit')]

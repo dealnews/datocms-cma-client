@@ -51,16 +51,6 @@ class UploadTest extends TestCase {
         $this->assertEquals('upload', $upload->type);
     }
 
-    #[Group('unit')]
-    public function testTypeThrowsOnInvalidValue() {
-        $upload = new Upload();
-
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "upload"');
-
-        $upload->type = 'invalid';
-    }
-
     // =========================================================================
     // toArray() tests
     // =========================================================================

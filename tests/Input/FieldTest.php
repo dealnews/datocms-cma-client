@@ -24,15 +24,6 @@ class FieldTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testTypeCannotBeChanged(): void {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "field"');
-
-        $field = new Field();
-        $field->type = 'invalid';
-    }
-
-    #[Group('unit')]
     public function testTypeCanBeSetToField(): void {
         $field = new Field();
         $field->type = 'field';

@@ -44,16 +44,6 @@ class CreatorTest extends TestCase {
     }
 
     #[Group('unit')]
-    #[DataProvider('invalidCreatorTypesProvider')]
-    public function testInvalidCreatorType(string $invalidType) {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be null or one of "account", "access_token", "user", "sso_user", "organization"');
-        
-        $creator = new Creator();
-        $creator->type = $invalidType;
-    }
-
-    #[Group('unit')]
     public function testToArrayReturnsEmptyWhenTypeIsNull() {
         $creator = new Creator();
         $creator->id = 'some_id';

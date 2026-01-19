@@ -23,19 +23,15 @@ class Creator extends ValueObject {
     /**
      * Creator type
      *
+     * WARNING: Must be null or one of: 'account', 'access_token', 'user', 
+     * 'sso_user', 'organization'
+     *
      * Valid values: 'account', 'access_token', 'user', 'sso_user', 'organization'
      * If null (with id also null), DatoCMS sets creator automatically.
      *
      * @var string|null
      */
-    public ?string $type = null {
-        set {
-            if (!is_null($value) && !in_array($value, ['account', 'access_token', 'user', 'sso_user', 'organization'])) {
-                throw new \InvalidArgumentException('Type must be null or one of "account", "access_token", "user", "sso_user", "organization"');
-            }
-            $this->type = $value;
-        }
-    }
+    public ?string $type = null;
 
     /**
      * Creator ID

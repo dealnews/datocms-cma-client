@@ -44,15 +44,6 @@ class RecordTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testVersionThrowsExceptionForInvalidValue() {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('version must be "published" or "current"');
-
-        $params = new Record();
-        $params->version = 'invalid';
-    }
-
-    #[Group('unit')]
     public function testNestedCanBeSetToTrue() {
         $params = new Record();
         $params->nested = true;

@@ -55,20 +55,16 @@ class FallbackSEO extends ValueObject {
     /**
      * Determines how a Twitter link preview is shown
      *
+     * WARNING: Must be 'summary', 'summary_large_image', null, or false.
+     * Setting to false excludes this from the request input.
+     *
      * Optional: Setting to false will exclude this from the request input
      *
      * If set to a string, it must be either "summary" or "summary_large_image"
      *
      * @var string|null|false
      */
-    public string|null|false $twitter_card = false {
-        set {
-            if ($value !== 'summary' && $value !== 'summary_large_image' && $value !== false && $value !== null) {
-                throw new \InvalidArgumentException('twitter_card must be "summary", "summary_large_image", null (or can be set to false if you don\'t want to send it with your request)');
-            }
-            $this->twitter_card = $value;
-        }
-    }
+    public string|null|false $twitter_card = false;
 
     /**
      * Converts to API array format

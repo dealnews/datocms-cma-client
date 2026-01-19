@@ -25,15 +25,6 @@ class SiteTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testTypeCannotBeChanged(): void {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "site"');
-
-        $site = new Site();
-        $site->type = 'invalid';
-    }
-
-    #[Group('unit')]
     public function testTypeCanBeSetToSite(): void {
         $site = new Site();
         $site->type = 'site';

@@ -18,18 +18,14 @@ use Moonspot\ValueObjects\ValueObject;
 class Role extends ValueObject {
 
     /**
-     * Role type, can only be set to "role"
+     * Role type, must always be "role"
+     *
+     * WARNING: This property MUST be set to "role". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'role' {
-        set {
-            if ($value !== 'role') {
-                throw new \InvalidArgumentException('Type must be "role"');
-            }
-            $this->type = $value;
-        }
-    }
+    public string $type = 'role';
 
     /**
      * Role ID

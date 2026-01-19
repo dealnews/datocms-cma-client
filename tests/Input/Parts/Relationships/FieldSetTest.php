@@ -21,16 +21,6 @@ class FieldSetTest extends TestCase
     }
 
     #[Group('unit')]
-    public function testTypeCannotBeChanged()
-    {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "fieldset"');
-        
-        $fieldset = new FieldSet();
-        $fieldset->type = 'invalid';
-    }
-
-    #[Group('unit')]
     public function testTypeCanBeSetToFieldset()
     {
         $fieldset = new FieldSet();

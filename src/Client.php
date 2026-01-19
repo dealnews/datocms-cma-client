@@ -61,7 +61,12 @@ use Psr\Log\LogLevel;
  */
 class Client {
 
-    protected const array PROPERTY_MAPPING = [
+    /**
+     * Property mapping from magic property names to API class names
+     *
+     * @var array<string, class-string>
+     */
+    protected const PROPERTY_MAPPING = [
         'record' => Record::class,
         'model' => Model::class,
         'upload' => Upload::class,

@@ -29,20 +29,14 @@ use DealNews\DatoCMS\CMA\Input\Parts\Site\Relationships;
 class Site extends ValueObject {
 
     /**
-     * Input type, always "site"
+     * Input type, must always be "site"
      *
-     * Enforced by setter - attempting to set any other value throws an exception.
+     * WARNING: This property MUST be set to "site". Setting any other value
+     * will cause API errors. Do not modify this property.
      *
      * @var string
      */
-    public string $type = 'site' {
-        set {
-            if ($value !== 'site') {
-                throw new \InvalidArgumentException('Type must be "site"');
-            }
-            $this->type = $value;
-        }
-    }
+    public string $type = 'site';
 
     /**
      * Site attributes to update

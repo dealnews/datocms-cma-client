@@ -31,15 +31,6 @@ class ItemTypeTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testCannotChangeTypeFromItemType() {
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('Type must be "item_type".');
-        
-        $itemType = new ItemType();
-        $itemType->type = 'something_else';
-    }
-
-    #[Group('unit')]
     public function testToArrayWrapsInDataStructure() {
         $itemType = new ItemType();
         $itemType->id = 'model_123';

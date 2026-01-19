@@ -19,7 +19,7 @@ namespace DealNews\DatoCMS\CMA\Input\Parts\Webhook;
  */
 class Events implements \JsonSerializable {
 
-    const array VALID_ENTITY_TYPE = [
+    const VALID_ENTITY_TYPE = [
         'item_type',
         'item',
         'upload',

@@ -25,14 +25,14 @@ class Page extends ValueObject {
      *
      * @var int
      */
-    const int DEFAULT_OFFSET = 0;
+    const DEFAULT_OFFSET = 0;
 
     /**
      * Default limit value (excluded from output when used)
      *
      * @var int
      */
-    const int DEFAULT_LIMIT = 15;
+    const DEFAULT_LIMIT = 15;
 
     /**
      * Number of records to skip

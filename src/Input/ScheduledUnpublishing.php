@@ -30,7 +30,7 @@ class ScheduledUnpublishing extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'scheduled_unpublishing';
+    public readonly string $type;
 
     /**
      * "ScheduledUnpublishing" configuration attributes
@@ -42,6 +42,10 @@ class ScheduledUnpublishing extends ValueObject {
      * @var array<string, mixed>
      */
     public array $attributes = [];
+
+    public function __construct() {
+        $this->type = 'scheduled_unpublishing';
+    }
 
     /**
      * Converts the ScheduledUnpublishing to an array for API submission

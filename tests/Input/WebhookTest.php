@@ -24,7 +24,6 @@ class WebhookTest extends TestCase {
     #[Group('unit')]
     public function testTypeCanBeSetToWebhook(): void {
         $webhook = new Webhook();
-        $webhook->type = 'webhook';
 
         $this->assertEquals('webhook', $webhook->type);
     }
@@ -59,6 +58,17 @@ class WebhookTest extends TestCase {
         $this->assertInstanceOf(Attributes::class, $webhook->attributes);
         $this->assertEquals('Test Webhook', $webhook->attributes->name);
         $this->assertEquals('https://example.com/webhook', $webhook->attributes->url);
+    }
+
+    #[Group('unit')]
+    public function testToArrayTypeProperlySet(): void {
+        $webhook = new Webhook();
+        $webhook->attributes['name'] = 'Test';
+
+        $array = $webhook->toArray();
+
+        $this->assertArrayHasKey('type', $array);
+        $this->assertEquals('webhook', $array['type']);
     }
 
     #[Group('unit')]

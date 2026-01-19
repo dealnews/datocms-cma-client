@@ -15,7 +15,7 @@ class FieldSetTest extends TestCase
     public function testDefaultValues()
     {
         $fieldset = new FieldSet();
-        
+
         $this->assertSame('fieldset', $fieldset->type);
         $this->assertSame('', $fieldset->id);
     }
@@ -24,8 +24,7 @@ class FieldSetTest extends TestCase
     public function testTypeCanBeSetToFieldset()
     {
         $fieldset = new FieldSet();
-        $fieldset->type = 'fieldset';
-        
+
         $this->assertSame('fieldset', $fieldset->type);
     }
 
@@ -34,7 +33,7 @@ class FieldSetTest extends TestCase
     {
         $fieldset = new FieldSet();
         $fieldset->id = '24';
-        
+
         $this->assertSame('24', $fieldset->id);
     }
 
@@ -42,11 +41,10 @@ class FieldSetTest extends TestCase
     public function testToArrayWrapsDataCorrectly()
     {
         $fieldset = new FieldSet();
-        $fieldset->type = 'fieldset';
         $fieldset->id = '42';
-        
+
         $result = $fieldset->toArray();
-        
+
         $this->assertArrayHasKey('data', $result);
         $this->assertIsArray($result['data']);
         $this->assertArrayHasKey('type', $result['data']);

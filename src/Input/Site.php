@@ -36,7 +36,7 @@ class Site extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'site';
+    public readonly string $type;
 
     /**
      * Site attributes to update
@@ -68,6 +68,10 @@ class Site extends ValueObject {
      * @var null|Relationships
      */
     public ?Relationships $relationships = null;
+
+    public function __construct() {
+        $this->type = 'site';
+    }
 
     /**
      * Converts to API array format

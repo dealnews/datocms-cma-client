@@ -23,7 +23,6 @@ class ModelTest extends TestCase {
     #[Group('unit')]
     public function testTypeCanBeSetToItemType(): void {
         $model = new Model();
-        $model->type = 'item_type';
 
         $this->assertEquals('item_type', $model->type);
     }
@@ -46,6 +45,17 @@ class ModelTest extends TestCase {
         $model->id = 'model-123';
 
         $this->assertEquals('model-123', $model->id);
+    }
+
+    #[Group('unit')]
+    public function testToArrayTypeProperlySet(): void {
+        $model = new Model();
+        $model->attributes['name'] = 'Test';
+
+        $array = $model->toArray();
+
+        $this->assertArrayHasKey('type', $array);
+        $this->assertEquals('item_type', $array['type']);
     }
 
     #[Group('unit')]

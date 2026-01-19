@@ -25,7 +25,7 @@ class ItemType extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'item_type';
+    public readonly string $type;
 
     /**
      * Item type (model) ID
@@ -35,6 +35,10 @@ class ItemType extends ValueObject {
      * @var string
      */
     public string $id = '';
+
+    public function __construct() {
+        $this->type = 'item_type';
+    }
 
 
     /**

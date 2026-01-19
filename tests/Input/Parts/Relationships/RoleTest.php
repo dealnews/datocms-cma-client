@@ -15,14 +15,14 @@ class RoleTest extends TestCase {
     #[Group('unit')]
     public function testDefaultTypeIsRole() {
         $role = new Role();
-        
+
         $this->assertEquals('role', $role->type);
     }
 
     #[Group('unit')]
     public function testDefaultIdIsEmpty() {
         $role = new Role();
-        
+
         $this->assertEquals('', $role->id);
     }
 
@@ -30,7 +30,7 @@ class RoleTest extends TestCase {
     public function testSettingValidId() {
         $role = new Role();
         $role->id = 'role_123';
-        
+
         $this->assertEquals('role_123', $role->id);
     }
 
@@ -38,9 +38,9 @@ class RoleTest extends TestCase {
     public function testToArrayWrapsInDataStructure() {
         $role = new Role();
         $role->id = 'role_123';
-        
+
         $array = $role->toArray();
-        
+
         $this->assertArrayHasKey('data', $array);
         $this->assertEquals([
             'data' => [
@@ -53,9 +53,9 @@ class RoleTest extends TestCase {
     #[Group('unit')]
     public function testToArrayWithDefaultValues() {
         $role = new Role();
-        
+
         $array = $role->toArray();
-        
+
         $this->assertEquals([
             'data' => [
                 'type' => 'role',
@@ -67,8 +67,7 @@ class RoleTest extends TestCase {
     #[Group('unit')]
     public function testTypeRemainsRoleAfterSettingSameValue() {
         $role = new Role();
-        $role->type = 'role';
-        
+
         $this->assertEquals('role', $role->type);
     }
 }

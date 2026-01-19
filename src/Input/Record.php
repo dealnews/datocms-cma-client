@@ -43,7 +43,7 @@ class Record extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'item';
+    public readonly string $type;
 
     /**
      * Field values for the record
@@ -83,6 +83,7 @@ class Record extends ValueObject {
         if (!empty($item_type_id)) {
             $this->relationships->item_type->id = $item_type_id;
         }
+        $this->type = 'item';
     }
 
     /**

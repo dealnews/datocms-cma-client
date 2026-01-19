@@ -37,7 +37,7 @@ class UploadCollection extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'upload_collection';
+    public readonly string $type;
 
     /**
      * Collection attributes
@@ -60,6 +60,7 @@ class UploadCollection extends ValueObject {
      */
     public function __construct() {
         $this->relationships = new Relationships();
+        $this->type = 'upload_collection';
     }
 
     /**

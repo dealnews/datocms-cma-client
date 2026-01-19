@@ -40,7 +40,7 @@ class Field extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'field';
+    public readonly string $type;
 
     /**
      * Field attributes
@@ -61,6 +61,10 @@ class Field extends ValueObject {
      * @var null|Relationships
      */
     public ?Relationships $relationships = null;
+
+    public function __construct() {
+        $this->type = 'field';
+    }
 
     /**
      * Converts to API array format

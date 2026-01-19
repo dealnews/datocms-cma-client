@@ -41,7 +41,7 @@ class Model extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'item_type';
+    public readonly string $type;
 
     /**
      * Model configuration attributes
@@ -63,6 +63,10 @@ class Model extends ValueObject {
      * @var array<string, mixed>
      */
     public array $attributes = [];
+
+    public function __construct() {
+        $this->type = 'item_type';
+    }
 
     /**
      * Converts the model to an array for API submission

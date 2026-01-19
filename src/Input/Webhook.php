@@ -25,7 +25,7 @@ class Webhook extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'webhook';
+    public readonly string $type;
 
     /**
      * Attributes for the webhook
@@ -33,6 +33,10 @@ class Webhook extends ValueObject {
      * @var array|Attributes
      */
     public array|Attributes $attributes = [];
+
+    public function __construct() {
+        $this->type = 'webhook';
+    }
 
     /**
      * Converts the webhook to an array for API submission

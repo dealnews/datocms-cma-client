@@ -42,7 +42,7 @@ class FieldSet extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'fieldset';
+    public readonly string $type;
 
     /**
      * FieldSet attributes for creating/updating fieldsets
@@ -54,6 +54,10 @@ class FieldSet extends ValueObject {
      * @var array<string, mixed>|Attributes
      */
     public array|Attributes $attributes = [];
+
+    public function __construct() {
+        $this->type = 'fieldset';
+    }
 
     /**
      * Converts the fieldset to an array for API submission

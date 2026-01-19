@@ -43,7 +43,7 @@ class Upload extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'upload';
+    public readonly string $type;
 
     /**
      * Upload attributes (path, copyright, author, notes, tags, metadata)
@@ -65,6 +65,7 @@ class Upload extends ValueObject {
     public function __construct() {
         $this->attributes = new Attributes();
         $this->relationships = new Relationships();
+        $this->type = 'upload';
     }
 
     /**

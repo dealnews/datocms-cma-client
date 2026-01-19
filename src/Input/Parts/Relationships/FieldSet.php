@@ -25,7 +25,7 @@ class FieldSet extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'fieldset';
+    public readonly string $type;
 
     /**
      * FieldSet ID
@@ -35,6 +35,10 @@ class FieldSet extends ValueObject {
      * @var string
      */
     public string $id = '';
+
+    public function __construct() {
+        $this->type = 'fieldset';
+    }
 
     /**
      * Converts to API array format

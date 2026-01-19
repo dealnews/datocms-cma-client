@@ -18,7 +18,7 @@ use Moonspot\ValueObjects\ValueObject;
  * ```php
  * // Single collection relationship
  * $uploadCollection->relationships->parent->id = 'parent-collection-id';
- * 
+ *
  * // Upload's collection
  * $upload->relationships->upload_collection->id = 'collection-id';
  * ```
@@ -33,7 +33,7 @@ class UploadCollection extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'upload_collection';
+    public readonly string $type;
 
     /**
      * Upload collection ID
@@ -43,6 +43,10 @@ class UploadCollection extends ValueObject {
      * @var string
      */
     public string $id = '';
+
+    public function __construct() {
+        $this->type = 'upload_collection';
+    }
 
 
     /**

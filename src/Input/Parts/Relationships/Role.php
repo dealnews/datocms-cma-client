@@ -25,7 +25,7 @@ class Role extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'role';
+    public readonly string $type;
 
     /**
      * Role ID
@@ -35,6 +35,10 @@ class Role extends ValueObject {
      * @var string
      */
     public string $id = '';
+
+    public function __construct() {
+        $this->type = 'role';
+    }
 
     /**
      * Converts to API array format

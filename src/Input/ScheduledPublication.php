@@ -33,7 +33,7 @@ class ScheduledPublication extends ValueObject {
      *
      * @var string
      */
-    public string $type = 'scheduled_publication';
+    public readonly string $type;
 
     /**
      * "ScheduledPublication" configuration attributes
@@ -47,6 +47,10 @@ class ScheduledPublication extends ValueObject {
      * @var array<string, mixed>
      */
     public array $attributes = [];
+
+    public function __construct() {
+        $this->type = 'scheduled_publication';
+    }
 
     /**
      * Converts the ScheduledPublication to an array for API submission

@@ -2,8 +2,6 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\Upload;
 use DealNews\DatoCMS\CMA\API\UploadRequest;
 use DealNews\DatoCMS\CMA\Exception\S3Upload;
@@ -14,6 +12,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
 use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\Upload class
@@ -68,16 +68,129 @@ class UploadTest extends TestCase {
 
     #[Group('unit')]
     public function testListWithParameters() {
-        $params = new UploadParameter();
+        $params               = new UploadParameter();
         $params->filter->type = 'image';
 
-        $expected_query = $params->toArray();
+        $expected_query    = $params->toArray();
         $expected_response = ['data' => []];
-        $upload = $this->createUploadWithMock('GET', '/uploads', $expected_query, [], $expected_response);
+        $upload            = $this->createUploadWithMock('GET', '/uploads', $expected_query, [], $expected_response);
 
         $result = $upload->list($params);
 
         $this->assertEquals($expected_response, $result);
+    }
+
+    // =========================================================================
+    // listAll() tests
+    // =========================================================================
+
+    #[Group('unit')]
+    public function testListAllWithNullParameters() {
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->with(
+                'GET',
+                '/uploads',
+                $this->callback(function ($query) {
+                    return isset($query['page']['limit']) &&
+                           $query['page']['limit'] === 500;
+                }),
+                []
+            )
+            ->willReturn(['data' => [['id' => '1'], ['id' => '2']]]);
+
+        $upload = new Upload($mock_handler);
+        $result = $upload->listAll();
+
+        $this->assertEquals(
+            ['data' => [['id' => '1'], ['id' => '2']]],
+            $result
+        );
+    }
+
+    #[Group('unit')]
+    public function testListAllWithProvidedParameters() {
+        $params               = new UploadParameter();
+        $params->filter->type = 'image';
+        $params->page->limit  = 100;
+        $params->page->offset = 50;
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->with(
+                'GET',
+                '/uploads',
+                $this->callback(function ($query) {
+                    return isset($query['page']['limit'])  &&
+                           $query['page']['limit'] === 500 &&
+                           isset($query['filter']['type']) &&
+                           $query['filter']['type'] === 'image';
+                }),
+                []
+            )
+            ->willReturn(['data' => [['id' => '1']]]);
+
+        $upload = new Upload($mock_handler);
+        $result = $upload->listAll($params);
+
+        $this->assertEquals(['data' => [['id' => '1']]], $result);
+    }
+
+    #[Group('unit')]
+    public function testListAllSinglePage() {
+        $first_page = array_fill(0, 250, ['id' => 'upload']);
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->willReturn(['data' => $first_page]);
+
+        $upload = new Upload($mock_handler);
+        $result = $upload->listAll();
+
+        $this->assertCount(250, $result['data']);
+    }
+
+    #[Group('unit')]
+    public function testListAllMultiplePages() {
+        $first_page  = array_fill(0, 500, ['id' => 'page1']);
+        $second_page = array_fill(0, 250, ['id' => 'page2']);
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->exactly(2))
+            ->method('execute')
+            ->willReturnOnConsecutiveCalls(
+                ['data' => $first_page],
+                ['data' => $second_page]
+            );
+
+        $upload = new Upload($mock_handler);
+        $result = $upload->listAll();
+
+        $this->assertCount(750, $result['data']);
+    }
+
+    #[Group('unit')]
+    public function testListAllExactly500OnLastPage() {
+        $first_page  = array_fill(0, 500, ['id' => 'page1']);
+        $second_page = array_fill(0, 500, ['id' => 'page2']);
+        $third_page  = [];
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->exactly(3))
+            ->method('execute')
+            ->willReturnOnConsecutiveCalls(
+                ['data' => $first_page],
+                ['data' => $second_page],
+                ['data' => $third_page]
+            );
+
+        $upload = new Upload($mock_handler);
+        $result = $upload->listAll();
+
+        $this->assertCount(1000, $result['data']);
     }
 
     // =========================================================================
@@ -125,10 +238,10 @@ class UploadTest extends TestCase {
 
     #[Group('unit')]
     public function testCreateWithInput() {
-        $input = new UploadInput();
+        $input                   = new UploadInput();
         $input->attributes->path = '/45/image.jpg';
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = [
             'data' => [
                 'id'   => 'new-upload-id',
@@ -173,10 +286,10 @@ class UploadTest extends TestCase {
 
     #[Group('unit')]
     public function testUpdateWithInput() {
-        $input = new UploadInput();
+        $input                     = new UploadInput();
         $input->attributes->author = 'New Author';
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = [
             'data' => [
                 'id'   => 'upload-456',
@@ -203,7 +316,7 @@ class UploadTest extends TestCase {
     #[Group('unit')]
     public function testDelete() {
         $expected_response = ['data' => []];
-        $upload = $this->createUploadWithMock('DELETE', '/uploads/upload-to-delete', [], [], $expected_response);
+        $upload            = $this->createUploadWithMock('DELETE', '/uploads/upload-to-delete', [], [], $expected_response);
 
         $result = $upload->delete('upload-to-delete');
 
@@ -232,7 +345,7 @@ class UploadTest extends TestCase {
     #[Group('unit')]
     public function testReferencesWithNested() {
         $expected_response = ['data' => []];
-        $upload = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['nested' => true], [], $expected_response);
+        $upload            = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['nested' => true], [], $expected_response);
 
         $result = $upload->references('upload-123', true);
 
@@ -242,7 +355,7 @@ class UploadTest extends TestCase {
     #[Group('unit')]
     public function testReferencesWithVersion() {
         $expected_response = ['data' => []];
-        $upload = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['version' => 'published'], [], $expected_response);
+        $upload            = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['version' => 'published'], [], $expected_response);
 
         $result = $upload->references('upload-123', false, 'published');
 
@@ -252,7 +365,7 @@ class UploadTest extends TestCase {
     #[Group('unit')]
     public function testReferencesWithNestedAndVersion() {
         $expected_response = ['data' => []];
-        $upload = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['nested' => true, 'version' => 'current'], [], $expected_response);
+        $upload            = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['nested' => true, 'version' => 'current'], [], $expected_response);
 
         $result = $upload->references('upload-123', true, 'current');
 
@@ -262,7 +375,7 @@ class UploadTest extends TestCase {
     #[Group('unit')]
     public function testReferencesWithPublishedOrCurrent() {
         $expected_response = ['data' => []];
-        $upload = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['version' => 'published-or-current'], [], $expected_response);
+        $upload            = $this->createUploadWithMock('GET', '/uploads/upload-123/references', ['version' => 'published-or-current'], [], $expected_response);
 
         $result = $upload->references('upload-123', false, 'published-or-current');
 
@@ -298,7 +411,7 @@ class UploadTest extends TestCase {
             ],
         ];
         $expected_response = ['data' => ['id' => 'job-123', 'type' => 'job']];
-        $upload = $this->createUploadWithMock('POST', '/uploads/bulk/destroy', [], $expected_data, $expected_response);
+        $upload            = $this->createUploadWithMock('POST', '/uploads/bulk/destroy', [], $expected_data, $expected_response);
 
         $result = $upload->deleteBulk(['id-1', 'id-2']);
 
@@ -311,7 +424,7 @@ class UploadTest extends TestCase {
 
     #[Group('unit')]
     public function testUpdateBulk() {
-        $attributes = ['author' => 'Bulk Author', 'copyright' => '© 2025'];
+        $attributes    = ['author' => 'Bulk Author', 'copyright' => '© 2025'];
         $expected_data = [
             'data' => [
                 'type'          => 'upload_bulk_update_operation',
@@ -328,7 +441,7 @@ class UploadTest extends TestCase {
             ],
         ];
         $expected_response = ['data' => ['id' => 'job-456', 'type' => 'job']];
-        $upload = $this->createUploadWithMock('PUT', '/uploads/bulk/update', [], $expected_data, $expected_response);
+        $upload            = $this->createUploadWithMock('PUT', '/uploads/bulk/update', [], $expected_data, $expected_response);
 
         $result = $upload->updateBulk(['id-1', 'id-2', 'id-3'], $attributes);
 
@@ -342,7 +455,7 @@ class UploadTest extends TestCase {
     #[Group('unit')]
     public function testUploadFileThrowsOnNonExistentFile() {
         $mock_handler = $this->createMock(Handler::class);
-        $upload = new Upload($mock_handler);
+        $upload       = new Upload($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('File does not exist');
@@ -378,7 +491,7 @@ class UploadTest extends TestCase {
                 new Response(200, [], ''),
             ]);
             $s3_handler_stack = HandlerStack::create($mock_s3);
-            $s3_client = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+            $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
             // Mock the main handler for create()
             $mock_handler = $this->createMock(Handler::class);
@@ -430,15 +543,16 @@ class UploadTest extends TestCase {
                 new Response(200, [], ''),
             ]);
             $s3_handler_stack = HandlerStack::create($mock_s3);
-            $s3_client = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+            $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
             // Mock the main handler and capture the input
             $captured_data = null;
-            $mock_handler = $this->createMock(Handler::class);
+            $mock_handler  = $this->createMock(Handler::class);
             $mock_handler->expects($this->once())
                 ->method('execute')
                 ->with('POST', '/uploads', [], $this->callback(function ($data) use (&$captured_data) {
                     $captured_data = $data;
+
                     return true;
                 }))
                 ->willReturn([
@@ -493,10 +607,10 @@ class UploadTest extends TestCase {
                 new Response(403, [], 'Access Denied'),
             ]);
             $s3_handler_stack = HandlerStack::create($mock_s3);
-            $s3_client = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+            $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
             $mock_handler = $this->createMock(Handler::class);
-            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
+            $upload       = new Upload($mock_handler, $mock_upload_request, $s3_client);
 
             $this->expectException(S3Upload::class);
             $this->expectExceptionMessage('S3 upload failed with status 403');
@@ -536,7 +650,7 @@ class UploadTest extends TestCase {
             new Response(200, [], ''),                          // S3 upload
         ]);
         $s3_handler_stack = HandlerStack::create($mock_s3);
-        $s3_client = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+        $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
         // Mock the main handler for create()
         $mock_handler = $this->createMock(Handler::class);
@@ -583,7 +697,7 @@ class UploadTest extends TestCase {
             new Response(200, [], ''),
         ]);
         $s3_handler_stack = HandlerStack::create($mock_s3);
-        $s3_client = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+        $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
         $mock_handler = $this->createMock(Handler::class);
         $mock_handler->expects($this->once())
@@ -603,10 +717,10 @@ class UploadTest extends TestCase {
             new Response(404, [], 'Not Found'),
         ]);
         $s3_handler_stack = HandlerStack::create($mock_s3);
-        $s3_client = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+        $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
         $mock_handler = $this->createMock(Handler::class);
-        $upload = new Upload($mock_handler, null, $s3_client);
+        $upload       = new Upload($mock_handler, null, $s3_client);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Failed to download file');
@@ -641,15 +755,16 @@ class UploadTest extends TestCase {
                 new Response(200, [], ''),
             ]);
             $s3_handler_stack = HandlerStack::create($mock_s3);
-            $s3_client = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+            $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
             // Capture the data sent to create()
             $captured_data = null;
-            $mock_handler = $this->createMock(Handler::class);
+            $mock_handler  = $this->createMock(Handler::class);
             $mock_handler->expects($this->once())
                 ->method('execute')
                 ->with('POST', '/uploads', [], $this->callback(function ($data) use (&$captured_data) {
                     $captured_data = $data;
+
                     return true;
                 }))
                 ->willReturn(['data' => ['id' => 'upload-id', 'type' => 'upload']]);

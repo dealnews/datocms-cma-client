@@ -66,6 +66,7 @@ class ScheduledPublication extends ValueObject {
         if (empty($array['attributes']['non_localized_content'])) {
             unset($array['attributes']['non_localized_content']);
         }
+
         return $array;
     }
 }

@@ -42,6 +42,7 @@ class ScheduledUnpublishing extends Base {
         if (empty($data['attributes']['unpublishing_scheduled_at'])) {
             throw new \InvalidArgumentException('unpublishing_scheduled_at must be set to an ISO 8601 date/time in the \'attributes\'');
         }
+
         return $this->handler->execute('POST', '/items/' . $record_id . '/scheduled-unpublishing', [], ['data' => $data]);
     }
 

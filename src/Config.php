@@ -79,10 +79,10 @@ class Config {
      * Initializes configuration from environment variables
      */
     protected function __construct() {
-        $this->apiToken = $this->getEnvVariable('DN_DATOCMS_API_TOKEN');
+        $this->apiToken    = $this->getEnvVariable('DN_DATOCMS_API_TOKEN');
         $this->environment = $this->getEnvVariable('DN_DATOCMS_ENVIRONMENT');
-        $this->base_url = $this->getEnvVariable('DN_DATOCMS_BASE_URL');
-        $log_level = $this->getEnvVariable('DN_DATOCMS_LOG_LEVEL');
+        $this->base_url    = $this->getEnvVariable('DN_DATOCMS_BASE_URL');
+        $log_level         = $this->getEnvVariable('DN_DATOCMS_LOG_LEVEL');
         if (!empty($log_level)) {
             $this->log_level = $log_level;
         }
@@ -173,6 +173,7 @@ class Config {
         if (is_string($value)) {
             return $value;
         }
+
         return null;
     }
 }

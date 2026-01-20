@@ -2,13 +2,13 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\Record;
 use DealNews\DatoCMS\CMA\Parameters\Parts\Filter;
 use DealNews\DatoCMS\CMA\Parameters\Parts\OrderBy;
 use DealNews\DatoCMS\CMA\Parameters\Parts\Page;
+use DealNews\DatoCMS\CMA\Parameters\Record;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Record parameters class
@@ -29,7 +29,7 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testVersionCanBeSetToPublished() {
-        $params = new Record();
+        $params          = new Record();
         $params->version = 'published';
 
         $this->assertEquals('published', $params->version);
@@ -37,7 +37,7 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testVersionCanBeSetToCurrent() {
-        $params = new Record();
+        $params          = new Record();
         $params->version = 'current';
 
         $this->assertEquals('current', $params->version);
@@ -45,7 +45,7 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testNestedCanBeSetToTrue() {
-        $params = new Record();
+        $params         = new Record();
         $params->nested = true;
 
         $this->assertTrue($params->nested);
@@ -53,7 +53,7 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testLocaleCanBeSet() {
-        $params = new Record();
+        $params         = new Record();
         $params->locale = 'en';
 
         $this->assertEquals('en', $params->locale);
@@ -84,7 +84,7 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesNestedWhenTrue() {
-        $params = new Record();
+        $params         = new Record();
         $params->nested = true;
 
         $array = $params->toArray();
@@ -95,7 +95,7 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesLocaleWhenSet() {
-        $params = new Record();
+        $params         = new Record();
         $params->locale = 'es';
 
         $array = $params->toArray();
@@ -118,7 +118,7 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesFilterWhenSet() {
-        $params = new Record();
+        $params               = new Record();
         $params->filter->type = ['article', 'page'];
 
         $array = $params->toArray();
@@ -129,8 +129,8 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesPageWhenNonDefault() {
-        $params = new Record();
-        $params->page->limit = 50;
+        $params               = new Record();
+        $params->page->limit  = 50;
         $params->page->offset = 100;
 
         $array = $params->toArray();
@@ -189,8 +189,8 @@ class RecordTest extends TestCase {
                     'locale' => 'fr',
                 ],
                 'expected' => [
-                    'nested' => true,
-                    'locale' => 'fr',
+                    'nested'  => true,
+                    'locale'  => 'fr',
                     'version' => 'published',
                 ],
             ],
@@ -202,7 +202,7 @@ class RecordTest extends TestCase {
                 ],
                 'expected' => [
                     'order_by' => 'updated_at_DESC',
-                    'version' => 'published',
+                    'version'  => 'published',
                 ],
             ],
             'with filter type' => [
@@ -211,20 +211,20 @@ class RecordTest extends TestCase {
                 ],
                 'expected' => [
                     'version' => 'published',
-                    'filter' => [
+                    'filter'  => [
                         'type' => 'blog_post',
                     ],
                 ],
             ],
             'with pagination' => [
                 'settings' => [
-                    'page_limit' => 25,
+                    'page_limit'  => 25,
                     'page_offset' => 50,
                 ],
                 'expected' => [
                     'version' => 'published',
-                    'page' => [
-                        'limit' => 25,
+                    'page'    => [
+                        'limit'  => 25,
                         'offset' => 50,
                     ],
                 ],

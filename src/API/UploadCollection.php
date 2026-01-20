@@ -2,8 +2,8 @@
 
 namespace DealNews\DatoCMS\CMA\API;
 
-use DealNews\DatoCMS\CMA\Parameters\UploadCollection as UploadCollectionParameter;
 use DealNews\DatoCMS\CMA\Input\UploadCollection as UploadCollectionInput;
+use DealNews\DatoCMS\CMA\Parameters\UploadCollection as UploadCollectionParameter;
 
 /**
  * API handler for DatoCMS upload collection operations
@@ -28,7 +28,8 @@ class UploadCollection extends Base {
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/upload-collection/instances
      *
-     * @param UploadCollectionParameter|null $parameters Optional pagination parameters
+     * @param UploadCollectionParameter|null $parameters Optional pagination
+     *                                                    parameters
      *
      * @return array<string, mixed> The API response body with collection data
      *
@@ -38,7 +39,59 @@ class UploadCollection extends Base {
      */
     public function list(?UploadCollectionParameter $parameters = null): array {
         $query_params = !is_null($parameters) ? $parameters->toArray() : [];
+
         return $this->handler->execute('GET', '/upload-collections', $query_params);
+    }
+
+    /**
+     * Return all upload collections with automatic pagination
+     *
+     * Automatically paginates through all upload collections by making
+     * multiple API requests with 500-collection chunks. Useful when you need
+     * to retrieve an entire dataset without manually managing pagination.
+     *
+     * @see https://www.datocms.com/docs/content-management-api/resources/upload-collection/instances
+     *
+     * @param UploadCollectionParameter|null $parameters Optional parameters
+     *                                                    for filtering and
+     *                                                    sorting. Page
+     *                                                    offset/limit are
+     *                                                    overridden.
+     *
+     * @return array<string, mixed> All collections in `['data' => [...]]`
+     *                              format
+     *
+     * @throws \DealNews\DatoCMS\CMA\Exception\API     On HTTP error responses
+     * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Unknown On unexpected errors
+     */
+    public function listAll(
+        ?UploadCollectionParameter $parameters = null
+    ): array {
+        if ($parameters === null) {
+            $parameters = new UploadCollectionParameter();
+        } else {
+            $parameters = clone $parameters;
+        }
+
+        $data   = [];
+        $offset = 0;
+        $limit  = 500;
+
+        $parameters->page->limit = $limit;
+
+        do {
+            $parameters->page->offset = $offset;
+
+            $response    = $this->list($parameters);
+            $collections = $response['data'] ?? [];
+
+            $data = array_merge($data, $collections);
+
+            $offset += $limit;
+        } while (count($collections) === $limit);
+
+        return ['data' => $data];
     }
 
     /**
@@ -75,6 +128,7 @@ class UploadCollection extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('POST', '/upload-collections', [], ['data' => $data]);
     }
 
@@ -96,6 +150,7 @@ class UploadCollection extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('PUT', '/upload-collections/' . $collection_id, [], ['data' => $data]);
     }
 

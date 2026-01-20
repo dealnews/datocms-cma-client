@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Exception;
 
+use DealNews\DatoCMS\CMA\Exception\Unknown;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Exception\Unknown;
 
 /**
  * Tests for the Unknown exception class
@@ -27,7 +27,7 @@ class UnknownTest extends TestCase {
 
     #[Group('unit')]
     public function testConstructorSetsPreviousException() {
-        $previous = new \Exception('Original error');
+        $previous  = new \Exception('Original error');
         $exception = new Unknown('Wrapped error', 1000, $previous);
 
         $this->assertSame($previous, $exception->getPrevious());
@@ -42,7 +42,7 @@ class UnknownTest extends TestCase {
 
     #[Group('unit')]
     public function testCanWrapAnyThrowable() {
-        $error = new \TypeError('Type mismatch');
+        $error     = new \TypeError('Type mismatch');
         $exception = new Unknown('Wrapped type error', 1000, $error);
 
         $this->assertSame($error, $exception->getPrevious());

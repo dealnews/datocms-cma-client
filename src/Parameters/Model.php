@@ -34,6 +34,7 @@ class Model extends Common {
                 unset($array[$key]);
             }
         }
+
         return $array;
     }
 }

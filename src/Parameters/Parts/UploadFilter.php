@@ -101,6 +101,7 @@ class UploadFilter extends ValueObject {
                 $array[$key] = implode(',', $value);
             }
         }
+
         return $array;
     }
 }

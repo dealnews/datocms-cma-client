@@ -2,19 +2,15 @@
 
 namespace DealNews\DatoCMS\CMA\Tests;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Client;
-use DealNews\DatoCMS\CMA\Config;
 use DealNews\DatoCMS\CMA\API\Environment;
-use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Field;
+use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Job;
 use DealNews\DatoCMS\CMA\API\Maintenance;
 use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\RecordVersion;
+use DealNews\DatoCMS\CMA\API\ScheduledPublication;
 use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
 use DealNews\DatoCMS\CMA\API\Site;
 use DealNews\DatoCMS\CMA\API\Upload;
@@ -22,9 +18,13 @@ use DealNews\DatoCMS\CMA\API\UploadCollection;
 use DealNews\DatoCMS\CMA\API\UploadRequest;
 use DealNews\DatoCMS\CMA\API\UploadSmartTag;
 use DealNews\DatoCMS\CMA\API\UploadTag;
-use DealNews\DatoCMS\CMA\API\ScheduledPublication;
-use DealNews\DatoCMS\CMA\API\WebhookCall;
 use DealNews\DatoCMS\CMA\API\Webhook;
+use DealNews\DatoCMS\CMA\API\WebhookCall;
+use DealNews\DatoCMS\CMA\Client;
+use DealNews\DatoCMS\CMA\Config;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -109,8 +109,8 @@ class ClientTest extends TestCase {
     #[Group('unit')]
     public function testConstructorWithNullParametersUsesConfigDefaults() {
         // Set values in config first
-        $config = Config::init();
-        $config->apiToken = 'existing-token';
+        $config              = Config::init();
+        $config->apiToken    = 'existing-token';
         $config->environment = 'existing-env';
 
         // Create client with nulls - should preserve existing config
@@ -125,8 +125,8 @@ class ClientTest extends TestCase {
     #[DataProvider('provideMagicMethods')]
     public function testGetMagicMethod(string $property, string $expected_class) {
         // Set values in config first
-        $config = Config::init();
-        $config->apiToken = 'existing-token';
+        $config              = Config::init();
+        $config->apiToken    = 'existing-token';
         $config->environment = 'existing-env';
 
         $client = new Client();

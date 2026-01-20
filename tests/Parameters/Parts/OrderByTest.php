@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters\Parts;
 
+use DealNews\DatoCMS\CMA\Parameters\Parts\OrderBy;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\Parts\OrderBy;
 
 class OrderByTest extends TestCase {
 
@@ -49,7 +49,7 @@ class OrderByTest extends TestCase {
                 'order_by' => [
                     'foo' => 'up',
                 ],
-                'expected' => [],
+                'expected'           => [],
                 'expected_exception' => \InvalidArgumentException::class,
             ],
             'Multiple valid fields and directions' => [

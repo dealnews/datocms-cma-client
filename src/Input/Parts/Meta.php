@@ -86,6 +86,7 @@ class Meta extends ValueObject {
         if ($array['stage'] === false) {
             unset($array['stage']);
         }
+
         return $array;
     }
 }

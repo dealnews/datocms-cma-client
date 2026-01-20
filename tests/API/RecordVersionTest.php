@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\RecordVersion;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Parameters\RecordVersion as RecordVersionParameter;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\RecordVersion class
@@ -47,7 +47,7 @@ class RecordVersionTest extends TestCase {
     #[Group('unit')]
     public function testRestore() {
         $expected_response = ['data' => ['id' => 'job-123', 'type' => 'job']];
-        $record_version = $this->createRecordVersionWithMock(
+        $record_version    = $this->createRecordVersionWithMock(
             'POST',
             '/versions/version-123/restore',
             [],
@@ -67,7 +67,7 @@ class RecordVersionTest extends TestCase {
     #[Group('unit')]
     public function testListWithoutParameters() {
         $expected_response = ['data' => [['id' => 'version-1'], ['id' => 'version-2']]];
-        $record_version = $this->createRecordVersionWithMock(
+        $record_version    = $this->createRecordVersionWithMock(
             'GET',
             '/items/record-123/versions',
             [],
@@ -82,13 +82,13 @@ class RecordVersionTest extends TestCase {
 
     #[Group('unit')]
     public function testListWithParameters() {
-        $parameters = new RecordVersionParameter();
-        $parameters->nested = true;
-        $parameters->page->limit = 10;
+        $parameters               = new RecordVersionParameter();
+        $parameters->nested       = true;
+        $parameters->page->limit  = 10;
         $parameters->page->offset = 5;
 
         $expected_response = ['data' => [['id' => 'version-3']]];
-        $record_version = $this->createRecordVersionWithMock(
+        $record_version    = $this->createRecordVersionWithMock(
             'GET',
             '/items/record-456/versions',
             ['nested' => true, 'page' => ['limit' => 10, 'offset' => 5]],
@@ -108,7 +108,7 @@ class RecordVersionTest extends TestCase {
     #[Group('unit')]
     public function testRetrieveWithoutParameters() {
         $expected_response = ['data' => ['id' => 'version-123', 'type' => 'item_version']];
-        $record_version = $this->createRecordVersionWithMock(
+        $record_version    = $this->createRecordVersionWithMock(
             'GET',
             '/versions/version-123',
             [],
@@ -123,11 +123,11 @@ class RecordVersionTest extends TestCase {
 
     #[Group('unit')]
     public function testRetrieveWithParameters() {
-        $parameters = new RecordVersionParameter();
+        $parameters         = new RecordVersionParameter();
         $parameters->nested = true;
 
         $expected_response = ['data' => ['id' => 'version-456', 'type' => 'item_version']];
-        $record_version = $this->createRecordVersionWithMock(
+        $record_version    = $this->createRecordVersionWithMock(
             'GET',
             '/versions/version-456',
             ['nested' => true],
@@ -142,13 +142,13 @@ class RecordVersionTest extends TestCase {
 
     #[Group('unit')]
     public function testRetrieveRemovesPageParameter() {
-        $parameters = new RecordVersionParameter();
-        $parameters->nested = true;
-        $parameters->page->limit = 10;
+        $parameters               = new RecordVersionParameter();
+        $parameters->nested       = true;
+        $parameters->page->limit  = 10;
         $parameters->page->offset = 5;
 
         $expected_response = ['data' => ['id' => 'version-789', 'type' => 'item_version']];
-        $record_version = $this->createRecordVersionWithMock(
+        $record_version    = $this->createRecordVersionWithMock(
             'GET',
             '/versions/version-789',
             ['nested' => true],

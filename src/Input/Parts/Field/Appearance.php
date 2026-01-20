@@ -2,8 +2,8 @@
 
 namespace DealNews\DatoCMS\CMA\Input\Parts\Field;
 
-use Moonspot\ValueObjects\ValueObject;
 use DealNews\DatoCMS\CMA\Input\Parts\Field\Appearance\AddOn;
+use Moonspot\ValueObjects\ValueObject;
 
 /**
  * Defines a field's appearance
@@ -69,6 +69,7 @@ class Appearance extends ValueObject {
                 unset($array['field_extension']);
             }
         }
+
         return $array;
     }
 }

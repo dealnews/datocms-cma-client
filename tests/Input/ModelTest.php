@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input;
 
+use DealNews\DatoCMS\CMA\Input\Model;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Model;
 
 /**
  * Tests for the Input\Model class
@@ -29,9 +29,9 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testAttributesCanBeSet(): void {
-        $model = new Model();
-        $model->attributes['name'] = 'Blog Post';
-        $model->attributes['api_key'] = 'blog_post';
+        $model                          = new Model();
+        $model->attributes['name']      = 'Blog Post';
+        $model->attributes['api_key']   = 'blog_post';
         $model->attributes['singleton'] = false;
 
         $this->assertEquals('Blog Post', $model->attributes['name']);
@@ -41,7 +41,7 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testIdCanBeSet(): void {
-        $model = new Model();
+        $model     = new Model();
         $model->id = 'model-123';
 
         $this->assertEquals('model-123', $model->id);
@@ -49,7 +49,7 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayTypeProperlySet(): void {
-        $model = new Model();
+        $model                     = new Model();
         $model->attributes['name'] = 'Test';
 
         $array = $model->toArray();
@@ -60,7 +60,7 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyId(): void {
-        $model = new Model();
+        $model                     = new Model();
         $model->attributes['name'] = 'Test';
 
         $array = $model->toArray();
@@ -70,8 +70,8 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesIdWhenSet(): void {
-        $model = new Model();
-        $model->id = 'model-123';
+        $model                     = new Model();
+        $model->id                 = 'model-123';
         $model->attributes['name'] = 'Test';
 
         $array = $model->toArray();
@@ -91,8 +91,8 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesAttributesWhenSet(): void {
-        $model = new Model();
-        $model->attributes['name'] = 'Blog Post';
+        $model                        = new Model();
+        $model->attributes['name']    = 'Blog Post';
         $model->attributes['api_key'] = 'blog_post';
 
         $array = $model->toArray();
@@ -114,15 +114,15 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testFullModelSerialization(): void {
-        $model = new Model();
-        $model->id = 'model-456';
+        $model             = new Model();
+        $model->id         = 'model-456';
         $model->attributes = [
-            'name' => 'Product',
-            'api_key' => 'product',
-            'singleton' => false,
-            'sortable' => true,
-            'modular_block' => false,
-            'tree' => false,
+            'name'              => 'Product',
+            'api_key'           => 'product',
+            'singleton'         => false,
+            'sortable'          => true,
+            'modular_block'     => false,
+            'tree'              => false,
             'draft_mode_active' => true,
         ];
 

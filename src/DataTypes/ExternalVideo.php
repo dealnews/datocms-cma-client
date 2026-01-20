@@ -50,13 +50,13 @@ class ExternalVideo extends Common {
         string $title
     ): static {
         return $this->set([
-            'provider' => $provider,
-            'provider_uid' => $provider_uid,
-            'url' => $url,
-            'width' => $width,
-            'height' => $height,
+            'provider'      => $provider,
+            'provider_uid'  => $provider_uid,
+            'url'           => $url,
+            'width'         => $width,
+            'height'        => $height,
             'thumbnail_url' => $thumbnail_url,
-            'title' => $title,
+            'title'         => $title,
         ]);
     }
 
@@ -86,7 +86,7 @@ class ExternalVideo extends Common {
             if ($key === 'provider' && $value[$key] !== 'youtube' && $value[$key] !== 'vimeo' && $value[$key] !== 'facebook') {
                 throw new \InvalidArgumentException('provider must be "youtube" or "vimeo" or "facebook"');
             } elseif (($key === 'width' || $key === 'height') && filter_var($value[$key], FILTER_VALIDATE_INT) === false) {
-                throw new \InvalidArgumentException($key .' must be an integer');
+                throw new \InvalidArgumentException($key . ' must be an integer');
             } elseif ($key !== 'width' && $key !== 'height' && !is_string($value[$key])) {
                 throw new \InvalidArgumentException($key . ' must be a string');
             }

@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Exception;
 
+use DealNews\DatoCMS\CMA\Exception\API;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Exception\API;
 
 /**
  * Tests for the API exception class
@@ -27,7 +27,7 @@ class APITest extends TestCase {
 
     #[Group('unit')]
     public function testConstructorSetsPreviousException() {
-        $previous = new \RuntimeException('Previous error');
+        $previous  = new \RuntimeException('Previous error');
         $exception = new API('Test message', 500, $previous);
 
         $this->assertSame($previous, $exception->getPrevious());
@@ -36,7 +36,7 @@ class APITest extends TestCase {
     #[Group('unit')]
     public function testConstructorSetsResponseBody() {
         $response_body = '{"errors": [{"message": "Not found"}]}';
-        $exception = new API('Test message', 404, null, $response_body);
+        $exception     = new API('Test message', 404, null, $response_body);
 
         $this->assertEquals($response_body, $exception->getResponseBody());
     }
@@ -57,7 +57,7 @@ class APITest extends TestCase {
 
     #[Group('unit')]
     public function testFullConstructorWithAllParameters() {
-        $previous = new \RuntimeException('Previous error');
+        $previous      = new \RuntimeException('Previous error');
         $response_body = '{"errors": [{"message": "Server error"}]}';
 
         $exception = new API(

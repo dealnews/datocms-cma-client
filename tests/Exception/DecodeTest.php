@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Exception;
 
+use DealNews\DatoCMS\CMA\Exception\Decode;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Exception\Decode;
 
 /**
  * Tests for the Decode exception class
@@ -27,7 +27,7 @@ class DecodeTest extends TestCase {
 
     #[Group('unit')]
     public function testConstructorSetsPreviousException() {
-        $previous = new \JsonException('Syntax error');
+        $previous  = new \JsonException('Syntax error');
         $exception = new Decode('Failed to decode JSON', 1001, $previous);
 
         $this->assertSame($previous, $exception->getPrevious());
@@ -35,7 +35,7 @@ class DecodeTest extends TestCase {
 
     #[Group('unit')]
     public function testConstructorSetsRawJson() {
-        $raw_json = '{invalid json}';
+        $raw_json  = '{invalid json}';
         $exception = new Decode('Failed to decode JSON', 1001, null, $raw_json);
 
         $this->assertEquals($raw_json, $exception->getRawJson());

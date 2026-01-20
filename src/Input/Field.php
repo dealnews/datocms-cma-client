@@ -93,6 +93,7 @@ class Field extends ValueObject {
                 unset($array['relationships']);
             }
         }
+
         return $array;
     }
 }

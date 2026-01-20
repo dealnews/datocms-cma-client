@@ -83,6 +83,7 @@ class Filter extends ValueObject {
                 $array[$key] = implode(',', $value);
             }
         }
+
         return $array;
     }
 }

@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\Webhook;
 
+use DealNews\DatoCMS\CMA\Input\Parts\Webhook\EventFilters;
+use DealNews\DatoCMS\CMA\Input\Parts\Webhook\Events;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Parts\Webhook\Events;
-use DealNews\DatoCMS\CMA\Input\Parts\Webhook\EventFilters;
 
 /**
  * Tests for the Input\Parts\Webhook\Events class
@@ -46,7 +46,7 @@ class EventsTest extends TestCase {
 
     #[Group('unit')]
     public function testAddEventWithFiltersAsArray(): void {
-        $events = Events::init();
+        $events  = Events::init();
         $filters = [
             ['filter' => ['type' => 'environment', 'type_id' => ['primary']]],
         ];
@@ -58,8 +58,8 @@ class EventsTest extends TestCase {
     #[Group('unit')]
     public function testAddEventWithFiltersAsEventFiltersObject(): void {
         $filters = EventFilters::init()->addFilter('environment', ['primary']);
-        $events = Events::init();
-        $result = $events->addEvent('item', ['create'], $filters);
+        $events  = Events::init();
+        $result  = $events->addEvent('item', ['create'], $filters);
 
         $this->assertInstanceOf(Events::class, $result);
     }
@@ -113,7 +113,7 @@ class EventsTest extends TestCase {
     #[Group('unit')]
     public function testJsonSerializeWithFilters(): void {
         $filters = EventFilters::init()->addFilter('environment', ['primary']);
-        $events = Events::init()
+        $events  = Events::init()
             ->addEvent('item', ['create'], $filters);
 
         $result = $events->jsonSerialize();

@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input;
 
+use DealNews\DatoCMS\CMA\Input\UploadCollection;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\UploadCollection;
 
 /**
  * Tests for the Input\UploadCollection class
@@ -51,7 +51,7 @@ class UploadCollectionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithMinimalData() {
-        $collection = new UploadCollection();
+        $collection                      = new UploadCollection();
         $collection->attributes['label'] = 'Product Images';
 
         $array = $collection->toArray();
@@ -64,7 +64,7 @@ class UploadCollectionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayTypeProperlySet() {
-        $collection = new UploadCollection();
+        $collection     = new UploadCollection();
         $collection->id = 'collection-123';
 
         $array = $collection->toArray();
@@ -75,8 +75,8 @@ class UploadCollectionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesIdWhenSet() {
-        $collection = new UploadCollection();
-        $collection->id = 'collection-123';
+        $collection                      = new UploadCollection();
+        $collection->id                  = 'collection-123';
         $collection->attributes['label'] = 'My Collection';
 
         $array = $collection->toArray();
@@ -86,8 +86,8 @@ class UploadCollectionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesParentRelationship() {
-        $collection = new UploadCollection();
-        $collection->attributes['label'] = 'Subcollection';
+        $collection                            = new UploadCollection();
+        $collection->attributes['label']       = 'Subcollection';
         $collection->relationships->parent->id = 'parent-456';
 
         $array = $collection->toArray();
@@ -104,9 +104,9 @@ class UploadCollectionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithAllFields() {
-        $collection = new UploadCollection();
-        $collection->id = 'collection-123';
-        $collection->attributes['label'] = 'Full Collection';
+        $collection                            = new UploadCollection();
+        $collection->id                        = 'collection-123';
+        $collection->attributes['label']       = 'Full Collection';
         $collection->relationships->parent->id = 'parent-456';
 
         $array = $collection->toArray();
@@ -136,15 +136,15 @@ class UploadCollectionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesChildrenRelationships() {
-        $collection = new UploadCollection();
+        $collection                      = new UploadCollection();
         $collection->attributes['label'] = 'Parent Collection';
 
-        $child1 = new \DealNews\DatoCMS\CMA\Input\Parts\Relationships\UploadCollection();
-        $child1->id = 'child-1';
+        $child1                                = new \DealNews\DatoCMS\CMA\Input\Parts\Relationships\UploadCollection();
+        $child1->id                            = 'child-1';
         $collection->relationships->children[] = $child1;
 
-        $child2 = new \DealNews\DatoCMS\CMA\Input\Parts\Relationships\UploadCollection();
-        $child2->id = 'child-2';
+        $child2                                = new \DealNews\DatoCMS\CMA\Input\Parts\Relationships\UploadCollection();
+        $child2->id                            = 'child-2';
         $collection->relationships->children[] = $child2;
 
         $array = $collection->toArray();

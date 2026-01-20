@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\DataTypes;
 
+use DealNews\DatoCMS\CMA\DataTypes\Asset;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\DataTypes\Asset;
 
 class AssetTest extends TestCase {
 
@@ -14,7 +14,7 @@ class AssetTest extends TestCase {
     public function testValidAssetValues(array $value, array $expected) {
         $asset = Asset::init();
         $asset->set($value);
-        
+
         $this->assertEquals($expected, $asset->jsonSerialize());
     }
 
@@ -23,16 +23,16 @@ class AssetTest extends TestCase {
     public function testInvalidAssetValues(mixed $value, string $expectedMessage) {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedMessage);
-        
+
         $asset = Asset::init();
         $asset->set($value);
     }
 
     #[Group('unit')]
     public function testSetAssetHelperMethodMinimal() {
-        $asset = Asset::init();
+        $asset  = Asset::init();
         $result = $asset->setAsset('upload123');
-        
+
         $this->assertInstanceOf(Asset::class, $result);
         $this->assertEquals([
             'upload_id' => 'upload123',
@@ -41,7 +41,7 @@ class AssetTest extends TestCase {
 
     #[Group('unit')]
     public function testSetAssetHelperMethodWithAllFields() {
-        $asset = Asset::init();
+        $asset  = Asset::init();
         $result = $asset->setAsset(
             'upload123',
             'My Title',
@@ -50,12 +50,12 @@ class AssetTest extends TestCase {
             0.75,
             ['key1' => 'value1']
         );
-        
+
         $this->assertInstanceOf(Asset::class, $result);
         $this->assertEquals([
-            'upload_id' => 'upload123',
-            'title' => 'My Title',
-            'alt' => 'Alt text',
+            'upload_id'   => 'upload123',
+            'title'       => 'My Title',
+            'alt'         => 'Alt text',
             'focal_point' => [
                 'x' => 0.5,
                 'y' => 0.75,
@@ -66,18 +66,18 @@ class AssetTest extends TestCase {
 
     #[Group('unit')]
     public function testSetAssetMethodChaining() {
-        $asset = Asset::init();
+        $asset  = Asset::init();
         $result = $asset->setAsset('upload123');
-        
+
         $this->assertInstanceOf(Asset::class, $result);
         $this->assertSame($asset, $result);
     }
 
     #[Group('unit')]
     public function testSetMethodReturnsStatic() {
-        $asset = Asset::init();
+        $asset  = Asset::init();
         $result = $asset->set(['upload_id' => 'upload123']);
-        
+
         $this->assertInstanceOf(Asset::class, $result);
         $this->assertSame($asset, $result);
     }
@@ -88,9 +88,9 @@ class AssetTest extends TestCase {
         $asset->set(['upload_id' => 'upload123', 'title' => 'Default']);
         $asset->addLocale('en', ['upload_id' => 'upload456', 'title' => 'English']);
         $asset->addLocale('es', ['upload_id' => 'upload789', 'title' => 'Spanish']);
-        
+
         $result = $asset->jsonSerialize();
-        
+
         $this->assertIsArray($result);
         $this->assertEquals(['upload_id' => 'upload456', 'title' => 'English'], $result['en']);
         $this->assertEquals(['upload_id' => 'upload789', 'title' => 'Spanish'], $result['es']);
@@ -98,9 +98,9 @@ class AssetTest extends TestCase {
 
     #[Group('unit')]
     public function testAddLocaleReturnsStatic() {
-        $asset = Asset::init();
+        $asset  = Asset::init();
         $result = $asset->addLocale('en', ['upload_id' => 'upload123']);
-        
+
         $this->assertInstanceOf(Asset::class, $result);
         $this->assertSame($asset, $result);
     }
@@ -109,7 +109,7 @@ class AssetTest extends TestCase {
     public function testAddLocaleWithInvalidAsset() {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Value not in expected format');
-        
+
         $asset = Asset::init();
         $asset->addLocale('en', 'invalid');
     }
@@ -117,7 +117,7 @@ class AssetTest extends TestCase {
     #[Group('unit')]
     public function testJsonSerializeReturnsNullWhenEmpty() {
         $asset = Asset::init();
-        
+
         $this->assertNull($asset->jsonSerialize());
     }
 
@@ -126,9 +126,9 @@ class AssetTest extends TestCase {
         $asset = Asset::init();
         $asset->set(['upload_id' => 'upload123']);
         $asset->addLocale('en', ['upload_id' => 'upload456']);
-        
+
         $result = $asset->jsonSerialize();
-        
+
         $this->assertIsArray($result);
         $this->assertArrayHasKey('en', $result);
         $this->assertEquals(['upload_id' => 'upload456'], $result['en']);
@@ -138,7 +138,7 @@ class AssetTest extends TestCase {
     public function testNullValueIsValid() {
         $asset = Asset::init();
         $asset->set(null);
-        
+
         $this->assertNull($asset->jsonSerialize());
     }
 
@@ -174,16 +174,16 @@ class AssetTest extends TestCase {
             ],
             'with all fields' => [
                 [
-                    'upload_id' => 'upload123',
-                    'title' => 'My Title',
-                    'alt' => 'Alt text',
+                    'upload_id'   => 'upload123',
+                    'title'       => 'My Title',
+                    'alt'         => 'Alt text',
                     'focal_point' => ['x' => 0.75, 'y' => 0.25],
                     'custom_data' => ['key1' => 'value1'],
                 ],
                 [
-                    'upload_id' => 'upload123',
-                    'title' => 'My Title',
-                    'alt' => 'Alt text',
+                    'upload_id'   => 'upload123',
+                    'title'       => 'My Title',
+                    'alt'         => 'Alt text',
                     'focal_point' => ['x' => 0.75, 'y' => 0.25],
                     'custom_data' => ['key1' => 'value1'],
                 ],

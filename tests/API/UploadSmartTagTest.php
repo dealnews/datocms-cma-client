@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\UploadSmartTag;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\UploadSmartTag class
@@ -32,7 +32,7 @@ class UploadSmartTagTest extends TestCase {
             ->willReturn($expected_response);
 
         $smart_tag = new UploadSmartTag($mock_handler);
-        $result = $smart_tag->list();
+        $result    = $smart_tag->list();
 
         $this->assertEquals($expected_response, $result);
     }
@@ -48,7 +48,7 @@ class UploadSmartTagTest extends TestCase {
             ->willReturn($expected_response);
 
         $smart_tag = new UploadSmartTag($mock_handler);
-        $result = $smart_tag->list();
+        $result    = $smart_tag->list();
 
         $this->assertEquals($expected_response, $result);
     }

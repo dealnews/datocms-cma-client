@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input;
 
+use DealNews\DatoCMS\CMA\Input\ScheduledPublication;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\ScheduledPublication;
 
 /**
  * Tests for the Input\ScheduledPublication class
@@ -28,7 +28,7 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingPublicationScheduledAt() {
-        $scheduled_publication = new ScheduledPublication();
+        $scheduled_publication                                         = new ScheduledPublication();
         $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
 
         $this->assertEquals('2030-09-01T12:00:00Z', $scheduled_publication->attributes['publication_scheduled_at']);
@@ -36,7 +36,7 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingSelectivePublicationContentInLocales() {
-        $scheduled_publication = new ScheduledPublication();
+        $scheduled_publication                                                            = new ScheduledPublication();
         $scheduled_publication->attributes['selective_publication']['content_in_locales'] = ['en', 'es'];
 
         $this->assertEquals(['en', 'es'], $scheduled_publication->attributes['selective_publication']['content_in_locales']);
@@ -44,7 +44,7 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingSelectivePublicationNonLocalizedContent() {
-        $scheduled_publication = new ScheduledPublication();
+        $scheduled_publication                                                               = new ScheduledPublication();
         $scheduled_publication->attributes['selective_publication']['non_localized_content'] = true;
 
         $this->assertTrue($scheduled_publication->attributes['selective_publication']['non_localized_content']);
@@ -52,7 +52,7 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithMinimalData() {
-        $scheduled_publication = new ScheduledPublication();
+        $scheduled_publication                                         = new ScheduledPublication();
         $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
 
         $result = $scheduled_publication->toArray();
@@ -63,7 +63,7 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesTypeAndAttributes() {
-        $scheduled_publication = new ScheduledPublication();
+        $scheduled_publication                                         = new ScheduledPublication();
         $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
 
         $result = $scheduled_publication->toArray();
@@ -75,9 +75,9 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyNonLocalizedContent() {
-        $scheduled_publication = new ScheduledPublication();
+        $scheduled_publication                                         = new ScheduledPublication();
         $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
-        $scheduled_publication->attributes['non_localized_content'] = null;
+        $scheduled_publication->attributes['non_localized_content']    = null;
 
         $result = $scheduled_publication->toArray();
 
@@ -86,10 +86,10 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithFullSelectivePublication() {
-        $scheduled_publication = new ScheduledPublication();
-        $scheduled_publication->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
+        $scheduled_publication                                                            = new ScheduledPublication();
+        $scheduled_publication->attributes['publication_scheduled_at']                    = '2030-09-01T12:00:00Z';
         $scheduled_publication->attributes['selective_publication']['content_in_locales'] = ['en', 'fr'];
-        $scheduled_publication->attributes['non_localized_content'] = true;
+        $scheduled_publication->attributes['non_localized_content']                       = true;
 
         $result = $scheduled_publication->toArray();
 

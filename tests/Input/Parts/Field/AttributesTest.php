@@ -2,12 +2,12 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\Field;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\TestCase;
+use DealNews\DatoCMS\CMA\Input\Parts\Field\Appearance;
 use DealNews\DatoCMS\CMA\Input\Parts\Field\Attributes;
 use DealNews\DatoCMS\CMA\Input\Parts\Field\Validators;
-use DealNews\DatoCMS\CMA\Input\Parts\Field\Appearance;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Input\Parts\Field\Attributes class
@@ -33,20 +33,20 @@ class AttributesTest extends TestCase {
     #[Group('unit')]
     #[DataProvider('validFieldTypesProvider')]
     public function testFieldTypeAcceptsValidTypes(string $fieldType): void {
-        $attributes = new Attributes();
+        $attributes             = new Attributes();
         $attributes->field_type = $fieldType;
 
         $this->assertEquals($fieldType, $attributes->field_type);
     }
 
     public static function validFieldTypesProvider(): array {
-        return array_map(fn($type) => [$type], Attributes::VALID_FIELD_TYPES);
+        return array_map(fn ($type) => [$type], Attributes::VALID_FIELD_TYPES);
     }
 
     #[Group('unit')]
     #[Group('unit')]
     public function testFieldTypeCanBeSetToNull(): void {
-        $attributes = new Attributes();
+        $attributes             = new Attributes();
         $attributes->field_type = 'string';
         $attributes->field_type = null;
 
@@ -55,10 +55,10 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testStringPropertiesCanBeSet(): void {
-        $attributes = new Attributes();
-        $attributes->label = 'Product Title';
+        $attributes          = new Attributes();
+        $attributes->label   = 'Product Title';
         $attributes->api_key = 'product_title';
-        $attributes->hint = 'Enter the product title here';
+        $attributes->hint    = 'Enter the product title here';
 
         $this->assertEquals('Product Title', $attributes->label);
         $this->assertEquals('product_title', $attributes->api_key);
@@ -67,10 +67,10 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testValidatorsCanBeSetAsArray(): void {
-        $attributes = new Attributes();
+        $attributes             = new Attributes();
         $attributes->validators = [
             'required' => true,
-            'length' => ['min' => 1, 'max' => 100],
+            'length'   => ['min' => 1, 'max' => 100],
         ];
 
         $this->assertIsArray($attributes->validators);
@@ -82,7 +82,7 @@ class AttributesTest extends TestCase {
     public function testValidatorsCanBeSetAsObject(): void {
         $validators = new Validators();
 
-        $attributes = new Attributes();
+        $attributes             = new Attributes();
         $attributes->validators = $validators;
 
         $this->assertInstanceOf(Validators::class, $attributes->validators);
@@ -90,9 +90,9 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testAppearanceCanBeSetAsArray(): void {
-        $attributes = new Attributes();
+        $attributes             = new Attributes();
         $attributes->appearance = [
-            'editor' => 'single_line',
+            'editor'     => 'single_line',
             'parameters' => ['heading' => false],
         ];
 
@@ -102,10 +102,10 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testAppearanceCanBeSetAsObject(): void {
-        $appearance = new Appearance();
+        $appearance         = new Appearance();
         $appearance->editor = 'single_line';
 
-        $attributes = new Attributes();
+        $attributes             = new Attributes();
         $attributes->appearance = $appearance;
 
         $this->assertInstanceOf(Appearance::class, $attributes->appearance);
@@ -114,20 +114,20 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArraySerialization(): void {
-        $validators = new Validators();
-        $appearance = new Appearance();
+        $validators         = new Validators();
+        $appearance         = new Appearance();
         $appearance->editor = 'wysiwyg';
 
-        $attributes = new Attributes();
-        $attributes->label = 'Content';
-        $attributes->field_type = 'text';
-        $attributes->api_key = 'content';
-        $attributes->localized = true;
-        $attributes->validators = $validators;
-        $attributes->appearance = $appearance;
-        $attributes->position = 5;
-        $attributes->hint = 'Main content field';
-        $attributes->default_value = 'Default text';
+        $attributes                         = new Attributes();
+        $attributes->label                  = 'Content';
+        $attributes->field_type             = 'text';
+        $attributes->api_key                = 'content';
+        $attributes->localized              = true;
+        $attributes->validators             = $validators;
+        $attributes->appearance             = $appearance;
+        $attributes->position               = 5;
+        $attributes->hint                   = 'Main content field';
+        $attributes->default_value          = 'Default text';
         $attributes->deep_filtering_enabled = false;
 
         $array = $attributes->toArray();

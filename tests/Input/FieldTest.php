@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Input\Field;
 use DealNews\DatoCMS\CMA\Input\Parts\Field\Attributes;
 use DealNews\DatoCMS\CMA\Input\Parts\Field\Relationships;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Input\Field class
@@ -25,10 +25,10 @@ class FieldTest extends TestCase {
 
     #[Group('unit')]
     public function testAttributesCanBeSetAsArray(): void {
-        $field = new Field();
-        $field->attributes['label'] = 'Title';
+        $field                           = new Field();
+        $field->attributes['label']      = 'Title';
         $field->attributes['field_type'] = 'string';
-        $field->attributes['api_key'] = 'title';
+        $field->attributes['api_key']    = 'title';
 
         $this->assertEquals('Title', $field->attributes['label']);
         $this->assertEquals('string', $field->attributes['field_type']);
@@ -37,12 +37,12 @@ class FieldTest extends TestCase {
 
     #[Group('unit')]
     public function testAttributesCanBeSetAsObject(): void {
-        $attributes = new Attributes();
-        $attributes->label = 'Title';
+        $attributes             = new Attributes();
+        $attributes->label      = 'Title';
         $attributes->field_type = 'string';
-        $attributes->api_key = 'title';
+        $attributes->api_key    = 'title';
 
-        $field = new Field();
+        $field             = new Field();
         $field->attributes = $attributes;
 
         $this->assertInstanceOf(Attributes::class, $field->attributes);
@@ -55,7 +55,7 @@ class FieldTest extends TestCase {
     public function testRelationshipsCanBeSet(): void {
         $relationships = new Relationships();
 
-        $field = new Field();
+        $field                = new Field();
         $field->relationships = $relationships;
 
         $this->assertInstanceOf(Relationships::class, $field->relationships);
@@ -63,7 +63,7 @@ class FieldTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayHasProperTypeSet(): void {
-        $field = new Field();
+        $field                      = new Field();
         $field->attributes['label'] = 'Test';
 
         $array = $field->toArray();
@@ -74,7 +74,7 @@ class FieldTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesNullId(): void {
-        $field = new Field();
+        $field                      = new Field();
         $field->attributes['label'] = 'Test';
 
         $array = $field->toArray();
@@ -84,8 +84,8 @@ class FieldTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesIdWhenSet(): void {
-        $field = new Field();
-        $field->id = 'field-123';
+        $field                      = new Field();
+        $field->id                  = 'field-123';
         $field->attributes['label'] = 'Test';
 
         $array = $field->toArray();
@@ -105,8 +105,8 @@ class FieldTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesAttributesWhenSet(): void {
-        $field = new Field();
-        $field->attributes['label'] = 'Title';
+        $field                           = new Field();
+        $field->attributes['label']      = 'Title';
         $field->attributes['field_type'] = 'string';
 
         $array = $field->toArray();
@@ -118,7 +118,7 @@ class FieldTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesNullRelationships(): void {
-        $field = new Field();
+        $field                      = new Field();
         $field->attributes['label'] = 'Test';
 
         $array = $field->toArray();
@@ -130,8 +130,8 @@ class FieldTest extends TestCase {
     public function testToArrayIncludesRelationshipsWhenSet(): void {
         $relationships = new Relationships();
 
-        $field = new Field();
-        $field->relationships = $relationships;
+        $field                      = new Field();
+        $field->relationships       = $relationships;
         $field->attributes['label'] = 'Test';
 
         $array = $field->toArray();
@@ -141,18 +141,18 @@ class FieldTest extends TestCase {
 
     #[Group('unit')]
     public function testFullFieldSerialization(): void {
-        $attributes = new Attributes();
-        $attributes->label = 'Product Title';
+        $attributes             = new Attributes();
+        $attributes->label      = 'Product Title';
         $attributes->field_type = 'string';
-        $attributes->api_key = 'product_title';
-        $attributes->localized = true;
-        $attributes->hint = 'Enter the product title';
+        $attributes->api_key    = 'product_title';
+        $attributes->localized  = true;
+        $attributes->hint       = 'Enter the product title';
 
         $relationships = new Relationships();
 
-        $field = new Field();
-        $field->id = 'field-789';
-        $field->attributes = $attributes;
+        $field                = new Field();
+        $field->id            = 'field-789';
+        $field->attributes    = $attributes;
         $field->relationships = $relationships;
 
         $array = $field->toArray();

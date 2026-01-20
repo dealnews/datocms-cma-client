@@ -2,12 +2,12 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\WebhookCall;
 use DealNews\DatoCMS\CMA\Parameters\Parts\OrderBy;
 use DealNews\DatoCMS\CMA\Parameters\Parts\Page;
 use DealNews\DatoCMS\CMA\Parameters\Parts\WebhookCallFilter;
+use DealNews\DatoCMS\CMA\Parameters\WebhookCall;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Parameters\WebhookCall class
@@ -54,7 +54,7 @@ class WebhookCallTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithFilter() {
-        $params = new WebhookCall();
+        $params              = new WebhookCall();
         $params->filter->ids = ['call-1', 'call-2'];
 
         $array = $params->toArray();
@@ -76,8 +76,8 @@ class WebhookCallTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithPage() {
-        $params = new WebhookCall();
-        $params->page->limit = 25;
+        $params               = new WebhookCall();
+        $params->page->limit  = 25;
         $params->page->offset = 50;
 
         $array = $params->toArray();
@@ -89,7 +89,7 @@ class WebhookCallTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyFilter() {
-        $params = new WebhookCall();
+        $params              = new WebhookCall();
         $params->page->limit = 10;
 
         $array = $params->toArray();
@@ -100,7 +100,7 @@ class WebhookCallTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyOrderBy() {
-        $params = new WebhookCall();
+        $params              = new WebhookCall();
         $params->filter->ids = ['call-1'];
 
         $array = $params->toArray();

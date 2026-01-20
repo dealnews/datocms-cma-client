@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters;
 
+use DealNews\DatoCMS\CMA\Parameters\Parts\Page;
+use DealNews\DatoCMS\CMA\Parameters\UploadCollection;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\UploadCollection;
-use DealNews\DatoCMS\CMA\Parameters\Parts\Page;
 
 /**
  * Tests for the Parameters\UploadCollection class
@@ -38,8 +38,8 @@ class UploadCollectionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithPage() {
-        $params = new UploadCollection();
-        $params->page->limit = 25;
+        $params               = new UploadCollection();
+        $params->page->limit  = 25;
         $params->page->offset = 50;
 
         $array = $params->toArray();
@@ -51,7 +51,7 @@ class UploadCollectionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithOnlyLimit() {
-        $params = new UploadCollection();
+        $params              = new UploadCollection();
         $params->page->limit = 100;
 
         $array = $params->toArray();

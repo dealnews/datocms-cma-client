@@ -2,8 +2,8 @@
 
 namespace DealNews\DatoCMS\CMA\API;
 
-use DealNews\DatoCMS\CMA\Parameters\Model as ModelParameter;
 use DealNews\DatoCMS\CMA\Input\Model as ModelInput;
+use DealNews\DatoCMS\CMA\Parameters\Model as ModelParameter;
 
 /**
  * API handler for DatoCMS model (item-type) operations
@@ -38,7 +38,54 @@ class Model extends Base {
      */
     public function list(?ModelParameter $parameters = null): array {
         $query_params = !is_null($parameters) ? $parameters->toArray() : [];
+
         return $this->handler->execute('GET', '/item-types', $query_params);
+    }
+
+    /**
+     * Return all models (item-types) with automatic pagination
+     *
+     * Automatically paginates through all models by making multiple API
+     * requests with 500-record chunks. Useful when you need to retrieve an
+     * entire dataset without manually managing pagination.
+     *
+     * @see https://www.datocms.com/docs/content-management-api/resources/item-type/instances
+     *
+     * @param ModelParameter|null $parameters Optional parameters for
+     *                                        pagination. Page offset/limit
+     *                                        are overridden.
+     *
+     * @return array<string, mixed> All models in `['data' => [...]]` format
+     *
+     * @throws \DealNews\DatoCMS\CMA\Exception\API     On HTTP error responses
+     * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Unknown On unexpected errors
+     */
+    public function listAll(?ModelParameter $parameters = null): array {
+        if ($parameters === null) {
+            $parameters = new ModelParameter();
+        } else {
+            $parameters = clone $parameters;
+        }
+
+        $data   = [];
+        $offset = 0;
+        $limit  = 500;
+
+        $parameters->page->limit = $limit;
+
+        do {
+            $parameters->page->offset = $offset;
+
+            $response = $this->list($parameters);
+            $models   = $response['data'] ?? [];
+
+            $data = array_merge($data, $models);
+
+            $offset += $limit;
+        } while (count($models) === $limit);
+
+        return ['data' => $data];
     }
 
     /**
@@ -76,6 +123,7 @@ class Model extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('POST', '/item-types', [], ['data' => $data]);
     }
 
@@ -98,6 +146,7 @@ class Model extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('PUT', '/item-types/' . $model_id, [], ['data' => $data]);
     }
 

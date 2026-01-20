@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\Webhook;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Input\Webhook as WebhookInput;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\Webhook class
@@ -48,14 +48,14 @@ class WebhookTest extends TestCase {
     #[Group('unit')]
     public function testCreateWithArray(): void {
         $data = [
-            'type' => 'webhook',
+            'type'       => 'webhook',
             'attributes' => [
                 'name' => 'Test Webhook',
-                'url' => 'https://example.com/webhook',
+                'url'  => 'https://example.com/webhook',
             ],
         ];
         $expected_response = ['data' => ['id' => 'webhook-123', 'type' => 'webhook']];
-        $webhook = $this->createWebhookWithMock(
+        $webhook           = $this->createWebhookWithMock(
             'POST',
             '/webhooks',
             [],
@@ -70,13 +70,13 @@ class WebhookTest extends TestCase {
 
     #[Group('unit')]
     public function testCreateWithWebhookInput(): void {
-        $input = new WebhookInput();
+        $input                     = new WebhookInput();
         $input->attributes['name'] = 'Test Webhook';
-        $input->attributes['url'] = 'https://example.com/webhook';
+        $input->attributes['url']  = 'https://example.com/webhook';
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => 'webhook-456', 'type' => 'webhook']];
-        $webhook = $this->createWebhookWithMock(
+        $webhook           = $this->createWebhookWithMock(
             'POST',
             '/webhooks',
             [],
@@ -96,13 +96,13 @@ class WebhookTest extends TestCase {
     #[Group('unit')]
     public function testUpdateWithArray(): void {
         $data = [
-            'type' => 'webhook',
+            'type'       => 'webhook',
             'attributes' => [
                 'name' => 'Updated Webhook',
             ],
         ];
         $expected_response = ['data' => ['id' => 'webhook-123', 'type' => 'webhook']];
-        $webhook = $this->createWebhookWithMock(
+        $webhook           = $this->createWebhookWithMock(
             'PUT',
             '/webhooks/webhook-123',
             [],
@@ -117,13 +117,13 @@ class WebhookTest extends TestCase {
 
     #[Group('unit')]
     public function testUpdateWithWebhookInput(): void {
-        $input = new WebhookInput();
-        $input->id = 'webhook-123';
+        $input                     = new WebhookInput();
+        $input->id                 = 'webhook-123';
         $input->attributes['name'] = 'Updated Webhook';
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => 'webhook-123', 'type' => 'webhook']];
-        $webhook = $this->createWebhookWithMock(
+        $webhook           = $this->createWebhookWithMock(
             'PUT',
             '/webhooks/webhook-123',
             [],
@@ -143,7 +143,7 @@ class WebhookTest extends TestCase {
     #[Group('unit')]
     public function testList(): void {
         $expected_response = ['data' => [['id' => 'webhook-1'], ['id' => 'webhook-2']]];
-        $webhook = $this->createWebhookWithMock(
+        $webhook           = $this->createWebhookWithMock(
             'GET',
             '/webhooks',
             [],
@@ -163,7 +163,7 @@ class WebhookTest extends TestCase {
     #[Group('unit')]
     public function testRetrieve(): void {
         $expected_response = ['data' => ['id' => 'webhook-123', 'type' => 'webhook']];
-        $webhook = $this->createWebhookWithMock(
+        $webhook           = $this->createWebhookWithMock(
             'GET',
             '/webhooks/webhook-123',
             [],
@@ -183,7 +183,7 @@ class WebhookTest extends TestCase {
     #[Group('unit')]
     public function testDelete(): void {
         $expected_response = ['data' => ['id' => 'webhook-123', 'type' => 'webhook']];
-        $webhook = $this->createWebhookWithMock(
+        $webhook           = $this->createWebhookWithMock(
             'DELETE',
             '/webhooks/webhook-123',
             [],

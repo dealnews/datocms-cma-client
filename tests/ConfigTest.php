@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests;
 
+use DealNews\DatoCMS\CMA\Config;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Config;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -23,10 +23,10 @@ class ConfigTest extends TestCase {
 
         // Store original environment values
         $this->original_env = [
-            'DN_DATOCMS_API_TOKEN' => getenv('DN_DATOCMS_API_TOKEN'),
+            'DN_DATOCMS_API_TOKEN'   => getenv('DN_DATOCMS_API_TOKEN'),
             'DN_DATOCMS_ENVIRONMENT' => getenv('DN_DATOCMS_ENVIRONMENT'),
-            'DN_DATOCMS_BASE_URL' => getenv('DN_DATOCMS_BASE_URL'),
-            'DN_DATOCMS_LOG_LEVEL' => getenv('DN_DATOCMS_LOG_LEVEL'),
+            'DN_DATOCMS_BASE_URL'    => getenv('DN_DATOCMS_BASE_URL'),
+            'DN_DATOCMS_LOG_LEVEL'   => getenv('DN_DATOCMS_LOG_LEVEL'),
         ];
 
         // Clear environment variables
@@ -116,7 +116,7 @@ class ConfigTest extends TestCase {
 
     #[Group('unit')]
     public function testSetApiToken() {
-        $config = Config::init();
+        $config           = Config::init();
         $config->apiToken = 'new-token';
 
         $this->assertEquals('new-token', $config->apiToken);
@@ -124,7 +124,7 @@ class ConfigTest extends TestCase {
 
     #[Group('unit')]
     public function testSetEnvironment() {
-        $config = Config::init();
+        $config              = Config::init();
         $config->environment = 'production';
 
         $this->assertEquals('production', $config->environment);
@@ -132,7 +132,7 @@ class ConfigTest extends TestCase {
 
     #[Group('unit')]
     public function testSetBaseUrl() {
-        $config = Config::init();
+        $config           = Config::init();
         $config->base_url = 'https://custom.api.com';
 
         $this->assertEquals('https://custom.api.com', $config->base_url);
@@ -140,7 +140,7 @@ class ConfigTest extends TestCase {
 
     #[Group('unit')]
     public function testSetLogLevel() {
-        $config = Config::init();
+        $config            = Config::init();
         $config->log_level = LogLevel::DEBUG;
 
         $this->assertEquals(LogLevel::DEBUG, $config->log_level);
@@ -150,7 +150,7 @@ class ConfigTest extends TestCase {
     public function testSetLogger() {
         $logger = $this->createMock(LoggerInterface::class);
 
-        $config = Config::init();
+        $config         = Config::init();
         $config->logger = $logger;
 
         $this->assertSame($logger, $config->logger);
@@ -165,7 +165,7 @@ class ConfigTest extends TestCase {
 
     #[Group('unit')]
     public function testSetUnknownPropertyIsIgnored() {
-        $config = Config::init();
+        $config                   = Config::init();
         $config->unknown_property = 'value';
 
         $this->assertNull($config->unknown_property);
@@ -173,7 +173,7 @@ class ConfigTest extends TestCase {
 
     #[Group('unit')]
     public function testResetClearsSingleton() {
-        $config1 = Config::init();
+        $config1           = Config::init();
         $config1->apiToken = 'token-1';
 
         Config::reset();

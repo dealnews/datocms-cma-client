@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters;
 
+use DealNews\DatoCMS\CMA\Parameters\Parts\Page;
+use DealNews\DatoCMS\CMA\Parameters\RecordVersion;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\RecordVersion;
-use DealNews\DatoCMS\CMA\Parameters\Parts\Page;
 
 /**
  * Tests for the RecordVersion parameters class
@@ -23,7 +23,7 @@ class RecordVersionTest extends TestCase {
 
     #[Group('unit')]
     public function testNestedCanBeSetToTrue() {
-        $params = new RecordVersion();
+        $params         = new RecordVersion();
         $params->nested = true;
 
         $this->assertTrue($params->nested);
@@ -41,7 +41,7 @@ class RecordVersionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesNestedWhenTrue() {
-        $params = new RecordVersion();
+        $params         = new RecordVersion();
         $params->nested = true;
 
         $array = $params->toArray();
@@ -52,8 +52,8 @@ class RecordVersionTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesPageWhenSet() {
-        $params = new RecordVersion();
-        $params->page->limit = 10;
+        $params               = new RecordVersion();
+        $params->page->limit  = 10;
         $params->page->offset = 5;
 
         $array = $params->toArray();
@@ -98,26 +98,26 @@ class RecordVersionTest extends TestCase {
             ],
             'nested with pagination' => [
                 'settings' => [
-                    'nested' => true,
-                    'page_limit' => 50,
+                    'nested'      => true,
+                    'page_limit'  => 50,
                     'page_offset' => 100,
                 ],
                 'expected' => [
                     'nested' => true,
-                    'page' => [
-                        'limit' => 50,
+                    'page'   => [
+                        'limit'  => 50,
                         'offset' => 100,
                     ],
                 ],
             ],
             'pagination only' => [
                 'settings' => [
-                    'page_limit' => 25,
+                    'page_limit'  => 25,
                     'page_offset' => 10,
                 ],
                 'expected' => [
                     'page' => [
-                        'limit' => 25,
+                        'limit'  => 25,
                         'offset' => 10,
                     ],
                 ],

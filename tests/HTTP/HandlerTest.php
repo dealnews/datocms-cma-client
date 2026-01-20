@@ -2,20 +2,20 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\HTTP;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Exception\API;
 use DealNews\DatoCMS\CMA\Exception\Decode;
 use DealNews\DatoCMS\CMA\Exception\Unknown;
+use DealNews\DatoCMS\CMA\HTTP\Handler;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\Handler\MockHandler;
 use GuzzleHttp\HandlerStack;
-use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\Request;
-use GuzzleHttp\Exception\RequestException;
-use GuzzleHttp\Exception\ConnectException;
+use GuzzleHttp\Psr7\Response;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -42,11 +42,11 @@ class HandlerTest extends TestCase {
      * @return Handler
      */
     protected function createHandlerWithMock(array $responses): Handler {
-        $mock = new MockHandler($responses);
+        $mock          = new MockHandler($responses);
         $handler_stack = HandlerStack::create($mock);
         // Important: http_errors => false matches the production Handler config
         $client = new Client([
-            'handler' => $handler_stack,
+            'handler'     => $handler_stack,
             'http_errors' => false,
         ]);
 
@@ -63,7 +63,7 @@ class HandlerTest extends TestCase {
     #[Group('unit')]
     public function testExecuteSuccessfulGetRequest() {
         $response_body = ['data' => ['id' => '123', 'type' => 'item']];
-        $handler = $this->createHandlerWithMock([
+        $handler       = $this->createHandlerWithMock([
             new Response(200, [], json_encode($response_body)),
         ]);
 
@@ -75,7 +75,7 @@ class HandlerTest extends TestCase {
     #[Group('unit')]
     public function testExecuteSuccessfulPostRequest() {
         $response_body = ['data' => ['id' => '456', 'type' => 'item']];
-        $handler = $this->createHandlerWithMock([
+        $handler       = $this->createHandlerWithMock([
             new Response(201, [], json_encode($response_body)),
         ]);
 
@@ -87,7 +87,7 @@ class HandlerTest extends TestCase {
     #[Group('unit')]
     public function testExecuteWithQueryParameters() {
         $response_body = ['data' => []];
-        $handler = $this->createHandlerWithMock([
+        $handler       = $this->createHandlerWithMock([
             new Response(200, [], json_encode($response_body)),
         ]);
 
@@ -99,7 +99,7 @@ class HandlerTest extends TestCase {
     #[Group('unit')]
     public function testExecuteThrowsAPIExceptionOn4xxError() {
         $error_body = ['errors' => [['message' => 'Not found']]];
-        $handler = $this->createHandlerWithMock([
+        $handler    = $this->createHandlerWithMock([
             new Response(404, [], json_encode($error_body)),
         ]);
 
@@ -113,7 +113,7 @@ class HandlerTest extends TestCase {
     #[Group('unit')]
     public function testExecuteThrowsAPIExceptionOn5xxError() {
         $error_body = ['errors' => [['message' => 'Internal server error']]];
-        $handler = $this->createHandlerWithMock([
+        $handler    = $this->createHandlerWithMock([
             new Response(500, [], json_encode($error_body)),
         ]);
 
@@ -126,7 +126,7 @@ class HandlerTest extends TestCase {
     #[Group('unit')]
     public function testExecuteAPIExceptionContainsResponseBody() {
         $error_body = '{"errors": [{"message": "Validation failed"}]}';
-        $handler = $this->createHandlerWithMock([
+        $handler    = $this->createHandlerWithMock([
             new Response(422, [], $error_body),
         ]);
 
@@ -142,7 +142,7 @@ class HandlerTest extends TestCase {
     #[Group('unit')]
     public function testExecuteAcceptsCustomStatusCodes() {
         $response_body = ['data' => null];
-        $handler = $this->createHandlerWithMock([
+        $handler       = $this->createHandlerWithMock([
             new Response(404, [], json_encode($response_body)),
         ]);
 
@@ -167,7 +167,7 @@ class HandlerTest extends TestCase {
     #[Group('unit')]
     public function testExecuteDecodeExceptionContainsRawJson() {
         $invalid_json = '{incomplete json';
-        $handler = $this->createHandlerWithMock([
+        $handler      = $this->createHandlerWithMock([
             new Response(200, [], $invalid_json),
         ]);
 
@@ -188,8 +188,8 @@ class HandlerTest extends TestCase {
             ),
         ]);
         $handler_stack = HandlerStack::create($mock);
-        $client = new Client([
-            'handler' => $handler_stack,
+        $client        = new Client([
+            'handler'     => $handler_stack,
             'http_errors' => false,
         ]);
         $handler = new Handler('token', null, null, LogLevel::INFO, null, $client);
@@ -203,7 +203,7 @@ class HandlerTest extends TestCase {
 
     #[Group('unit')]
     public function testAutoRetryDeciderReturnsTrueOn429() {
-        $request = new Request('GET', '/items');
+        $request  = new Request('GET', '/items');
         $response = new Response(429);
 
         $result = Handler::autoRetryDecider(0, $request, $response);
@@ -213,7 +213,7 @@ class HandlerTest extends TestCase {
 
     #[Group('unit')]
     public function testAutoRetryDeciderReturnsFalseOnOtherErrors() {
-        $request = new Request('GET', '/items');
+        $request  = new Request('GET', '/items');
         $response = new Response(500);
 
         $result = Handler::autoRetryDecider(0, $request, $response);
@@ -223,7 +223,7 @@ class HandlerTest extends TestCase {
 
     #[Group('unit')]
     public function testAutoRetryDeciderReturnsFalseOnSuccess() {
-        $request = new Request('GET', '/items');
+        $request  = new Request('GET', '/items');
         $response = new Response(200);
 
         $result = Handler::autoRetryDecider(0, $request, $response);
@@ -233,7 +233,7 @@ class HandlerTest extends TestCase {
 
     #[Group('unit')]
     public function testAutoRetryDeciderReturnsFalseWhenMaxRetriesExceeded() {
-        $request = new Request('GET', '/items');
+        $request  = new Request('GET', '/items');
         $response = new Response(429);
 
         $result = Handler::autoRetryDecider(Handler::MAX_RETRIES, $request, $response);
@@ -253,7 +253,7 @@ class HandlerTest extends TestCase {
     #[Group('unit')]
     #[DataProvider('retryCountProvider')]
     public function testAutoRetryDeciderRetriesUpToMaxRetries(int $retries, bool $expected) {
-        $request = new Request('GET', '/items');
+        $request  = new Request('GET', '/items');
         $response = new Response(429);
 
         $result = Handler::autoRetryDecider($retries, $request, $response);
@@ -263,13 +263,13 @@ class HandlerTest extends TestCase {
 
     public static function retryCountProvider(): array {
         return [
-            'retry 0' => [0, true],
-            'retry 1' => [1, true],
-            'retry 2' => [2, true],
-            'retry 3' => [3, true],
-            'retry 4' => [4, true],
+            'retry 0'       => [0, true],
+            'retry 1'       => [1, true],
+            'retry 2'       => [2, true],
+            'retry 3'       => [3, true],
+            'retry 4'       => [4, true],
             'retry 5 (max)' => [5, false],
-            'retry 6' => [6, false],
+            'retry 6'       => [6, false],
         ];
     }
 
@@ -279,8 +279,8 @@ class HandlerTest extends TestCase {
             new Response(200, [], '{"data": []}'),
         ]);
         $handler_stack = HandlerStack::create($mock);
-        $client = new Client([
-            'handler' => $handler_stack,
+        $client        = new Client([
+            'handler'     => $handler_stack,
             'http_errors' => false,
         ]);
 
@@ -316,7 +316,7 @@ class HandlerTest extends TestCase {
 
     #[Group('unit')]
     public function testConstructorCreatesClientWithLogger() {
-        $logger = $this->createMock(LoggerInterface::class);
+        $logger  = $this->createMock(LoggerInterface::class);
         $handler = new Handler('test-token', null, $logger, LogLevel::DEBUG);
 
         $this->assertInstanceOf(Handler::class, $handler);

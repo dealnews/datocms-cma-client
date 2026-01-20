@@ -2,8 +2,8 @@
 
 namespace DealNews\DatoCMS\CMA\Input\Parts\Site;
 
-use Moonspot\ValueObjects\ValueObject;
 use DealNews\DatoCMS\CMA\Input\Parts\Relationships\Role;
+use Moonspot\ValueObjects\ValueObject;
 
 /**
  * Represents the relationships between a site and other entities.

@@ -2,7 +2,6 @@
 
 namespace DealNews\DatoCMS\CMA\Exception;
 
-
 /**
  * Exception thrown when the DatoCMS API returns an error response
  *

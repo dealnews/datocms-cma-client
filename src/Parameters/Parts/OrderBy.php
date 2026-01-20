@@ -57,11 +57,12 @@ class OrderBy extends ValueObject {
      * @return array<string> Formatted order_by values
      */
     public function toArray(?array $data = null): array {
-        $order_by = $data ?? $this->order_by;
+        $order_by     = $data ?? $this->order_by;
         $order_by_set = [];
         foreach ($order_by as $field_name => $direction) {
             $order_by_set[] = $field_name . '_' . strtoupper($direction);
         }
+
         return $order_by_set;
     }
 }

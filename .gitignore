@@ -7,6 +7,7 @@ composer.lock
 
 # Exclude testing cache
 .phpunit.cache
+.php-cs-fixer.cache
 
 # Directory to store temp files while doing development (AI files, temp test files, etc..)
 /.dev/

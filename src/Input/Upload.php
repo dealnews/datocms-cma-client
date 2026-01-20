@@ -63,9 +63,9 @@ class Upload extends ValueObject {
      * Creates a new Upload input object
      */
     public function __construct() {
-        $this->attributes = new Attributes();
+        $this->attributes    = new Attributes();
         $this->relationships = new Relationships();
-        $this->type = 'upload';
+        $this->type          = 'upload';
     }
 
     /**

@@ -44,6 +44,7 @@ class FilterFields extends ValueObject {
         string $operator = 'eq'
     ): FilterFields {
         $this->fields[$field_name][$operator] = $value;
+
         return $this;
     }
 

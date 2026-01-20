@@ -2,10 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\Upload;
 
-use PHPUnit\Framework\Attributes\DataProvider;
+use DealNews\DatoCMS\CMA\Input\Parts\Upload\DefaultFieldMetadata;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Parts\Upload\DefaultFieldMetadata;
 
 /**
  * Tests for the Input\Parts\Upload\DefaultFieldMetadata class
@@ -18,7 +17,7 @@ class DefaultFieldMetadataTest extends TestCase {
 
     #[Group('unit')]
     public function testAddLocaleWithAllFields() {
-        $metadata = new DefaultFieldMetadata();
+        $metadata    = new DefaultFieldMetadata();
         $focal_point = ['x' => 0.5, 'y' => 0.3];
         $custom_data = ['key' => 'value'];
 
@@ -238,7 +237,7 @@ class DefaultFieldMetadataTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesAllNonNullValues() {
-        $metadata = new DefaultFieldMetadata();
+        $metadata    = new DefaultFieldMetadata();
         $focal_point = ['x' => 0.5, 'y' => 0.5];
         $custom_data = ['custom' => 'value'];
         $metadata->addLocale('en', 'Alt', 'Title', $focal_point, $custom_data);

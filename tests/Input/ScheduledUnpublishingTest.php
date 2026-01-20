@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input;
 
+use DealNews\DatoCMS\CMA\Input\ScheduledUnpublishing;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\ScheduledUnpublishing;
 
 class ScheduledUnpublishingTest extends TestCase {
 
@@ -17,7 +17,7 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingUnpublishingScheduledAt() {
-        $scheduled_unpublishing = new ScheduledUnpublishing();
+        $scheduled_unpublishing                                          = new ScheduledUnpublishing();
         $scheduled_unpublishing->attributes['unpublishing_scheduled_at'] = '2030-09-01T12:00:00Z';
 
         $this->assertEquals('2030-09-01T12:00:00Z', $scheduled_unpublishing->attributes['unpublishing_scheduled_at']);
@@ -25,7 +25,7 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingContentInLocales() {
-        $scheduled_unpublishing = new ScheduledUnpublishing();
+        $scheduled_unpublishing                                   = new ScheduledUnpublishing();
         $scheduled_unpublishing->attributes['content_in_locales'] = ['en', 'it', 'fr'];
 
         $this->assertEquals(['en', 'it', 'fr'], $scheduled_unpublishing->attributes['content_in_locales']);
@@ -33,7 +33,7 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayTypeProperlySet() {
-        $scheduled_unpublishing = new ScheduledUnpublishing();
+        $scheduled_unpublishing                                          = new ScheduledUnpublishing();
         $scheduled_unpublishing->attributes['unpublishing_scheduled_at'] = '2030-09-01T12:00:00Z';
 
         $array = $scheduled_unpublishing->toArray();
@@ -44,9 +44,9 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayRemovesEmptyContentInLocales() {
-        $scheduled_unpublishing = new ScheduledUnpublishing();
+        $scheduled_unpublishing                                          = new ScheduledUnpublishing();
         $scheduled_unpublishing->attributes['unpublishing_scheduled_at'] = '2030-09-01T12:00:00Z';
-        $scheduled_unpublishing->attributes['content_in_locales'] = [];
+        $scheduled_unpublishing->attributes['content_in_locales']        = [];
 
         $array = $scheduled_unpublishing->toArray();
 
@@ -55,9 +55,9 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayPreservesContentInLocales() {
-        $scheduled_unpublishing = new ScheduledUnpublishing();
+        $scheduled_unpublishing                                          = new ScheduledUnpublishing();
         $scheduled_unpublishing->attributes['unpublishing_scheduled_at'] = '2030-09-01T12:00:00Z';
-        $scheduled_unpublishing->attributes['content_in_locales'] = ['en', 'es'];
+        $scheduled_unpublishing->attributes['content_in_locales']        = ['en', 'es'];
 
         $array = $scheduled_unpublishing->toArray();
 
@@ -67,7 +67,7 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesTypeAndAttributes() {
-        $scheduled_unpublishing = new ScheduledUnpublishing();
+        $scheduled_unpublishing                                          = new ScheduledUnpublishing();
         $scheduled_unpublishing->attributes['unpublishing_scheduled_at'] = '2030-09-01T12:00:00Z';
 
         $array = $scheduled_unpublishing->toArray();
@@ -79,30 +79,30 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testFullScheduledUnpublishingWithAllFields() {
-        $scheduled_unpublishing = new ScheduledUnpublishing();
+        $scheduled_unpublishing                                          = new ScheduledUnpublishing();
         $scheduled_unpublishing->attributes['unpublishing_scheduled_at'] = '2025-12-31T23:59:59Z';
-        $scheduled_unpublishing->attributes['content_in_locales'] = ['en', 'it', 'de'];
+        $scheduled_unpublishing->attributes['content_in_locales']        = ['en', 'it', 'de'];
 
         $array = $scheduled_unpublishing->toArray();
 
         $this->assertEquals([
-            'type' => 'scheduled_unpublishing',
+            'type'       => 'scheduled_unpublishing',
             'attributes' => [
                 'unpublishing_scheduled_at' => '2025-12-31T23:59:59Z',
-                'content_in_locales' => ['en', 'it', 'de'],
+                'content_in_locales'        => ['en', 'it', 'de'],
             ],
         ], $array);
     }
 
     #[Group('unit')]
     public function testToArrayWithOnlyRequiredField() {
-        $scheduled_unpublishing = new ScheduledUnpublishing();
+        $scheduled_unpublishing                                          = new ScheduledUnpublishing();
         $scheduled_unpublishing->attributes['unpublishing_scheduled_at'] = '2030-01-01T00:00:00Z';
 
         $array = $scheduled_unpublishing->toArray();
 
         $this->assertEquals([
-            'type' => 'scheduled_unpublishing',
+            'type'       => 'scheduled_unpublishing',
             'attributes' => [
                 'unpublishing_scheduled_at' => '2030-01-01T00:00:00Z',
             ],

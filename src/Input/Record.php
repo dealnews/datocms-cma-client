@@ -77,7 +77,7 @@ class Record extends ValueObject {
      * @param string|null $item_type_id The item_type (model) ID for this record
      */
     public function __construct(?string $item_type_id = null) {
-        $this->meta = new Meta();
+        $this->meta          = new Meta();
         $this->relationships = new Relationships();
 
         if (!empty($item_type_id)) {
@@ -122,6 +122,7 @@ class Record extends ValueObject {
 
             }
         }
+
         return $array;
     }
 }

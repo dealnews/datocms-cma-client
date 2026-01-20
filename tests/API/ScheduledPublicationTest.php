@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\ScheduledPublication;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Input\ScheduledPublication as ScheduledPublicationInput;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\ScheduledPublication class
@@ -47,10 +47,10 @@ class ScheduledPublicationTest extends TestCase {
     #[Group('unit')]
     public function testCreateWithArrayMinimalData() {
         $data = [
-            'type' => 'scheduled_publication',
+            'type'       => 'scheduled_publication',
             'attributes' => ['publication_scheduled_at' => '2030-09-01T12:00:00Z'],
         ];
-        $expected_response = ['data' => ['id' => 'scheduled-pub-123', 'type' => 'scheduled_publication']];
+        $expected_response     = ['data' => ['id' => 'scheduled-pub-123', 'type' => 'scheduled_publication']];
         $scheduled_publication = $this->createScheduledPublicationWithMock(
             'POST',
             '/items/record-123/scheduled-publication',
@@ -67,16 +67,16 @@ class ScheduledPublicationTest extends TestCase {
     #[Group('unit')]
     public function testCreateWithArrayFullData() {
         $data = [
-            'type' => 'scheduled_publication',
+            'type'       => 'scheduled_publication',
             'attributes' => [
                 'publication_scheduled_at' => '2030-09-01T12:00:00Z',
-                'selective_publication' => [
-                    'content_in_locales' => ['en', 'es'],
+                'selective_publication'    => [
+                    'content_in_locales'    => ['en', 'es'],
                     'non_localized_content' => true,
                 ],
             ],
         ];
-        $expected_response = ['data' => ['id' => 'scheduled-pub-456']];
+        $expected_response     = ['data' => ['id' => 'scheduled-pub-456']];
         $scheduled_publication = $this->createScheduledPublicationWithMock(
             'POST',
             '/items/record-456/scheduled-publication',
@@ -92,10 +92,10 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testCreateWithScheduledPublicationInput() {
-        $input = new ScheduledPublicationInput();
+        $input                                         = new ScheduledPublicationInput();
         $input->attributes['publication_scheduled_at'] = '2030-09-01T12:00:00Z';
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => 'scheduled-pub-789']];
 
         $mock_handler = $this->createMock(Handler::class);
@@ -105,7 +105,7 @@ class ScheduledPublicationTest extends TestCase {
             ->willReturn($expected_response);
 
         $scheduled_publication = new ScheduledPublication($mock_handler);
-        $result = $scheduled_publication->create('record-789', $input);
+        $result                = $scheduled_publication->create('record-789', $input);
 
         $this->assertEquals($expected_response, $result);
     }
@@ -113,11 +113,11 @@ class ScheduledPublicationTest extends TestCase {
     #[Group('unit')]
     public function testCreateThrowsWhenPublicationScheduledAtIsMissing() {
         $data = [
-            'type' => 'scheduled_publication',
+            'type'       => 'scheduled_publication',
             'attributes' => [],
         ];
 
-        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler          = $this->createMock(Handler::class);
         $scheduled_publication = new ScheduledPublication($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
@@ -129,11 +129,11 @@ class ScheduledPublicationTest extends TestCase {
     #[Group('unit')]
     public function testCreateThrowsWhenPublicationScheduledAtIsEmpty() {
         $data = [
-            'type' => 'scheduled_publication',
+            'type'       => 'scheduled_publication',
             'attributes' => ['publication_scheduled_at' => ''],
         ];
 
-        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler          = $this->createMock(Handler::class);
         $scheduled_publication = new ScheduledPublication($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
@@ -148,7 +148,7 @@ class ScheduledPublicationTest extends TestCase {
             'type' => 'scheduled_publication',
         ];
 
-        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler          = $this->createMock(Handler::class);
         $scheduled_publication = new ScheduledPublication($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
@@ -163,7 +163,7 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testDelete() {
-        $expected_response = ['data' => ['id' => 'record-123', 'type' => 'item']];
+        $expected_response     = ['data' => ['id' => 'record-123', 'type' => 'item']];
         $scheduled_publication = $this->createScheduledPublicationWithMock(
             'DELETE',
             '/items/record-123/scheduled-publication',
@@ -179,7 +179,7 @@ class ScheduledPublicationTest extends TestCase {
 
     #[Group('unit')]
     public function testDeleteWithDifferentRecordId() {
-        $expected_response = ['data' => ['id' => 'record-999', 'type' => 'item']];
+        $expected_response     = ['data' => ['id' => 'record-999', 'type' => 'item']];
         $scheduled_publication = $this->createScheduledPublicationWithMock(
             'DELETE',
             '/items/record-999/scheduled-publication',

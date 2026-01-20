@@ -2,16 +2,15 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\Maintenance;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\Maintenance class
  */
-class MaintenanceTest extends TestCase
-{
+class MaintenanceTest extends TestCase {
     protected function createMaintenanceWithMock(
         string $expected_method,
         string $expected_path,
@@ -29,14 +28,13 @@ class MaintenanceTest extends TestCase
     }
 
     #[Group('unit')]
-    public function testRetrieve(): void
-    {
+    public function testRetrieve(): void {
         $expected_response = [
             'data' => [
-                'id' => '1',
-                'type' => 'maintenance_mode',
-                'attributes' => ['active' => false]
-            ]
+                'id'         => '1',
+                'type'       => 'maintenance_mode',
+                'attributes' => ['active' => false],
+            ],
         ];
 
         $maintenance = $this->createMaintenanceWithMock(
@@ -53,14 +51,13 @@ class MaintenanceTest extends TestCase
     }
 
     #[Group('unit')]
-    public function testActivateWithoutForceParameter(): void
-    {
+    public function testActivateWithoutForceParameter(): void {
         $expected_response = [
             'data' => [
-                'id' => '1',
-                'type' => 'maintenance_mode',
-                'attributes' => ['active' => true]
-            ]
+                'id'         => '1',
+                'type'       => 'maintenance_mode',
+                'attributes' => ['active' => true],
+            ],
         ];
 
         $maintenance = $this->createMaintenanceWithMock(
@@ -77,14 +74,13 @@ class MaintenanceTest extends TestCase
     }
 
     #[Group('unit')]
-    public function testActivateWithForceFalse(): void
-    {
+    public function testActivateWithForceFalse(): void {
         $expected_response = [
             'data' => [
-                'id' => '1',
-                'type' => 'maintenance_mode',
-                'attributes' => ['active' => true]
-            ]
+                'id'         => '1',
+                'type'       => 'maintenance_mode',
+                'attributes' => ['active' => true],
+            ],
         ];
 
         $maintenance = $this->createMaintenanceWithMock(
@@ -101,14 +97,13 @@ class MaintenanceTest extends TestCase
     }
 
     #[Group('unit')]
-    public function testActivateWithForceTrue(): void
-    {
+    public function testActivateWithForceTrue(): void {
         $expected_response = [
             'data' => [
-                'id' => '1',
-                'type' => 'maintenance_mode',
-                'attributes' => ['active' => true]
-            ]
+                'id'         => '1',
+                'type'       => 'maintenance_mode',
+                'attributes' => ['active' => true],
+            ],
         ];
 
         $maintenance = $this->createMaintenanceWithMock(
@@ -125,14 +120,13 @@ class MaintenanceTest extends TestCase
     }
 
     #[Group('unit')]
-    public function testDeactivate(): void
-    {
+    public function testDeactivate(): void {
         $expected_response = [
             'data' => [
-                'id' => '1',
-                'type' => 'maintenance_mode',
-                'attributes' => ['active' => false]
-            ]
+                'id'         => '1',
+                'type'       => 'maintenance_mode',
+                'attributes' => ['active' => false],
+            ],
         ];
 
         $maintenance = $this->createMaintenanceWithMock(

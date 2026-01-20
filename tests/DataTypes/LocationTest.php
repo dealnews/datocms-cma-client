@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\DataTypes;
 
+use DealNews\DatoCMS\CMA\DataTypes\Location;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\DataTypes\Location;
 
 class LocationTest extends TestCase {
 
@@ -14,7 +14,7 @@ class LocationTest extends TestCase {
     public function testValidLocationValues(array $value, array $expected) {
         $location = Location::init();
         $location->set($value);
-        
+
         $this->assertEquals($expected, $location->jsonSerialize());
     }
 
@@ -23,7 +23,7 @@ class LocationTest extends TestCase {
     public function testInvalidLocationValues(mixed $value, string $expectedMessage) {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedMessage);
-        
+
         $location = Location::init();
         $location->set($value);
     }
@@ -31,11 +31,11 @@ class LocationTest extends TestCase {
     #[Group('unit')]
     public function testSetLocationHelperMethod() {
         $location = Location::init();
-        $result = $location->setLocation(40.7128, -74.0060);
-        
+        $result   = $location->setLocation(40.7128, -74.0060);
+
         $this->assertInstanceOf(Location::class, $result);
         $this->assertEquals([
-            'latitude' => 40.7128,
+            'latitude'  => 40.7128,
             'longitude' => -74.0060,
         ], $location->jsonSerialize());
     }
@@ -43,8 +43,8 @@ class LocationTest extends TestCase {
     #[Group('unit')]
     public function testSetLocationMethodChaining() {
         $location = Location::init();
-        $result = $location->setLocation(0.0, 0.0);
-        
+        $result   = $location->setLocation(0.0, 0.0);
+
         $this->assertInstanceOf(Location::class, $result);
         $this->assertSame($location, $result);
     }
@@ -52,8 +52,8 @@ class LocationTest extends TestCase {
     #[Group('unit')]
     public function testSetMethodReturnsStatic() {
         $location = Location::init();
-        $result = $location->set(['latitude' => 40.7128, 'longitude' => -74.0060]);
-        
+        $result   = $location->set(['latitude' => 40.7128, 'longitude' => -74.0060]);
+
         $this->assertInstanceOf(Location::class, $result);
         $this->assertSame($location, $result);
     }
@@ -64,9 +64,9 @@ class LocationTest extends TestCase {
         $location->set(['latitude' => 40.7128, 'longitude' => -74.0060]);
         $location->addLocale('en', ['latitude' => 51.5074, 'longitude' => -0.1278]);
         $location->addLocale('es', ['latitude' => 40.4168, 'longitude' => -3.7038]);
-        
+
         $result = $location->jsonSerialize();
-        
+
         $this->assertIsArray($result);
         $this->assertEquals(['latitude' => 51.5074, 'longitude' => -0.1278], $result['en']);
         $this->assertEquals(['latitude' => 40.4168, 'longitude' => -3.7038], $result['es']);
@@ -75,8 +75,8 @@ class LocationTest extends TestCase {
     #[Group('unit')]
     public function testAddLocaleReturnsStatic() {
         $location = Location::init();
-        $result = $location->addLocale('en', ['latitude' => 0.0, 'longitude' => 0.0]);
-        
+        $result   = $location->addLocale('en', ['latitude' => 0.0, 'longitude' => 0.0]);
+
         $this->assertInstanceOf(Location::class, $result);
         $this->assertSame($location, $result);
     }
@@ -85,7 +85,7 @@ class LocationTest extends TestCase {
     public function testAddLocaleWithInvalidLocation() {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Value not in expected format');
-        
+
         $location = Location::init();
         $location->addLocale('en', 'invalid');
     }
@@ -93,7 +93,7 @@ class LocationTest extends TestCase {
     #[Group('unit')]
     public function testJsonSerializeReturnsNullWhenEmpty() {
         $location = Location::init();
-        
+
         $this->assertNull($location->jsonSerialize());
     }
 
@@ -102,9 +102,9 @@ class LocationTest extends TestCase {
         $location = Location::init();
         $location->set(['latitude' => 40.7128, 'longitude' => -74.0060]);
         $location->addLocale('en', ['latitude' => 51.5074, 'longitude' => -0.1278]);
-        
+
         $result = $location->jsonSerialize();
-        
+
         $this->assertIsArray($result);
         $this->assertArrayHasKey('en', $result);
         $this->assertEquals(['latitude' => 51.5074, 'longitude' => -0.1278], $result['en']);
@@ -114,7 +114,7 @@ class LocationTest extends TestCase {
     public function testNullValueIsValid() {
         $location = Location::init();
         $location->set(null);
-        
+
         $this->assertNull($location->jsonSerialize());
     }
 

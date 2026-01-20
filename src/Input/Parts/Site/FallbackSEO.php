@@ -80,6 +80,7 @@ class FallbackSEO extends ValueObject {
         if ($array['twitter_card'] === false) {
             unset($array['twitter_card']);
         }
+
         return $array;
     }
 }

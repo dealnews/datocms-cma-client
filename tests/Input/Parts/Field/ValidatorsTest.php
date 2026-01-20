@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\Field;
 
+use DealNews\DatoCMS\CMA\Input\Parts\Field\Validators;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Parts\Field\Validators;
 
 /**
  * Tests for the Input\Parts\Field\Validators class

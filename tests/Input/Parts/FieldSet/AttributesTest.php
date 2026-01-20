@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\FieldSet;
 
+use DealNews\DatoCMS\CMA\Input\Parts\FieldSet\Attributes;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Parts\FieldSet\Attributes;
 
 /**
  * Tests for the Input\Parts\FieldSet\Attributes class
@@ -99,7 +99,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesNullTitle(): void {
-        $attributes = new Attributes();
+        $attributes           = new Attributes();
         $attributes->position = 5;
 
         $array = $attributes->toArray();
@@ -109,7 +109,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesTitleWhenSet(): void {
-        $attributes = new Attributes();
+        $attributes        = new Attributes();
         $attributes->title = 'Contact Information';
 
         $array = $attributes->toArray();
@@ -120,7 +120,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesFalseHint(): void {
-        $attributes = new Attributes();
+        $attributes        = new Attributes();
         $attributes->title = 'Test';
 
         $array = $attributes->toArray();
@@ -130,7 +130,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesHintWhenSetToString(): void {
-        $attributes = new Attributes();
+        $attributes       = new Attributes();
         $attributes->hint = 'Please fill in these fields!';
 
         $array = $attributes->toArray();
@@ -141,7 +141,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesHintWhenSetToNull(): void {
-        $attributes = new Attributes();
+        $attributes       = new Attributes();
         $attributes->hint = null;
 
         $array = $attributes->toArray();
@@ -152,7 +152,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesNullPosition(): void {
-        $attributes = new Attributes();
+        $attributes        = new Attributes();
         $attributes->title = 'Test';
 
         $array = $attributes->toArray();
@@ -162,7 +162,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesPositionWhenSet(): void {
-        $attributes = new Attributes();
+        $attributes           = new Attributes();
         $attributes->position = 10;
 
         $array = $attributes->toArray();
@@ -173,7 +173,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesNullCollapsible(): void {
-        $attributes = new Attributes();
+        $attributes        = new Attributes();
         $attributes->title = 'Test';
 
         $array = $attributes->toArray();
@@ -183,7 +183,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesCollapsibleWhenSet(): void {
-        $attributes = new Attributes();
+        $attributes              = new Attributes();
         $attributes->collapsible = true;
 
         $array = $attributes->toArray();
@@ -194,7 +194,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesNullStartCollapsed(): void {
-        $attributes = new Attributes();
+        $attributes        = new Attributes();
         $attributes->title = 'Test';
 
         $array = $attributes->toArray();
@@ -204,7 +204,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesStartCollapsedWhenSet(): void {
-        $attributes = new Attributes();
+        $attributes                  = new Attributes();
         $attributes->start_collapsed = false;
 
         $array = $attributes->toArray();
@@ -215,11 +215,11 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithAllFieldsPopulated(): void {
-        $attributes = new Attributes();
-        $attributes->title = 'Contact Details';
-        $attributes->hint = 'Enter contact information';
-        $attributes->position = 10;
-        $attributes->collapsible = true;
+        $attributes                  = new Attributes();
+        $attributes->title           = 'Contact Details';
+        $attributes->hint            = 'Enter contact information';
+        $attributes->position        = 10;
+        $attributes->collapsible     = true;
         $attributes->start_collapsed = false;
 
         $array = $attributes->toArray();

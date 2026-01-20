@@ -38,6 +38,7 @@ class Webhook extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('POST', '/webhooks', [], ['data' => $data]);
     }
 
@@ -59,6 +60,7 @@ class Webhook extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('PUT', '/webhooks/' . $webhook_id, [], ['data' => $data]);
     }
 

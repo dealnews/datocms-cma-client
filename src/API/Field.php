@@ -39,6 +39,7 @@ class Field extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('POST', '/item-types/' . $model_id_or_api_key . '/fields', [], ['data' => $data]);
     }
 
@@ -60,6 +61,7 @@ class Field extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('PUT', '/fields/' . $field_id_or_api_key, [], ['data' => $data]);
     }
 

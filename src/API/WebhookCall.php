@@ -37,6 +37,7 @@ class WebhookCall extends Base {
      */
     public function list(?WebhookCallParameters $parameters = null): array {
         $query_params = !is_null($parameters) ? $parameters->toArray() : [];
+
         return $this->handler->execute('GET', '/webhook_calls', $query_params);
     }
 

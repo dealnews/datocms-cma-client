@@ -9,11 +9,9 @@ use PHPUnit\Framework\TestCase;
 /**
  * Tests for the Input\Parts\Relationships\FieldSet class
  */
-class FieldSetTest extends TestCase
-{
+class FieldSetTest extends TestCase {
     #[Group('unit')]
-    public function testDefaultValues()
-    {
+    public function testDefaultValues() {
         $fieldset = new FieldSet();
 
         $this->assertSame('fieldset', $fieldset->type);
@@ -21,26 +19,23 @@ class FieldSetTest extends TestCase
     }
 
     #[Group('unit')]
-    public function testTypeCanBeSetToFieldset()
-    {
+    public function testTypeCanBeSetToFieldset() {
         $fieldset = new FieldSet();
 
         $this->assertSame('fieldset', $fieldset->type);
     }
 
     #[Group('unit')]
-    public function testIdCanBeSet()
-    {
-        $fieldset = new FieldSet();
+    public function testIdCanBeSet() {
+        $fieldset     = new FieldSet();
         $fieldset->id = '24';
 
         $this->assertSame('24', $fieldset->id);
     }
 
     #[Group('unit')]
-    public function testToArrayWrapsDataCorrectly()
-    {
-        $fieldset = new FieldSet();
+    public function testToArrayWrapsDataCorrectly() {
+        $fieldset     = new FieldSet();
         $fieldset->id = '42';
 
         $result = $fieldset->toArray();

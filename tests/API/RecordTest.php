@@ -2,13 +2,12 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
-use DealNews\DatoCMS\CMA\Parameters\Record as RecordParameter;
 use DealNews\DatoCMS\CMA\Input\Record as RecordInput;
+use DealNews\DatoCMS\CMA\Parameters\Record as RecordParameter;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\Record class
@@ -49,7 +48,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testListWithoutParameters() {
         $expected_response = ['data' => [['id' => '1'], ['id' => '2']]];
-        $record = $this->createRecordWithMock('GET', '/items', [], [], $expected_response);
+        $record            = $this->createRecordWithMock('GET', '/items', [], [], $expected_response);
 
         $result = $record->list();
 
@@ -58,17 +57,143 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testListWithParameters() {
-        $params = new RecordParameter();
+        $params          = new RecordParameter();
         $params->version = 'published';
-        $params->nested = true;
+        $params->nested  = true;
 
-        $expected_query = $params->toArray();
+        $expected_query    = $params->toArray();
         $expected_response = ['data' => []];
-        $record = $this->createRecordWithMock('GET', '/items', $expected_query, [], $expected_response);
+        $record            = $this->createRecordWithMock('GET', '/items', $expected_query, [], $expected_response);
 
         $result = $record->list($params);
 
         $this->assertEquals($expected_response, $result);
+    }
+
+    // =========================================================================
+    // listAll() tests
+    // =========================================================================
+
+    #[Group('unit')]
+    public function testListAllWithNullParameters() {
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->with(
+                'GET',
+                '/items',
+                $this->callback(function ($query) {
+                    return isset($query['page']['limit']) &&
+                           $query['page']['limit'] === 500;
+                }),
+                []
+            )
+            ->willReturn(['data' => [['id' => '1'], ['id' => '2']]]);
+
+        $record = new Record($mock_handler);
+        $result = $record->listAll();
+
+        $this->assertEquals(['data' => [['id' => '1'], ['id' => '2']]], $result);
+    }
+
+    #[Group('unit')]
+    public function testListAllWithProvidedParameters() {
+        $params               = new RecordParameter();
+        $params->version      = 'published';
+        $params->nested       = true;
+        $params->page->limit  = 100;
+        $params->page->offset = 50;
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->with(
+                'GET',
+                '/items',
+                $this->callback(function ($query) {
+                    return isset($query['page']['limit'])    &&
+                           $query['page']['limit'] === 500   &&
+                           isset($query['version'])          &&
+                           $query['version'] === 'published' &&
+                           isset($query['nested'])           &&
+                           $query['nested'] === true;
+                }),
+                []
+            )
+            ->willReturn(['data' => [['id' => '1']]]);
+
+        $record = new Record($mock_handler);
+        $result = $record->listAll($params);
+
+        $this->assertEquals(['data' => [['id' => '1']]], $result);
+    }
+
+    #[Group('unit')]
+    public function testListAllSinglePage() {
+        $first_page = array_fill(0, 250, ['id' => 'record']);
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->willReturn(['data' => $first_page]);
+
+        $record = new Record($mock_handler);
+        $result = $record->listAll();
+
+        $this->assertCount(250, $result['data']);
+    }
+
+    #[Group('unit')]
+    public function testListAllMultiplePages() {
+        $first_page  = array_fill(0, 500, ['id' => 'page1']);
+        $second_page = array_fill(0, 250, ['id' => 'page2']);
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->exactly(2))
+            ->method('execute')
+            ->willReturnOnConsecutiveCalls(
+                ['data' => $first_page],
+                ['data' => $second_page]
+            );
+
+        $record = new Record($mock_handler);
+        $result = $record->listAll();
+
+        $this->assertCount(750, $result['data']);
+    }
+
+    #[Group('unit')]
+    public function testListAllExactly500OnLastPage() {
+        $first_page  = array_fill(0, 500, ['id' => 'page1']);
+        $second_page = array_fill(0, 500, ['id' => 'page2']);
+        $third_page  = [];
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->exactly(3))
+            ->method('execute')
+            ->willReturnOnConsecutiveCalls(
+                ['data' => $first_page],
+                ['data' => $second_page],
+                ['data' => $third_page]
+            );
+
+        $record = new Record($mock_handler);
+        $result = $record->listAll();
+
+        $this->assertCount(1000, $result['data']);
+    }
+
+    #[Group('unit')]
+    public function testListAllEmptyResultSet() {
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->willReturn(['data' => []]);
+
+        $record = new Record($mock_handler);
+        $result = $record->listAll();
+
+        $this->assertEquals(['data' => []], $result);
     }
 
     // =========================================================================
@@ -78,12 +203,12 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testCreateWithArray() {
         $data = [
-            'type' => 'item',
-            'attributes' => ['title' => 'Test'],
+            'type'          => 'item',
+            'attributes'    => ['title' => 'Test'],
             'relationships' => ['item_type' => ['data' => ['type' => 'item_type', 'id' => 'model-123']]],
         ];
         $expected_response = ['data' => ['id' => 'new-id', 'type' => 'item']];
-        $record = $this->createRecordWithMock('POST', '/items', [], ['data' => $data], $expected_response);
+        $record            = $this->createRecordWithMock('POST', '/items', [], ['data' => $data], $expected_response);
 
         $result = $record->create($data);
 
@@ -92,10 +217,10 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testCreateWithRecordInput() {
-        $input = new RecordInput('model-123');
+        $input                      = new RecordInput('model-123');
         $input->attributes['title'] = 'Test Record';
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => 'new-id', 'type' => 'item']];
 
         $mock_handler = $this->createMock(Handler::class);
@@ -117,7 +242,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testDuplicate() {
         $expected_response = ['data' => ['id' => 'duplicated-id', 'type' => 'item']];
-        $record = $this->createRecordWithMock('POST', '/items/original-id/duplicate', [], [], $expected_response);
+        $record            = $this->createRecordWithMock('POST', '/items/original-id/duplicate', [], [], $expected_response);
 
         $result = $record->duplicate('original-id');
 
@@ -131,11 +256,11 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testUpdateWithArray() {
         $data = [
-            'type' => 'item',
+            'type'       => 'item',
             'attributes' => ['title' => 'Updated Title'],
         ];
         $expected_response = ['data' => ['id' => 'record-123', 'type' => 'item']];
-        $record = $this->createRecordWithMock('PUT', '/items/record-123', [], ['data' => $data], $expected_response);
+        $record            = $this->createRecordWithMock('PUT', '/items/record-123', [], ['data' => $data], $expected_response);
 
         $result = $record->update('record-123', $data);
 
@@ -144,10 +269,10 @@ class RecordTest extends TestCase {
 
     #[Group('unit')]
     public function testUpdateWithRecordInput() {
-        $input = new RecordInput('model-123');
+        $input                      = new RecordInput('model-123');
         $input->attributes['title'] = 'Updated Title';
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => 'record-123', 'type' => 'item']];
 
         $mock_handler = $this->createMock(Handler::class);
@@ -169,7 +294,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testReferencesWithDefaults() {
         $expected_response = ['data' => []];
-        $record = $this->createRecordWithMock('GET', '/items/record-123/references', [], [], $expected_response);
+        $record            = $this->createRecordWithMock('GET', '/items/record-123/references', [], [], $expected_response);
 
         $result = $record->references('record-123');
 
@@ -179,7 +304,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testReferencesWithNested() {
         $expected_response = ['data' => []];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'GET',
             '/items/record-123/references',
             ['nested' => true],
@@ -195,7 +320,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testReferencesWithPublishedVersion() {
         $expected_response = ['data' => []];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'GET',
             '/items/record-123/references',
             ['version' => 'published'],
@@ -211,7 +336,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testReferencesWithCurrentVersion() {
         $expected_response = ['data' => []];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'GET',
             '/items/record-123/references',
             ['version' => 'current'],
@@ -227,7 +352,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testReferencesThrowsOnInvalidVersion() {
         $mock_handler = $this->createMock(Handler::class);
-        $record = new Record($mock_handler);
+        $record       = new Record($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('version must be "published" or "current"');
@@ -242,7 +367,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testRetrieveWithDefaults() {
         $expected_response = ['data' => ['id' => 'record-123', 'type' => 'item']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'GET',
             '/items/record-123',
             ['version' => 'current'],
@@ -258,7 +383,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testRetrieveWithNested() {
         $expected_response = ['data' => ['id' => 'record-123']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'GET',
             '/items/record-123',
             ['version' => 'current', 'nested' => true],
@@ -274,7 +399,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testRetrieveWithPublishedVersion() {
         $expected_response = ['data' => ['id' => 'record-123']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'GET',
             '/items/record-123',
             ['version' => 'published'],
@@ -290,7 +415,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testRetrieveThrowsOnInvalidVersion() {
         $mock_handler = $this->createMock(Handler::class);
-        $record = new Record($mock_handler);
+        $record       = new Record($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('version must be "published" or "current"');
@@ -305,7 +430,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testDelete() {
         $expected_response = ['data' => ['id' => 'job-123', 'type' => 'job']];
-        $record = $this->createRecordWithMock('DELETE', '/items/record-123', [], [], $expected_response);
+        $record            = $this->createRecordWithMock('DELETE', '/items/record-123', [], [], $expected_response);
 
         $result = $record->delete('record-123');
 
@@ -319,7 +444,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testPublishWithDefaults() {
         $expected_response = ['data' => ['id' => 'record-123']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'PUT',
             '/items/record-123/publish',
             [],
@@ -335,7 +460,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testPublishWithRecursive() {
         $expected_response = ['data' => ['id' => 'record-123']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'PUT',
             '/items/record-123/publish',
             ['recursive' => true],
@@ -352,15 +477,15 @@ class RecordTest extends TestCase {
     public function testPublishWithSelectivePublishing() {
         $expected_data = [
             'data' => [
-                'type' => 'selective_publish_operation',
+                'type'       => 'selective_publish_operation',
                 'attributes' => [
-                    'content_in_locales' => ['en', 'es'],
+                    'content_in_locales'    => ['en', 'es'],
                     'non_localized_content' => true,
                 ],
-            ]
+            ],
         ];
         $expected_response = ['data' => ['id' => 'record-123']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'PUT',
             '/items/record-123/publish',
             [],
@@ -376,7 +501,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testPublishThrowsWhenOnlyLocalesProvided() {
         $mock_handler = $this->createMock(Handler::class);
-        $record = new Record($mock_handler);
+        $record       = new Record($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('both locales and non_localized_content must be set');
@@ -387,7 +512,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testPublishThrowsWhenOnlyNonLocalizedContentProvided() {
         $mock_handler = $this->createMock(Handler::class);
-        $record = new Record($mock_handler);
+        $record       = new Record($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('both locales and non_localized_content must be set');
@@ -402,7 +527,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testUnpublishWithDefaults() {
         $expected_response = ['data' => ['id' => 'record-123']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'PUT',
             '/items/record-123/unpublish',
             [],
@@ -418,7 +543,7 @@ class RecordTest extends TestCase {
     #[Group('unit')]
     public function testUnpublishWithRecursive() {
         $expected_response = ['data' => ['id' => 'record-123']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'PUT',
             '/items/record-123/unpublish',
             ['recursive' => true],
@@ -435,14 +560,14 @@ class RecordTest extends TestCase {
     public function testUnpublishWithSelectiveUnpublishing() {
         $expected_data = [
             'data' => [
-                'type' => 'selective_unpublish_operation',
+                'type'       => 'selective_unpublish_operation',
                 'attributes' => [
                     'content_in_locales' => ['fr'],
                 ],
-            ]
+            ],
         ];
         $expected_response = ['data' => ['id' => 'record-123']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'PUT',
             '/items/record-123/unpublish',
             [],
@@ -463,7 +588,7 @@ class RecordTest extends TestCase {
     public function testPublishBulk() {
         $expected_data = [
             'data' => [
-                'type' => 'item_bulk_publish_operation',
+                'type'          => 'item_bulk_publish_operation',
                 'relationships' => [
                     'items' => [
                         'data' => [
@@ -471,12 +596,12 @@ class RecordTest extends TestCase {
                             ['type' => 'item', 'id' => 'id-2'],
                             ['type' => 'item', 'id' => 'id-3'],
                         ],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         $expected_response = ['data' => ['id' => 'job-123', 'type' => 'job']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'POST',
             '/items/bulk/publish',
             [],
@@ -497,19 +622,19 @@ class RecordTest extends TestCase {
     public function testUnpublishBulk() {
         $expected_data = [
             'data' => [
-                'type' => 'item_bulk_unpublish_operation',
+                'type'          => 'item_bulk_unpublish_operation',
                 'relationships' => [
                     'items' => [
                         'data' => [
                             ['type' => 'item', 'id' => 'id-1'],
                             ['type' => 'item', 'id' => 'id-2'],
                         ],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         $expected_response = ['data' => ['id' => 'job-456', 'type' => 'job']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'POST',
             '/items/bulk/unpublish',
             [],
@@ -530,18 +655,18 @@ class RecordTest extends TestCase {
     public function testDeleteBulk() {
         $expected_data = [
             'data' => [
-                'type' => 'item_bulk_destroy_operation',
+                'type'          => 'item_bulk_destroy_operation',
                 'relationships' => [
                     'items' => [
                         'data' => [
                             ['type' => 'item', 'id' => 'id-1'],
                         ],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         $expected_response = ['data' => ['id' => 'job-789', 'type' => 'job']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'POST',
             '/items/bulk/destroy',
             [],
@@ -562,7 +687,7 @@ class RecordTest extends TestCase {
     public function testMoveToStageBulk() {
         $expected_data = [
             'data' => [
-                'type' => 'item_bulk_move_to_stage_operation',
+                'type'       => 'item_bulk_move_to_stage_operation',
                 'attributes' => [
                     'stage' => 'review',
                 ],
@@ -572,12 +697,12 @@ class RecordTest extends TestCase {
                             ['type' => 'item', 'id' => 'id-1'],
                             ['type' => 'item', 'id' => 'id-2'],
                         ],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         $expected_response = ['data' => ['id' => 'job-999', 'type' => 'job']];
-        $record = $this->createRecordWithMock(
+        $record            = $this->createRecordWithMock(
             'POST',
             '/items/bulk/move-to-stage',
             [],

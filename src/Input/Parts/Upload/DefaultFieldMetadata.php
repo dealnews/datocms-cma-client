@@ -138,8 +138,9 @@ class DefaultFieldMetadata extends ValueObject {
     public function toArray(?array $data = null): array {
         $result = [];
         foreach ($this->locales as $locale => $metadata) {
-            $result[$locale] = array_filter($metadata, fn($v) => !is_null($v));
+            $result[$locale] = array_filter($metadata, fn ($v) => !is_null($v));
         }
+
         return $result;
     }
 }

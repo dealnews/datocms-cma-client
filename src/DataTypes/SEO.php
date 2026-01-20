@@ -44,11 +44,11 @@ class SEO extends Common {
         bool $no_index
     ): static {
         return $this->set([
-            'title' => $title,
-            'description' => $description,
-            'image' => $image,
+            'title'        => $title,
+            'description'  => $description,
+            'image'        => $image,
             'twitter_card' => $twitter_card,
-            'no_index' => $no_index,
+            'no_index'     => $no_index,
         ]);
     }
 

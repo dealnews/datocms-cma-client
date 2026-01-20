@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\Environment;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\Environment class
@@ -47,7 +47,7 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testForkWithOnlyRequiredParameters(): void {
         $expected_response = ['data' => ['id' => 'new-env', 'type' => 'environment']];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'POST',
             '/environments/original-env/fork',
             [],
@@ -63,11 +63,11 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testForkWithImmediateReturn(): void {
         $expected_response = ['data' => ['id' => 'forked-env', 'type' => 'environment']];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'POST',
             '/environments/source-env/fork',
             ['immediate_return' => true],
-            ['data' => ['id' => 'forked-env', 'type' => 'environment']],
+            ['data'             => ['id' => 'forked-env', 'type' => 'environment']],
             $expected_response
         );
 
@@ -79,7 +79,7 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testForkWithFastOption(): void {
         $expected_response = ['data' => ['id' => 'forked-env', 'type' => 'environment']];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'POST',
             '/environments/source-env/fork',
             ['fast' => true],
@@ -95,11 +95,11 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testForkWithForceOption(): void {
         $expected_response = ['data' => ['id' => 'forked-env', 'type' => 'environment']];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'POST',
             '/environments/source-env/fork',
             ['force' => true],
-            ['data' => ['id' => 'forked-env', 'type' => 'environment']],
+            ['data'  => ['id' => 'forked-env', 'type' => 'environment']],
             $expected_response
         );
 
@@ -111,11 +111,11 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testForkWithAllOptions(): void {
         $expected_response = ['data' => ['id' => 'forked-env', 'type' => 'environment']];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'POST',
             '/environments/source-env/fork',
             ['immediate_return' => true, 'fast' => true, 'force' => true],
-            ['data' => ['id' => 'forked-env', 'type' => 'environment']],
+            ['data'             => ['id' => 'forked-env', 'type' => 'environment']],
             $expected_response
         );
 
@@ -131,7 +131,7 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testPromote(): void {
         $expected_response = ['data' => ['id' => 'env-123', 'type' => 'environment', 'attributes' => ['primary' => true]]];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'PUT',
             '/environments/env-123/promote',
             [],
@@ -151,7 +151,7 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testRename(): void {
         $expected_response = ['data' => ['id' => 'new-name', 'type' => 'environment']];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'PUT',
             '/environments/old-name/rename',
             [],
@@ -171,7 +171,7 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testList(): void {
         $expected_response = ['data' => [['id' => 'env-1'], ['id' => 'env-2']]];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'GET',
             '/environments',
             [],
@@ -191,7 +191,7 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testRetrieve(): void {
         $expected_response = ['data' => ['id' => 'env-123', 'type' => 'environment']];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'GET',
             '/environments/env-123',
             [],
@@ -211,7 +211,7 @@ class EnvironmentTest extends TestCase {
     #[Group('unit')]
     public function testDelete(): void {
         $expected_response = ['data' => ['job_id' => 'job-123', 'status' => 'in_progress']];
-        $environment = $this->createEnvironmentWithMock(
+        $environment       = $this->createEnvironmentWithMock(
             'DELETE',
             '/environments/env-123',
             [],

@@ -2,7 +2,6 @@
 
 namespace DealNews\DatoCMS\CMA\API;
 
-use DealNews\DatoCMS\CMA\Config;
 use DealNews\DatoCMS\CMA\Exception\S3Upload;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Input\Upload as UploadInput;
@@ -56,7 +55,7 @@ class Upload extends Base {
     ) {
         parent::__construct($handler);
         $this->upload_request = $upload_request ?? new UploadRequest($this->handler);
-        $this->s3_client = $s3_client;
+        $this->s3_client      = $s3_client;
     }
 
     /**
@@ -64,8 +63,9 @@ class Upload extends Base {
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/upload/instances
      *
-     * @param UploadParameter|null $parameters Optional parameters for filtering,
-     *                                          sorting, and pagination
+     * @param UploadParameter|null $parameters Optional parameters for
+     *                                          filtering, sorting, and
+     *                                          pagination
      *
      * @return array<string, mixed> The API response body decoded as an
      *                              associative array
@@ -76,7 +76,55 @@ class Upload extends Base {
      */
     public function list(?UploadParameter $parameters = null): array {
         $query_params = !is_null($parameters) ? $parameters->toArray() : [];
+
         return $this->handler->execute('GET', '/uploads', $query_params);
+    }
+
+    /**
+     * Return all uploads with automatic pagination
+     *
+     * Automatically paginates through all uploads by making multiple API
+     * requests with 500-upload chunks. Useful when you need to retrieve an
+     * entire dataset without manually managing pagination. Filter and sort
+     * parameters are preserved across pages.
+     *
+     * @see https://www.datocms.com/docs/content-management-api/resources/upload/instances
+     *
+     * @param UploadParameter|null $parameters Optional parameters for
+     *                                          filtering and sorting. Page
+     *                                          offset/limit are overridden.
+     *
+     * @return array<string, mixed> All uploads in `['data' => [...]]` format
+     *
+     * @throws \DealNews\DatoCMS\CMA\Exception\API     On HTTP error responses
+     * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Unknown On unexpected errors
+     */
+    public function listAll(?UploadParameter $parameters = null): array {
+        if ($parameters === null) {
+            $parameters = new UploadParameter();
+        } else {
+            $parameters = clone $parameters;
+        }
+
+        $data   = [];
+        $offset = 0;
+        $limit  = 500;
+
+        $parameters->page->limit = $limit;
+
+        do {
+            $parameters->page->offset = $offset;
+
+            $response = $this->list($parameters);
+            $uploads  = $response['data'] ?? [];
+
+            $data = array_merge($data, $uploads);
+
+            $offset += $limit;
+        } while (count($uploads) === $limit);
+
+        return ['data' => $data];
     }
 
     /**
@@ -116,6 +164,7 @@ class Upload extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('POST', '/uploads', [], ['data' => $data]);
     }
 
@@ -137,6 +186,7 @@ class Upload extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('PUT', '/uploads/' . $upload_id, [], ['data' => $data]);
     }
 
@@ -188,6 +238,7 @@ class Upload extends Base {
             }
             $query_params['version'] = $version;
         }
+
         return $this->handler->execute('GET', '/uploads/' . $upload_id . '/references', $query_params);
     }
 
@@ -298,8 +349,8 @@ class Upload extends Base {
 
         // Step 1: Request upload permission
         $request_response = $this->upload_request->create($filename);
-        $s3_url = $request_response['data']['attributes']['url'];
-        $s3_headers = $request_response['data']['attributes']['request_headers'] ?? [];
+        $s3_url           = $request_response['data']['attributes']['url'];
+        $s3_headers       = $request_response['data']['attributes']['request_headers'] ?? [];
 
         // Step 2: Upload to S3
         $this->uploadToS3($s3_url, $filepath, $s3_headers);
@@ -342,8 +393,8 @@ class Upload extends Base {
         // Determine filename from URL if not provided
         if (empty($filename)) {
             $parsed_url = parse_url($url);
-            $path = $parsed_url['path'] ?? '';
-            $filename = basename($path);
+            $path       = $parsed_url['path'] ?? '';
+            $filename   = basename($path);
             if (empty($filename)) {
                 $filename = 'downloaded_file';
             }
@@ -419,7 +470,7 @@ class Upload extends Base {
      * @throws \InvalidArgumentException On download failure
      */
     protected function downloadToTemp(string $url, string $filename): string {
-        $temp_dir = sys_get_temp_dir();
+        $temp_dir  = sys_get_temp_dir();
         $temp_file = $temp_dir . DIRECTORY_SEPARATOR . uniqid('datocms_') . '_' . $filename;
 
         $client = $this->getS3Client();
@@ -466,7 +517,7 @@ class Upload extends Base {
         ?array $metadata,
         ?string $upload_collection_id
     ): UploadInput {
-        $upload = new UploadInput();
+        $upload                   = new UploadInput();
         $upload->attributes->path = $path;
 
         if (!empty($metadata)) {
@@ -486,8 +537,8 @@ class Upload extends Base {
                 foreach ($metadata['default_field_metadata'] as $locale => $locale_metadata) {
                     $upload->attributes->default_field_metadata->addLocale(
                         $locale,
-                        $locale_metadata['alt'] ?? null,
-                        $locale_metadata['title'] ?? null,
+                        $locale_metadata['alt']         ?? null,
+                        $locale_metadata['title']       ?? null,
                         $locale_metadata['focal_point'] ?? null,
                         $locale_metadata['custom_data'] ?? null
                     );
@@ -513,6 +564,7 @@ class Upload extends Base {
                 'http_errors' => false,
             ]);
         }
+
         return $this->s3_client;
     }
 }

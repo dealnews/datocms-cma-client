@@ -3,8 +3,8 @@
 namespace DealNews\DatoCMS\CMA\Input\Parts;
 
 use DealNews\DatoCMS\CMA\Input\Parts\Relationships\Creator;
-use Moonspot\ValueObjects\ValueObject;
 use DealNews\DatoCMS\CMA\Input\Parts\Relationships\ItemType;
+use Moonspot\ValueObjects\ValueObject;
 
 /**
  * Relationship definitions for a DatoCMS record
@@ -45,7 +45,7 @@ class Relationships extends ValueObject {
      */
     public function __construct() {
         $this->item_type = new ItemType();
-        $this->creator = new Creator();
+        $this->creator   = new Creator();
     }
 
     /**
@@ -60,6 +60,7 @@ class Relationships extends ValueObject {
         if (empty($array['creator'])) {
             unset($array['creator']);
         }
+
         return $array;
     }
 }

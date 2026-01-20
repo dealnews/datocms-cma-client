@@ -37,7 +37,7 @@ class WebhookCall extends Common {
 
     public function __construct() {
         parent::__construct();
-        $this->filter = new WebhookCallFilter();
+        $this->filter   = new WebhookCallFilter();
         $this->order_by = new OrderBy();
     }
 
@@ -62,6 +62,7 @@ class WebhookCall extends Common {
                 $array['order_by'] = implode(',', $array['order_by']);
             }
         }
+
         return $array;
     }
 }

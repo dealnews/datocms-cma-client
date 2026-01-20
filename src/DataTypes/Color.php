@@ -38,11 +38,12 @@ class Color extends Common {
      */
     public function setColor(int $red, int $green, int $blue, int $alpha): static {
         $this->set([
-            'red' => $red,
+            'red'   => $red,
             'green' => $green,
-            'blue' => $blue,
+            'blue'  => $blue,
             'alpha' => $alpha,
         ]);
+
         return $this;
     }
 

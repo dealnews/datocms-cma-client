@@ -8,10 +8,10 @@ use DealNews\DatoCMS\CMA\Exception\Unknown;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\RequestException;
 use GuzzleHttp\HandlerStack;
+use GuzzleHttp\MessageFormatter;
 use GuzzleHttp\Middleware;
 use GuzzleHttp\Psr7\Request;
 use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\MessageFormatter;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -93,15 +93,15 @@ class Handler {
             }
 
             $config = [
-                'handler' => $handler_stack,
-                'base_uri' => $base_url ?? self::DEFAULT_BASE_URI,
+                'handler'     => $handler_stack,
+                'base_uri'    => $base_url ?? self::DEFAULT_BASE_URI,
                 'http_errors' => false,
-                'headers' => [
+                'headers'     => [
                     'X-Api-Version' => '3',
                     'Authorization' => 'Bearer ' . $apiToken,
-                    'Accept' => 'application/json',
-                    'Content-Type' => 'application/vnd.api+json',
-                ]
+                    'Accept'        => 'application/json',
+                    'Content-Type'  => 'application/vnd.api+json',
+                ],
             ];
 
             if (!empty($environment)) {
@@ -157,10 +157,11 @@ class Handler {
         }
 
         $raw_body = $response->getBody()->__toString();
-        $body = json_decode($raw_body, true);
+        $body     = json_decode($raw_body, true);
         if (!is_array($body)) {
             throw new Decode('Failed to decode JSON response', 1001, null, $raw_body);
         }
+
         return $body;
     }
 
@@ -264,7 +265,7 @@ class Handler {
     ): bool {
         if (
             $retries < self::MAX_RETRIES &&
-            !empty($response) &&
+            !empty($response)            &&
             $response->getStatusCode() === 429
         ) {
             return true;

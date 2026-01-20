@@ -52,6 +52,7 @@ class Site extends ValueObject {
                 unset($array[$key]);
             }
         }
+
         return $array;
     }
 }

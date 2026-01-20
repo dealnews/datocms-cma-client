@@ -73,6 +73,7 @@ class WebhookCallFilter extends ValueObject {
                 $array[$key] = implode(',', $value);
             }
         }
+
         return $array;
     }
 }

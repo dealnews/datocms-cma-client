@@ -78,6 +78,7 @@ class FieldSet extends ValueObject {
                 unset($array['attributes']);
             }
         }
+
         return $array;
     }
 }

@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\Job;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\Job class
@@ -47,7 +47,7 @@ class JobTest extends TestCase {
     #[Group('unit')]
     public function testRetrieve(): void {
         $expected_response = ['data' => ['id' => 'job-123', 'type' => 'job']];
-        $job = $this->createJobWithMock(
+        $job               = $this->createJobWithMock(
             'GET',
             '/job-results/job-123',
             [],

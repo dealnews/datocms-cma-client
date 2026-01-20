@@ -33,7 +33,7 @@ class Location extends Common {
      */
     public function setLocation(float $latitude, float $longitude): static {
         return $this->set([
-            'latitude' => $latitude,
+            'latitude'  => $latitude,
             'longitude' => $longitude,
         ]);
     }

@@ -40,6 +40,7 @@ abstract class Common extends ValueObject {
         if (empty($array['page'])) {
             unset($array['page']);
         }
+
         return $array;
     }
 }

@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\Upload;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Input\Parts\Upload\Attributes;
 use DealNews\DatoCMS\CMA\Input\Parts\Upload\DefaultFieldMetadata;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Input\Parts\Upload\Attributes class
@@ -98,7 +98,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesPath() {
-        $attributes = new Attributes();
+        $attributes       = new Attributes();
         $attributes->path = '/45/1496845848-image.jpg';
 
         $array = $attributes->toArray();
@@ -109,7 +109,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesCopyright() {
-        $attributes = new Attributes();
+        $attributes            = new Attributes();
         $attributes->copyright = '© 2025';
 
         $array = $attributes->toArray();
@@ -120,7 +120,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesAuthor() {
-        $attributes = new Attributes();
+        $attributes         = new Attributes();
         $attributes->author = 'Jane Doe';
 
         $array = $attributes->toArray();
@@ -131,7 +131,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesNotes() {
-        $attributes = new Attributes();
+        $attributes        = new Attributes();
         $attributes->notes = 'Some notes';
 
         $array = $attributes->toArray();
@@ -142,7 +142,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesTags() {
-        $attributes = new Attributes();
+        $attributes       = new Attributes();
         $attributes->tags = ['tag1', 'tag2'];
 
         $array = $attributes->toArray();
@@ -153,7 +153,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyTags() {
-        $attributes = new Attributes();
+        $attributes       = new Attributes();
         $attributes->path = '/path/to/file.jpg';
 
         $array = $attributes->toArray();
@@ -174,7 +174,7 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyDefaultFieldMetadata() {
-        $attributes = new Attributes();
+        $attributes       = new Attributes();
         $attributes->path = '/path/to/file.jpg';
 
         $array = $attributes->toArray();
@@ -184,12 +184,12 @@ class AttributesTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithAllFields() {
-        $attributes = new Attributes();
-        $attributes->path = '/45/image.jpg';
+        $attributes            = new Attributes();
+        $attributes->path      = '/45/image.jpg';
         $attributes->copyright = '© 2025';
-        $attributes->author = 'Author';
-        $attributes->notes = 'Notes';
-        $attributes->tags = ['tag1'];
+        $attributes->author    = 'Author';
+        $attributes->notes     = 'Notes';
+        $attributes->tags      = ['tag1'];
         $attributes->default_field_metadata->addLocale('en', 'Alt');
 
         $array = $attributes->toArray();

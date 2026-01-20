@@ -49,7 +49,7 @@ class Relationships extends ValueObject {
      */
     public function __construct() {
         $this->upload_collection = new UploadCollection();
-        $this->creator = new Creator();
+        $this->creator           = new Creator();
     }
 
     /**
@@ -61,17 +61,17 @@ class Relationships extends ValueObject {
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
-        
+
         // Remove upload_collection if id is empty
         if (empty($array['upload_collection']['data']['id'])) {
             unset($array['upload_collection']);
         }
-        
+
         // Remove creator if it returns empty array (both type and id not set)
         if (empty($array['creator'])) {
             unset($array['creator']);
         }
-        
+
         return $array;
     }
 }

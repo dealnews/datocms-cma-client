@@ -53,6 +53,7 @@ class RecordVersion extends Base {
      */
     public function list(string $record_id, ?RecordVersionParameter $parameters = null): array {
         $query_params = !is_null($parameters) ? $parameters->toArray() : [];
+
         return $this->handler->execute('GET', '/items/' . $record_id . '/versions', $query_params);
     }
 
@@ -77,6 +78,7 @@ class RecordVersion extends Base {
         if (!empty($query_params['page'])) {
             unset($query_params['page']);
         }
+
         return $this->handler->execute('GET', '/versions/' . $record_version_id, $query_params);
     }
 }

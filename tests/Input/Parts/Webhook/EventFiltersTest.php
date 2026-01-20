@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\Webhook;
 
+use DealNews\DatoCMS\CMA\Input\Parts\Webhook\EventFilters;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Parts\Webhook\EventFilters;
 
 /**
  * Tests for the Input\Parts\Webhook\EventFilters class
@@ -29,7 +29,7 @@ class EventFiltersTest extends TestCase {
     #[Group('unit')]
     public function testAddFilterWithValidEntityType(): void {
         $filters = EventFilters::init();
-        $result = $filters->addFilter('item', ['item-123']);
+        $result  = $filters->addFilter('item', ['item-123']);
 
         $this->assertInstanceOf(EventFilters::class, $result);
     }

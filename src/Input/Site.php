@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Input;
 
-use Moonspot\ValueObjects\ValueObject;
-
 use DealNews\DatoCMS\CMA\Input\Parts\Site\Attributes;
+
 use DealNews\DatoCMS\CMA\Input\Parts\Site\Meta;
 use DealNews\DatoCMS\CMA\Input\Parts\Site\Relationships;
+use Moonspot\ValueObjects\ValueObject;
 
 /**
  * Input object for updating DatoCMS site information/settings
@@ -93,6 +93,7 @@ class Site extends ValueObject {
         if (empty($array['relationships'])) {
             unset($array['relationships']);
         }
+
         return $array;
     }
 }

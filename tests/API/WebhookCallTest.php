@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\WebhookCall;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Parameters\WebhookCall as WebhookCallParameters;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\WebhookCall class
@@ -47,7 +47,7 @@ class WebhookCallTest extends TestCase {
     #[Group('unit')]
     public function testListWithoutParameters(): void {
         $expected_response = ['data' => [['id' => 'call-1'], ['id' => 'call-2']]];
-        $webhook_call = $this->createWebhookCallWithMock('GET', '/webhook_calls', [], [], $expected_response);
+        $webhook_call      = $this->createWebhookCallWithMock('GET', '/webhook_calls', [], [], $expected_response);
 
         $result = $webhook_call->list();
 
@@ -56,10 +56,10 @@ class WebhookCallTest extends TestCase {
 
     #[Group('unit')]
     public function testListWithParameters(): void {
-        $parameters = new WebhookCallParameters();
+        $parameters              = new WebhookCallParameters();
         $parameters->filter->ids = ['call-1', 'call-2'];
         $parameters->order_by->addOrderByField('created_at', 'DESC');
-        $parameters->page->limit = 10;
+        $parameters->page->limit  = 10;
         $parameters->page->offset = 5;
 
         $expected_query = [
@@ -67,14 +67,14 @@ class WebhookCallTest extends TestCase {
                 'ids' => 'call-1,call-2',
             ],
             'order_by' => 'created_at_DESC',
-            'page' => [
-                'limit' => 10,
+            'page'     => [
+                'limit'  => 10,
                 'offset' => 5,
             ],
         ];
 
         $expected_response = ['data' => [['id' => 'call-1']]];
-        $webhook_call = $this->createWebhookCallWithMock('GET', '/webhook_calls', $expected_query, [], $expected_response);
+        $webhook_call      = $this->createWebhookCallWithMock('GET', '/webhook_calls', $expected_query, [], $expected_response);
 
         $result = $webhook_call->list($parameters);
 
@@ -88,7 +88,7 @@ class WebhookCallTest extends TestCase {
     #[Group('unit')]
     public function testRetrieve(): void {
         $expected_response = ['data' => ['id' => 'call-123', 'type' => 'webhook_call']];
-        $webhook_call = $this->createWebhookCallWithMock(
+        $webhook_call      = $this->createWebhookCallWithMock(
             'GET',
             '/webhook_calls/call-123',
             [],
@@ -108,7 +108,7 @@ class WebhookCallTest extends TestCase {
     #[Group('unit')]
     public function testResend(): void {
         $expected_response = ['data' => ['id' => 'call-123', 'type' => 'webhook_call']];
-        $webhook_call = $this->createWebhookCallWithMock(
+        $webhook_call      = $this->createWebhookCallWithMock(
             'POST',
             '/webhook_calls/call-123/resend_webhook',
             [],

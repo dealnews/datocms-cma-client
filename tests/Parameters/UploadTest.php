@@ -2,12 +2,12 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\Upload;
 use DealNews\DatoCMS\CMA\Parameters\Parts\OrderBy;
 use DealNews\DatoCMS\CMA\Parameters\Parts\Page;
 use DealNews\DatoCMS\CMA\Parameters\Parts\UploadFilter;
+use DealNews\DatoCMS\CMA\Parameters\Upload;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Parameters\Upload class
@@ -54,8 +54,8 @@ class UploadTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithFilter() {
-        $params = new Upload();
-        $params->filter->type = 'image';
+        $params                = new Upload();
+        $params->filter->type  = 'image';
         $params->filter->query = 'banner';
 
         $array = $params->toArray();
@@ -89,8 +89,8 @@ class UploadTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithPage() {
-        $params = new Upload();
-        $params->page->limit = 25;
+        $params               = new Upload();
+        $params->page->limit  = 25;
         $params->page->offset = 50;
 
         $array = $params->toArray();
@@ -102,7 +102,7 @@ class UploadTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithAllParams() {
-        $params = new Upload();
+        $params               = new Upload();
         $params->filter->type = 'image';
         $params->filter->tags = ['banner'];
         $params->order_by->addOrderByField('created_at', 'DESC');
@@ -117,7 +117,7 @@ class UploadTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyFilter() {
-        $params = new Upload();
+        $params              = new Upload();
         $params->page->limit = 10;
 
         $array = $params->toArray();
@@ -128,7 +128,7 @@ class UploadTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyOrderBy() {
-        $params = new Upload();
+        $params               = new Upload();
         $params->filter->type = 'video';
 
         $array = $params->toArray();

@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\Relationships;
 
+use DealNews\DatoCMS\CMA\Input\Parts\Relationships\ItemType;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Parts\Relationships\ItemType;
 
 class ItemTypeTest extends TestCase {
 
@@ -24,7 +24,7 @@ class ItemTypeTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingValidId() {
-        $itemType = new ItemType();
+        $itemType     = new ItemType();
         $itemType->id = 'model_123';
 
         $this->assertEquals('model_123', $itemType->id);
@@ -32,7 +32,7 @@ class ItemTypeTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWrapsInDataStructure() {
-        $itemType = new ItemType();
+        $itemType     = new ItemType();
         $itemType->id = 'model_123';
 
         $array = $itemType->toArray();
@@ -41,8 +41,8 @@ class ItemTypeTest extends TestCase {
         $this->assertEquals([
             'data' => [
                 'type' => 'item_type',
-                'id' => 'model_123',
-            ]
+                'id'   => 'model_123',
+            ],
         ], $array);
     }
 
@@ -55,8 +55,8 @@ class ItemTypeTest extends TestCase {
         $this->assertEquals([
             'data' => [
                 'type' => 'item_type',
-                'id' => '',
-            ]
+                'id'   => '',
+            ],
         ], $array);
     }
 

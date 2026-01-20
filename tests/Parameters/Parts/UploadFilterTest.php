@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters\Parts;
 
+use DealNews\DatoCMS\CMA\Parameters\Parts\UploadFilter;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\Parts\UploadFilter;
 
 /**
  * Tests for the Parameters\Parts\UploadFilter class
@@ -44,7 +44,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithIds() {
-        $filter = new UploadFilter();
+        $filter      = new UploadFilter();
         $filter->ids = ['id1', 'id2', 'id3'];
 
         $array = $filter->toArray();
@@ -54,7 +54,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithType() {
-        $filter = new UploadFilter();
+        $filter       = new UploadFilter();
         $filter->type = 'image';
 
         $array = $filter->toArray();
@@ -64,7 +64,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithQuery() {
-        $filter = new UploadFilter();
+        $filter        = new UploadFilter();
         $filter->query = 'banner hero';
 
         $array = $filter->toArray();
@@ -74,7 +74,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithUploadCollectionId() {
-        $filter = new UploadFilter();
+        $filter                       = new UploadFilter();
         $filter->upload_collection_id = 'collection-123';
 
         $array = $filter->toArray();
@@ -84,7 +84,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithSmartTags() {
-        $filter = new UploadFilter();
+        $filter             = new UploadFilter();
         $filter->smart_tags = ['person', 'outdoor'];
 
         $array = $filter->toArray();
@@ -94,7 +94,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithTags() {
-        $filter = new UploadFilter();
+        $filter       = new UploadFilter();
         $filter->tags = ['banner', 'featured'];
 
         $array = $filter->toArray();
@@ -104,7 +104,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithAuthor() {
-        $filter = new UploadFilter();
+        $filter         = new UploadFilter();
         $filter->author = 'John Doe';
 
         $array = $filter->toArray();
@@ -114,7 +114,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithCopyright() {
-        $filter = new UploadFilter();
+        $filter            = new UploadFilter();
         $filter->copyright = '© 2025';
 
         $array = $filter->toArray();
@@ -124,10 +124,10 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithMultipleFilters() {
-        $filter = new UploadFilter();
-        $filter->type = 'image';
-        $filter->query = 'banner';
-        $filter->tags = ['hero', 'featured'];
+        $filter                       = new UploadFilter();
+        $filter->type                 = 'image';
+        $filter->query                = 'banner';
+        $filter->tags                 = ['hero', 'featured'];
         $filter->upload_collection_id = 'collection-123';
 
         $array = $filter->toArray();
@@ -140,7 +140,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyArrays() {
-        $filter = new UploadFilter();
+        $filter       = new UploadFilter();
         $filter->type = 'video';
 
         $array = $filter->toArray();
@@ -152,7 +152,7 @@ class UploadFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesNullValues() {
-        $filter = new UploadFilter();
+        $filter      = new UploadFilter();
         $filter->ids = ['id1'];
 
         $array = $filter->toArray();

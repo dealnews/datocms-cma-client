@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\DataTypes;
 
+use DealNews\DatoCMS\CMA\DataTypes\Color;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\DataTypes\Color;
 
 class ColorTest extends TestCase {
 
@@ -14,7 +14,7 @@ class ColorTest extends TestCase {
     public function testValidColorValues(array $value, array $expected) {
         $color = Color::init();
         $color->set($value);
-        
+
         $this->assertEquals($expected, $color->jsonSerialize());
     }
 
@@ -23,39 +23,39 @@ class ColorTest extends TestCase {
     public function testInvalidColorValues(mixed $value, string $expectedMessage) {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage($expectedMessage);
-        
+
         $color = Color::init();
         $color->set($value);
     }
 
     #[Group('unit')]
     public function testSetColorHelperMethod() {
-        $color = Color::init();
+        $color  = Color::init();
         $result = $color->setColor(128, 64, 200, 150);
-        
+
         $this->assertInstanceOf(Color::class, $result);
         $this->assertEquals([
-            'red' => 128,
+            'red'   => 128,
             'green' => 64,
-            'blue' => 200,
+            'blue'  => 200,
             'alpha' => 150,
         ], $color->jsonSerialize());
     }
 
     #[Group('unit')]
     public function testSetColorMethodChaining() {
-        $color = Color::init();
+        $color  = Color::init();
         $result = $color->setColor(0, 0, 0, 0);
-        
+
         $this->assertInstanceOf(Color::class, $result);
         $this->assertSame($color, $result);
     }
 
     #[Group('unit')]
     public function testSetMethodReturnsStatic() {
-        $color = Color::init();
+        $color  = Color::init();
         $result = $color->set(['red' => 100, 'green' => 100, 'blue' => 100, 'alpha' => 100]);
-        
+
         $this->assertInstanceOf(Color::class, $result);
         $this->assertSame($color, $result);
     }
@@ -66,9 +66,9 @@ class ColorTest extends TestCase {
         $color->set(['red' => 255, 'green' => 0, 'blue' => 0, 'alpha' => 255]);
         $color->addLocale('en', ['red' => 0, 'green' => 255, 'blue' => 0, 'alpha' => 255]);
         $color->addLocale('es', ['red' => 0, 'green' => 0, 'blue' => 255, 'alpha' => 255]);
-        
+
         $result = $color->jsonSerialize();
-        
+
         $this->assertIsArray($result);
         $this->assertEquals(['red' => 0, 'green' => 255, 'blue' => 0, 'alpha' => 255], $result['en']);
         $this->assertEquals(['red' => 0, 'green' => 0, 'blue' => 255, 'alpha' => 255], $result['es']);
@@ -76,9 +76,9 @@ class ColorTest extends TestCase {
 
     #[Group('unit')]
     public function testAddLocaleReturnsStatic() {
-        $color = Color::init();
+        $color  = Color::init();
         $result = $color->addLocale('en', ['red' => 0, 'green' => 0, 'blue' => 0, 'alpha' => 0]);
-        
+
         $this->assertInstanceOf(Color::class, $result);
         $this->assertSame($color, $result);
     }
@@ -87,7 +87,7 @@ class ColorTest extends TestCase {
     public function testAddLocaleWithInvalidColor() {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Value not in expected format');
-        
+
         $color = Color::init();
         $color->addLocale('en', 'invalid');
     }
@@ -95,7 +95,7 @@ class ColorTest extends TestCase {
     #[Group('unit')]
     public function testJsonSerializeReturnsNullWhenEmpty() {
         $color = Color::init();
-        
+
         $this->assertNull($color->jsonSerialize());
     }
 
@@ -104,9 +104,9 @@ class ColorTest extends TestCase {
         $color = Color::init();
         $color->set(['red' => 255, 'green' => 0, 'blue' => 0, 'alpha' => 255]);
         $color->addLocale('en', ['red' => 0, 'green' => 255, 'blue' => 0, 'alpha' => 255]);
-        
+
         $result = $color->jsonSerialize();
-        
+
         $this->assertIsArray($result);
         $this->assertArrayHasKey('en', $result);
         $this->assertEquals(['red' => 0, 'green' => 255, 'blue' => 0, 'alpha' => 255], $result['en']);
@@ -116,7 +116,7 @@ class ColorTest extends TestCase {
     public function testNullValueIsValid() {
         $color = Color::init();
         $color->set(null);
-        
+
         $this->assertNull($color->jsonSerialize());
     }
 

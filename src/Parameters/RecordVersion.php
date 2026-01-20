@@ -41,6 +41,7 @@ class RecordVersion extends Common {
                 unset($array[$key]);
             }
         }
+
         return $array;
     }
 }

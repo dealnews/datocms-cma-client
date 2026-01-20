@@ -40,7 +40,7 @@ class Environment extends Base {
      */
     public function fork(string $original_environment_id, string $new_environment_id, bool $immediate_return = false, bool $fast = false, bool $force = false): array {
         $payload = [
-            'id' => $new_environment_id,
+            'id'   => $new_environment_id,
             'type' => 'environment',
         ];
 
@@ -91,7 +91,7 @@ class Environment extends Base {
      */
     public function rename(string $original_environment_id, string $new_environment_id): array {
         $payload = [
-            'id' => $new_environment_id,
+            'id'   => $new_environment_id,
             'type' => 'environment',
         ];
 

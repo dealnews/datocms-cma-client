@@ -179,6 +179,7 @@ class Attributes extends ValueObject {
                 unset($array['auto_retry']);
             }
         }
+
         return $array;
     }
 }

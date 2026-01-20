@@ -43,7 +43,7 @@ class Upload extends Common {
      */
     public function __construct() {
         $this->order_by = new OrderBy();
-        $this->filter = new UploadFilter();
+        $this->filter   = new UploadFilter();
         parent::__construct();
     }
 
@@ -65,6 +65,7 @@ class Upload extends Common {
                 $array['order_by'] = implode(',', $value);
             }
         }
+
         return $array;
     }
 }

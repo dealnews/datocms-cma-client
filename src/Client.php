@@ -2,24 +2,24 @@
 
 namespace DealNews\DatoCMS\CMA;
 
+use DealNews\DatoCMS\CMA\API\Environment;
+use DealNews\DatoCMS\CMA\API\Field;
+use DealNews\DatoCMS\CMA\API\FieldSet;
+use DealNews\DatoCMS\CMA\API\Job;
+use DealNews\DatoCMS\CMA\API\Maintenance;
 use DealNews\DatoCMS\CMA\API\Model;
 use DealNews\DatoCMS\CMA\API\Record;
+use DealNews\DatoCMS\CMA\API\RecordVersion;
+use DealNews\DatoCMS\CMA\API\ScheduledPublication;
+use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
+use DealNews\DatoCMS\CMA\API\Site;
 use DealNews\DatoCMS\CMA\API\Upload;
 use DealNews\DatoCMS\CMA\API\UploadCollection;
 use DealNews\DatoCMS\CMA\API\UploadRequest;
 use DealNews\DatoCMS\CMA\API\UploadSmartTag;
 use DealNews\DatoCMS\CMA\API\UploadTag;
-use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
-use DealNews\DatoCMS\CMA\API\ScheduledPublication;
-use DealNews\DatoCMS\CMA\API\Site;
-use DealNews\DatoCMS\CMA\API\FieldSet;
-use DealNews\DatoCMS\CMA\API\Field;
-use DealNews\DatoCMS\CMA\API\Environment;
-use DealNews\DatoCMS\CMA\API\RecordVersion;
-use DealNews\DatoCMS\CMA\API\WebhookCall;
 use DealNews\DatoCMS\CMA\API\Webhook;
-use DealNews\DatoCMS\CMA\API\Job;
-use DealNews\DatoCMS\CMA\API\Maintenance;
+use DealNews\DatoCMS\CMA\API\WebhookCall;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
@@ -67,24 +67,24 @@ class Client {
      * @var array<string, class-string>
      */
     protected const PROPERTY_MAPPING = [
-        'record' => Record::class,
-        'model' => Model::class,
-        'upload' => Upload::class,
-        'upload_request' => UploadRequest::class,
-        'upload_collection' => UploadCollection::class,
-        'upload_smart_tag' => UploadSmartTag::class,
-        'upload_tag' => UploadTag::class,
-        'scheduled_publication' => ScheduledPublication::class,
+        'record'                 => Record::class,
+        'model'                  => Model::class,
+        'upload'                 => Upload::class,
+        'upload_request'         => UploadRequest::class,
+        'upload_collection'      => UploadCollection::class,
+        'upload_smart_tag'       => UploadSmartTag::class,
+        'upload_tag'             => UploadTag::class,
+        'scheduled_publication'  => ScheduledPublication::class,
         'scheduled_unpublishing' => ScheduledUnpublishing::class,
-        'site' => Site::class,
-        'fieldset' => FieldSet::class,
-        'field' => Field::class,
-        'environment' => Environment::class,
-        'record_version' => RecordVersion::class,
-        'webhook_call' => WebhookCall::class,
-        'webhook' => Webhook::class,
-        'job' => Job::class,
-        'maintenance' => Maintenance::class,
+        'site'                   => Site::class,
+        'fieldset'               => FieldSet::class,
+        'field'                  => Field::class,
+        'environment'            => Environment::class,
+        'record_version'         => RecordVersion::class,
+        'webhook_call'           => WebhookCall::class,
+        'webhook'                => Webhook::class,
+        'job'                    => Job::class,
+        'maintenance'            => Maintenance::class,
     ];
 
     /**
@@ -228,11 +228,11 @@ class Client {
      * @param string|null          $base_url    Optional custom base URL for proxies
      */
     public function __construct(
-        ?string             $apiToken = null,
-        ?string             $environment = null,
-        ?LoggerInterface    $logger = null,
-        string              $log_level = LogLevel::INFO,
-        ?string             $base_url = null
+        ?string $apiToken = null,
+        ?string $environment = null,
+        ?LoggerInterface $logger = null,
+        string $log_level = LogLevel::INFO,
+        ?string $base_url = null
     ) {
         $config = Config::init();
 
@@ -292,6 +292,7 @@ class Client {
             if (empty($this->$name)) {
                 $this->$name = new $classname();
             }
+
             return $this->$name;
         }
 

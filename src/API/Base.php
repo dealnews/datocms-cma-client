@@ -35,11 +35,11 @@ abstract class Base {
         if (!empty($handler)) {
             $this->handler = $handler;
         } else {
-            $apiToken = Config::init()->apiToken;
+            $apiToken    = Config::init()->apiToken;
             $environment = Config::init()->environment;
-            $base_url = Config::init()->base_url;
-            $logger = Config::init()->logger;
-            $log_level = Config::init()->log_level;
+            $base_url    = Config::init()->base_url;
+            $logger      = Config::init()->logger;
+            $log_level   = Config::init()->log_level;
 
             $this->handler = Handler::init(
                 $apiToken,

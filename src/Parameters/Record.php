@@ -2,8 +2,8 @@
 
 namespace DealNews\DatoCMS\CMA\Parameters;
 
-use DealNews\DatoCMS\CMA\Parameters\Parts\OrderBy;
 use DealNews\DatoCMS\CMA\Parameters\Parts\Filter;
+use DealNews\DatoCMS\CMA\Parameters\Parts\OrderBy;
 
 /**
  * Query parameters for listing DatoCMS records
@@ -62,7 +62,7 @@ class Record extends CommonWithLocale {
      */
     public function __construct() {
         $this->order_by = new OrderBy();
-        $this->filter = new Filter();
+        $this->filter   = new Filter();
         parent::__construct();
     }
 
@@ -84,6 +84,7 @@ class Record extends CommonWithLocale {
                 $array['order_by'] = implode(',', $value);
             }
         }
+
         return $array;
     }
 }

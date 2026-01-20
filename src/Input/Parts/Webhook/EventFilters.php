@@ -31,7 +31,7 @@ class EventFilters implements \JsonSerializable {
         'item',
         'build_trigger',
         'environment',
-        'environment_type'
+        'environment_type',
     ];
 
     protected array $filters = [];
@@ -54,12 +54,13 @@ class EventFilters implements \JsonSerializable {
      */
     public function addFilter(string $type, array $entity_ids): static {
         if (!in_array($type, self::VALID_ENTITY_TYPE)) {
-            throw new \InvalidArgumentException("Event type must be one of " . implode(", ", self::VALID_ENTITY_TYPE));
+            throw new \InvalidArgumentException('Event type must be one of ' . implode(', ', self::VALID_ENTITY_TYPE));
         }
         $this->filters[] = [
             'entity_type' => $type,
-            'entity_ids' => $entity_ids
+            'entity_ids'  => $entity_ids,
         ];
+
         return $this;
     }
 

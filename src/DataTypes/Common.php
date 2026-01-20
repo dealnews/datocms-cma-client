@@ -70,6 +70,7 @@ abstract class Common implements \JsonSerializable {
     public function set(mixed $value): static {
         $this->validateValue($value);
         $this->value = $value;
+
         return $this;
     }
 
@@ -86,6 +87,7 @@ abstract class Common implements \JsonSerializable {
     public function addLocale(string $locale, mixed $value): static {
         $this->validateValue($value);
         $this->localized_values[$locale] = $value;
+
         return $this;
     }
 
@@ -113,6 +115,7 @@ abstract class Common implements \JsonSerializable {
                     }
                 }
             }
+
             return $copy;
         } elseif (!empty($this->value)) {
             if (is_object($this->value)) {
@@ -121,7 +124,7 @@ abstract class Common implements \JsonSerializable {
                 } elseif ($this->value instanceof \JsonSerializable) {
                     return $this->value->jsonSerialize();
                 } else {
-                    throw new \LogicException("Value is an object and does not implement the Export or JsonSerializable interface");
+                    throw new \LogicException('Value is an object and does not implement the Export or JsonSerializable interface');
                 }
             } else {
                 return $this->value;

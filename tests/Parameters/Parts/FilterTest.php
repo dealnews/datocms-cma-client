@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters\Parts;
 
+use DealNews\DatoCMS\CMA\Parameters\Parts\Filter;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\Parts\Filter;
 
 class FilterTest extends TestCase {
 
@@ -103,9 +103,9 @@ class FilterTest extends TestCase {
                         'type_1',
                         'type_2',
                     ],
-                    'query' => 'hello world',
+                    'query'      => 'hello world',
                     'only_valid' => true,
-                    'fields' => [
+                    'fields'     => [
                         'foo' => [
                             'eq' => 'bar',
                         ],
@@ -116,11 +116,11 @@ class FilterTest extends TestCase {
                     ],
                 ],
                 'expected' => [
-                    'ids' => 'abcd,efgh',
-                    'type' => 'type_1,type_2',
-                    'query' => 'hello world',
+                    'ids'        => 'abcd,efgh',
+                    'type'       => 'type_1,type_2',
+                    'query'      => 'hello world',
                     'only_valid' => true,
-                    'fields' => [
+                    'fields'     => [
                         'foo' => [
                             'eq' => 'bar',
                         ],

@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\DataTypes;
 
+use DealNews\DatoCMS\CMA\DataTypes\Scalar;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\DataTypes\Scalar;
 
 /**
  * Tests for the Common abstract base class (tested via Scalar subclass)
@@ -97,10 +97,10 @@ class CommonTest extends TestCase {
         };
 
         $scalar = Scalar::init();
-        
+
         // Use reflection to bypass validation and set value directly
         $reflection = new \ReflectionClass($scalar);
-        $property = $reflection->getProperty('value');
+        $property   = $reflection->getProperty('value');
         $property->setValue($scalar, $json_obj);
 
         $result = $scalar->jsonSerialize();
@@ -116,10 +116,10 @@ class CommonTest extends TestCase {
         );
 
         $scalar = Scalar::init();
-        
+
         // Use reflection to bypass validation and set value directly
         $reflection = new \ReflectionClass($scalar);
-        $property = $reflection->getProperty('value');
+        $property   = $reflection->getProperty('value');
         $property->setValue($scalar, new \stdClass());
 
         $scalar->jsonSerialize();
@@ -134,10 +134,10 @@ class CommonTest extends TestCase {
         };
 
         $scalar = Scalar::init();
-        
+
         // Use reflection to add a JsonSerializable object to localized_values
         $reflection = new \ReflectionClass($scalar);
-        $property = $reflection->getProperty('localized_values');
+        $property   = $reflection->getProperty('localized_values');
         $property->setValue($scalar, ['es' => $json_obj]);
 
         $result = $scalar->jsonSerialize();
@@ -155,10 +155,10 @@ class CommonTest extends TestCase {
         );
 
         $scalar = Scalar::init();
-        
+
         // Use reflection to add a non-serializable object to localized_values
         $reflection = new \ReflectionClass($scalar);
-        $property = $reflection->getProperty('localized_values');
+        $property   = $reflection->getProperty('localized_values');
         $property->setValue($scalar, ['en' => new \stdClass()]);
 
         $scalar->jsonSerialize();
@@ -173,10 +173,10 @@ class CommonTest extends TestCase {
         };
 
         $scalar = Scalar::init();
-        
+
         // Use reflection to set mixed localized values
         $reflection = new \ReflectionClass($scalar);
-        $property = $reflection->getProperty('localized_values');
+        $property   = $reflection->getProperty('localized_values');
         $property->setValue($scalar, [
             'en' => 'plain string',
             'es' => $json_obj,

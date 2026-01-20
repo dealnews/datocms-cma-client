@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input\Parts\Relationships;
 
+use DealNews\DatoCMS\CMA\Input\Parts\Relationships\Role;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Parts\Relationships\Role;
 
 /**
  * Tests the Role relationship input part, including default values,
@@ -28,7 +28,7 @@ class RoleTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingValidId() {
-        $role = new Role();
+        $role     = new Role();
         $role->id = 'role_123';
 
         $this->assertEquals('role_123', $role->id);
@@ -36,7 +36,7 @@ class RoleTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWrapsInDataStructure() {
-        $role = new Role();
+        $role     = new Role();
         $role->id = 'role_123';
 
         $array = $role->toArray();
@@ -45,8 +45,8 @@ class RoleTest extends TestCase {
         $this->assertEquals([
             'data' => [
                 'type' => 'role',
-                'id' => 'role_123',
-            ]
+                'id'   => 'role_123',
+            ],
         ], $array);
     }
 
@@ -59,8 +59,8 @@ class RoleTest extends TestCase {
         $this->assertEquals([
             'data' => [
                 'type' => 'role',
-                'id' => '',
-            ]
+                'id'   => '',
+            ],
         ], $array);
     }
 

@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Parameters\Model;
 use DealNews\DatoCMS\CMA\Parameters\Parts\Page;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Model parameters class
@@ -30,8 +30,8 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesPageWhenNonDefault(): void {
-        $params = new Model();
-        $params->page->limit = 50;
+        $params               = new Model();
+        $params->page->limit  = 50;
         $params->page->offset = 100;
 
         $array = $params->toArray();
@@ -43,7 +43,7 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesOnlyLimitWhenSet(): void {
-        $params = new Model();
+        $params              = new Model();
         $params->page->limit = 25;
 
         $array = $params->toArray();
@@ -55,7 +55,7 @@ class ModelTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesOnlyOffsetWhenSet(): void {
-        $params = new Model();
+        $params               = new Model();
         $params->page->offset = 50;
 
         $array = $params->toArray();

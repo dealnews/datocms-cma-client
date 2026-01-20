@@ -60,7 +60,7 @@ class UploadCollection extends ValueObject {
      */
     public function __construct() {
         $this->relationships = new Relationships();
-        $this->type = 'upload_collection';
+        $this->type          = 'upload_collection';
     }
 
     /**

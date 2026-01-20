@@ -61,6 +61,7 @@ class ScheduledUnpublishing extends ValueObject {
         if (empty($array['attributes']['content_in_locales'])) {
             unset($array['attributes']['content_in_locales']);
         }
+
         return $array;
     }
 }

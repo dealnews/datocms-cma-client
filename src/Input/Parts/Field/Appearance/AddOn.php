@@ -59,6 +59,7 @@ class AddOn extends ValueObject {
                 unset($array['field_extension']);
             }
         }
+
         return $array;
     }
 }

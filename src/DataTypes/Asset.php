@@ -65,6 +65,7 @@ class Asset extends Common {
         if (!is_null($custom_data)) {
             $upload['custom_data'] = $custom_data;
         }
+
         return $this->set($upload);
     }
 
@@ -91,7 +92,7 @@ class Asset extends Common {
             throw new \InvalidArgumentException('Value not in expected format');
         }
         foreach (['upload_id', 'title', 'alt', 'focal_point', 'custom_data'] as $key) {
-            if ($key ==='upload_id' && !array_key_exists($key, $value)) {
+            if ($key === 'upload_id' && !array_key_exists($key, $value)) {
                 throw new \InvalidArgumentException('Value not in expected format');
             } elseif (array_key_exists($key, $value)) {
                 if ($key === 'focal_point' && !is_null($value[$key]) && !is_array($value[$key])) {
@@ -100,8 +101,8 @@ class Asset extends Common {
                     $key === 'focal_point' &&
                     !is_null($value[$key]) &&
                     (
-                        !array_key_exists('x', $value[$key]) ||
-                        !array_key_exists('y', $value[$key]) ||
+                        !array_key_exists('x', $value[$key])                                                                                ||
+                        !array_key_exists('y', $value[$key])                                                                                ||
                         filter_var($value[$key]['x'], FILTER_VALIDATE_FLOAT, ['options' => ['min_range' => 0, 'max_range' => 1]]) === false ||
                         filter_var($value[$key]['y'], FILTER_VALIDATE_FLOAT, ['options' => ['min_range' => 0, 'max_range' => 1]]) === false
                     )

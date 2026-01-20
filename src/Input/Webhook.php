@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Input;
 
-use Moonspot\ValueObjects\ValueObject;
-
 use DealNews\DatoCMS\CMA\Input\Parts\Webhook\Attributes;
+
+use Moonspot\ValueObjects\ValueObject;
 
 class Webhook extends ValueObject {
 
@@ -57,6 +57,7 @@ class Webhook extends ValueObject {
                 unset($array['attributes']);
             }
         }
+
         return $array;
     }
 }

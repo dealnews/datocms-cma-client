@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters\Parts;
 
+use DealNews\DatoCMS\CMA\Parameters\Parts\FilterFields;
+use DealNews\DatoCMS\CMA\Parameters\Parts\WebhookCallFilter;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\Parts\WebhookCallFilter;
-use DealNews\DatoCMS\CMA\Parameters\Parts\FilterFields;
 
 /**
  * Tests for the Parameters\Parts\WebhookCallFilter class
@@ -39,7 +39,7 @@ class WebhookCallFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithIds() {
-        $filter = new WebhookCallFilter();
+        $filter      = new WebhookCallFilter();
         $filter->ids = ['call-1', 'call-2', 'call-3'];
 
         $array = $filter->toArray();
@@ -69,8 +69,8 @@ class WebhookCallFilterTest extends TestCase {
 
         $this->assertArrayHasKey('fields', $array);
         $this->assertEquals([
-            'webhook_id' => ['eq' => '123'],
-            'status' => ['eq' => 'pending'],
+            'webhook_id'  => ['eq' => '123'],
+            'status'      => ['eq' => 'pending'],
             'entity_type' => ['eq' => 'item'],
         ], $array['fields']);
     }
@@ -86,9 +86,9 @@ class WebhookCallFilterTest extends TestCase {
 
         $this->assertArrayHasKey('fields', $array);
         $this->assertEquals([
-            'last_sent_at' => ['gt' => '2025-01-01'],
+            'last_sent_at'  => ['gt' => '2025-01-01'],
             'next_retry_at' => ['lt' => '2025-12-31'],
-            'created_at' => ['gt' => '2025-01-15'],
+            'created_at'    => ['gt' => '2025-01-15'],
         ], $array['fields']);
     }
 
@@ -105,7 +105,7 @@ class WebhookCallFilterTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayWithIdsAndFieldFilters() {
-        $filter = new WebhookCallFilter();
+        $filter      = new WebhookCallFilter();
         $filter->ids = ['call-1', 'call-2'];
         $filter->fields->addField('status', 'failed', 'eq');
 

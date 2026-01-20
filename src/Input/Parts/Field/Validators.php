@@ -225,6 +225,7 @@ class Validators implements \JsonSerializable {
      */
     public function isRequired(): static {
         $this->required = true;
+
         return $this;
     }
 
@@ -237,6 +238,7 @@ class Validators implements \JsonSerializable {
      */
     public function isUnique(): static {
         $this->unique = true;
+
         return $this;
     }
 
@@ -257,6 +259,7 @@ class Validators implements \JsonSerializable {
         if (!empty($max)) {
             $this->date_range['max'] = $max;
         }
+
         return $this;
     }
 
@@ -277,6 +280,7 @@ class Validators implements \JsonSerializable {
         if (!empty($max)) {
             $this->date_time_range['max'] = $max;
         }
+
         return $this;
     }
 
@@ -289,6 +293,7 @@ class Validators implements \JsonSerializable {
      */
     public function setEnum(array $enum): static {
         $this->enum = $enum;
+
         return $this;
     }
 
@@ -304,8 +309,9 @@ class Validators implements \JsonSerializable {
      * @return  static
      */
     public function setFileExtensions(array $extension): static {
-        $this->extension = [];
+        $this->extension               = [];
         $this->extension['extensions'] = $extension;
+
         return $this;
     }
 
@@ -321,12 +327,13 @@ class Validators implements \JsonSerializable {
      * @return  static
      */
     public function setFileType(string $type): static {
-        $allowed_types = ["image", "transformable_image", "video", "document"];
+        $allowed_types = ['image', 'transformable_image', 'video', 'document'];
         if (!in_array($type, $allowed_types)) {
-            throw new \InvalidArgumentException("Invalid file type");
+            throw new \InvalidArgumentException('Invalid file type');
         }
-        $this->extension = [];
+        $this->extension                    = [];
         $this->extension['predefined_list'] = $type;
+
         return $this;
     }
 
@@ -340,12 +347,13 @@ class Validators implements \JsonSerializable {
      * @return  static
      */
     public function setFileSizeMin(int $min, string $unit): static {
-        $allowed_units = ["B", "KB", "MB"];
+        $allowed_units = ['B', 'KB', 'MB'];
         if (!in_array($unit, $allowed_units)) {
-            throw new \InvalidArgumentException("Invalid file size unit");
+            throw new \InvalidArgumentException('Invalid file size unit');
         }
         $this->file_size['min_value'] = $min;
-        $this->file_size['min_unit'] = $unit;
+        $this->file_size['min_unit']  = $unit;
+
         return $this;
     }
 
@@ -358,12 +366,13 @@ class Validators implements \JsonSerializable {
      * @return  static
      */
     public function setFileSizeMax(int $max, string $unit): static {
-        $allowed_units = ["B", "KB", "MB"];
+        $allowed_units = ['B', 'KB', 'MB'];
         if (!in_array($unit, $allowed_units)) {
-            throw new \InvalidArgumentException("Invalid file size unit");
+            throw new \InvalidArgumentException('Invalid file size unit');
         }
         $this->file_size['max_value'] = $max;
-        $this->file_size['max_unit'] = $unit;
+        $this->file_size['max_unit']  = $unit;
+
         return $this;
     }
 
@@ -379,11 +388,12 @@ class Validators implements \JsonSerializable {
      * @return  static
      */
     public function setCustomFormat(string $pattern, ?string $description = null): static {
-        $this->format = [];
+        $this->format                   = [];
         $this->format['custom_pattern'] = $pattern;
         if (!empty($description)) {
             $this->format['description'] = $description;
         }
+
         return $this;
     }
 
@@ -399,10 +409,11 @@ class Validators implements \JsonSerializable {
      */
     public function setPredefinedFormat(string $format): static {
         if ($format !== 'email' && $format !== 'url') {
-            throw new \InvalidArgumentException("Invalid format");
+            throw new \InvalidArgumentException('Invalid format');
         }
-        $this->format = [];
+        $this->format                       = [];
         $this->format['predefined_pattern'] = $format;
+
         return $this;
     }
 
@@ -417,8 +428,9 @@ class Validators implements \JsonSerializable {
      * @return  static
      */
     public function setSlugCustomFormat(string $pattern): static {
-        $this->slug_format = [];
+        $this->slug_format                   = [];
         $this->slug_format['custom_pattern'] = $pattern;
+
         return $this;
     }
 
@@ -431,10 +443,11 @@ class Validators implements \JsonSerializable {
      */
     public function setSlugPredefinedFormat(string $format): static {
         if ($format !== 'webpage_slug') {
-            throw new \InvalidArgumentException("Invalid format");
+            throw new \InvalidArgumentException('Invalid format');
         }
-        $this->slug_format = [];
+        $this->slug_format                       = [];
         $this->slug_format['predefined_pattern'] = $format;
+
         return $this;
     }
 
@@ -463,6 +476,7 @@ class Validators implements \JsonSerializable {
         if ($height_max_value !== null) {
             $this->image_dimensions['height_max_value'] = $height_max_value;
         }
+
         return $this;
     }
 
@@ -499,6 +513,7 @@ class Validators implements \JsonSerializable {
         if ($max_ar_denominator !== null) {
             $this->image_aspect_ratio['max_ar_denominator'] = $max_ar_denominator;
         }
+
         return $this;
     }
 
@@ -511,6 +526,7 @@ class Validators implements \JsonSerializable {
      */
     public function setItemTypesSingle(array $item_types): static {
         $this->item_item_type['item_types'] = $item_types;
+
         return $this;
     }
 
@@ -529,9 +545,10 @@ class Validators implements \JsonSerializable {
      */
     public function setItemTypesSingleOnPublishStrategy(string $strategy): static {
         if ($strategy !== 'fail' && $strategy !== 'publish_references') {
-            throw new \InvalidArgumentException("Invalid strategy");
+            throw new \InvalidArgumentException('Invalid strategy');
         }
         $this->item_item_type['on_publish_with_unpublished_references_strategy'] = $strategy;
+
         return $this;
     }
 
@@ -551,9 +568,10 @@ class Validators implements \JsonSerializable {
      */
     public function setItemTypesSingleOnUnpublishStrategy(string $strategy): static {
         if ($strategy !== 'fail' && $strategy !== 'unpublish' && $strategy !== 'delete_references') {
-            throw new \InvalidArgumentException("Invalid strategy");
+            throw new \InvalidArgumentException('Invalid strategy');
         }
         $this->item_item_type['on_reference_unpublish_strategy'] = $strategy;
+
         return $this;
     }
 
@@ -572,9 +590,10 @@ class Validators implements \JsonSerializable {
      */
     public function setItemTypesSingleOnDeleteStrategy(string $strategy): static {
         if ($strategy !== 'fail' && $strategy !== 'delete_references') {
-            throw new \InvalidArgumentException("Invalid strategy");
+            throw new \InvalidArgumentException('Invalid strategy');
         }
         $this->item_item_type['on_reference_delete_strategy'] = $strategy;
+
         return $this;
     }
 
@@ -587,6 +606,7 @@ class Validators implements \JsonSerializable {
      */
     public function setItemTypesMultiple(array $item_types): static {
         $this->items_item_type['item_types'] = $item_types;
+
         return $this;
     }
 
@@ -605,9 +625,10 @@ class Validators implements \JsonSerializable {
      */
     public function setItemTypesMultipleOnPublishStrategy(string $strategy): static {
         if ($strategy !== 'fail' && $strategy !== 'publish_references') {
-            throw new \InvalidArgumentException("Invalid strategy");
+            throw new \InvalidArgumentException('Invalid strategy');
         }
         $this->items_item_type['on_publish_with_unpublished_references_strategy'] = $strategy;
+
         return $this;
     }
 
@@ -627,9 +648,10 @@ class Validators implements \JsonSerializable {
      */
     public function setItemTypesMultipleOnUnpublishStrategy(string $strategy): static {
         if ($strategy !== 'fail' && $strategy !== 'unpublish' && $strategy !== 'delete_references') {
-            throw new \InvalidArgumentException("Invalid strategy");
+            throw new \InvalidArgumentException('Invalid strategy');
         }
         $this->items_item_type['on_reference_unpublish_strategy'] = $strategy;
+
         return $this;
     }
 
@@ -648,9 +670,10 @@ class Validators implements \JsonSerializable {
      */
     public function setItemTypesMultipleOnDeleteStrategy(string $strategy): static {
         if ($strategy !== 'fail' && $strategy !== 'delete_references') {
-            throw new \InvalidArgumentException("Invalid strategy");
+            throw new \InvalidArgumentException('Invalid strategy');
         }
         $this->items_item_type['on_reference_delete_strategy'] = $strategy;
+
         return $this;
     }
 
@@ -669,6 +692,7 @@ class Validators implements \JsonSerializable {
         if ($max !== null) {
             $this->length['max'] = $max;
         }
+
         return $this;
     }
 
@@ -681,6 +705,7 @@ class Validators implements \JsonSerializable {
      */
     public function setLength(int $equal): static {
         $this->length['eq'] = $equal;
+
         return $this;
     }
 
@@ -699,6 +724,7 @@ class Validators implements \JsonSerializable {
         if ($max !== null) {
             $this->number_range['max'] = $max;
         }
+
         return $this;
     }
 
@@ -709,6 +735,7 @@ class Validators implements \JsonSerializable {
      */
     public function requiresAlt(): static {
         $this->required_alt_title['alt'] = true;
+
         return $this;
     }
 
@@ -719,6 +746,7 @@ class Validators implements \JsonSerializable {
      */
     public function requiresTitle(): static {
         $this->required_alt_title['title'] = true;
+
         return $this;
     }
 
@@ -729,6 +757,7 @@ class Validators implements \JsonSerializable {
      */
     public function requiresSEOTitle(): static {
         $this->required_seo_fields['title'] = true;
+
         return $this;
     }
 
@@ -739,6 +768,7 @@ class Validators implements \JsonSerializable {
      */
     public function requiresSEODescription(): static {
         $this->required_seo_fields['description'] = true;
+
         return $this;
     }
 
@@ -749,6 +779,7 @@ class Validators implements \JsonSerializable {
      */
     public function requiresSEOImage(): static {
         $this->required_seo_fields['image'] = true;
+
         return $this;
     }
 
@@ -759,6 +790,7 @@ class Validators implements \JsonSerializable {
      */
     public function requiresSEOTwitterCard(): static {
         $this->required_seo_fields['twitter_card'] = true;
+
         return $this;
     }
 
@@ -779,6 +811,7 @@ class Validators implements \JsonSerializable {
         if ($max !== null) {
             $this->title_length['max'] = $max;
         }
+
         return $this;
     }
 
@@ -799,6 +832,7 @@ class Validators implements \JsonSerializable {
         if ($max !== null) {
             $this->description_length['max'] = $max;
         }
+
         return $this;
     }
 
@@ -811,6 +845,7 @@ class Validators implements \JsonSerializable {
      */
     public function setRichTextBlocks(array $item_types): static {
         $this->rich_text_blocks['item_types'] = $item_types;
+
         return $this;
     }
 
@@ -823,6 +858,7 @@ class Validators implements \JsonSerializable {
      */
     public function setSingleBlockBlocks(array $item_types): static {
         $this->single_block_blocks['item_types'] = $item_types;
+
         return $this;
     }
 
@@ -837,6 +873,7 @@ class Validators implements \JsonSerializable {
      */
     public function setSanitizedHtml(bool $sanitize_before_validation): static {
         $this->sanitized_html['sanitize_before_validation'] = $sanitize_before_validation;
+
         return $this;
     }
 
@@ -849,6 +886,7 @@ class Validators implements \JsonSerializable {
      */
     public function setStructuredTextBlocks(array $item_types): static {
         $this->structured_text_blocks['item_types'] = $item_types;
+
         return $this;
     }
 
@@ -861,6 +899,7 @@ class Validators implements \JsonSerializable {
      */
     public function setStructuredTextInlineBlocks(array $item_types): static {
         $this->structured_text_inline_blocks['item_types'] = $item_types;
+
         return $this;
     }
 
@@ -873,6 +912,7 @@ class Validators implements \JsonSerializable {
      */
     public function setStructuredTextLinks(array $item_types): static {
         $this->structured_text_links['item_types'] = $item_types;
+
         return $this;
     }
 
@@ -885,9 +925,10 @@ class Validators implements \JsonSerializable {
      */
     public function setStructuredTextLinksOnPublishStrategy(string $strategy): static {
         if ($strategy !== 'fail' && $strategy !== 'publish_references') {
-            throw new \InvalidArgumentException("Invalid strategy");
+            throw new \InvalidArgumentException('Invalid strategy');
         }
         $this->structured_text_links['on_publish_with_unpublished_references_strategy'] = $strategy;
+
         return $this;
     }
 
@@ -900,9 +941,10 @@ class Validators implements \JsonSerializable {
      */
     public function setStructuredTextLinksOnUnpublishStrategy(string $strategy): static {
         if ($strategy !== 'fail' && $strategy !== 'unpublish' && $strategy !== 'delete_references') {
-            throw new \InvalidArgumentException("Invalid strategy");
+            throw new \InvalidArgumentException('Invalid strategy');
         }
         $this->structured_text_links['on_reference_unpublish_strategy'] = $strategy;
+
         return $this;
     }
 
@@ -915,9 +957,10 @@ class Validators implements \JsonSerializable {
      */
     public function setStructuredTextLinksOnDeleteStrategy(string $strategy): static {
         if ($strategy !== 'fail' && $strategy !== 'delete_references') {
-            throw new \InvalidArgumentException("Invalid strategy");
+            throw new \InvalidArgumentException('Invalid strategy');
         }
         $this->structured_text_links['on_reference_delete_strategy'] = $strategy;
+
         return $this;
     }
 
@@ -936,6 +979,7 @@ class Validators implements \JsonSerializable {
         if ($max !== null) {
             $this->size['max'] = $max;
         }
+
         return $this;
     }
 
@@ -948,6 +992,7 @@ class Validators implements \JsonSerializable {
      */
     public function setSize(int $equal): static {
         $this->size['eq'] = $equal;
+
         return $this;
     }
 
@@ -960,6 +1005,7 @@ class Validators implements \JsonSerializable {
      */
     public function setSizeMultipleOf(int $multiple_of): static {
         $this->size['multiple_of'] = $multiple_of;
+
         return $this;
     }
 
@@ -972,6 +1018,7 @@ class Validators implements \JsonSerializable {
      */
     public function setSlugTitleField(string $title_field_id): static {
         $this->slug_title_field['title_field_id'] = $title_field_id;
+
         return $this;
     }
 
@@ -982,11 +1029,11 @@ class Validators implements \JsonSerializable {
         // Boolean validators
         if ($this->required) {
             // DatoCMS expects an empty object for required
-            $validators['required'] = "{}";
+            $validators['required'] = '{}';
         }
         if ($this->unique) {
             // DatoCMS expects an empty object for unique
-            $validators['unique'] = "{}";
+            $validators['unique'] = '{}';
         }
 
         // Array validators (only include if not empty)

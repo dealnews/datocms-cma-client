@@ -2,12 +2,12 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Site;
 use DealNews\DatoCMS\CMA\Input\Parts\Site\Attributes;
 use DealNews\DatoCMS\CMA\Input\Parts\Site\Meta;
 use DealNews\DatoCMS\CMA\Input\Parts\Site\Relationships;
+use DealNews\DatoCMS\CMA\Input\Site;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Input\Site class
@@ -33,7 +33,7 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testAttributesCanBeSetWithArray(): void {
-        $site = new Site();
+        $site             = new Site();
         $site->attributes = ['no_index' => true];
 
         $this->assertEquals(['no_index' => true], $site->attributes);
@@ -41,10 +41,10 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testAttributesCanBeSetWithObject(): void {
-        $site = new Site();
-        $attributes = new Attributes();
+        $site                 = new Site();
+        $attributes           = new Attributes();
         $attributes->no_index = true;
-        $site->attributes = $attributes;
+        $site->attributes     = $attributes;
 
         $this->assertInstanceOf(Attributes::class, $site->attributes);
         $this->assertTrue($site->attributes->no_index);
@@ -52,7 +52,7 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testMetaCanBeSetWithArray(): void {
-        $site = new Site();
+        $site       = new Site();
         $site->meta = ['test' => 'value'];
 
         $this->assertEquals(['test' => 'value'], $site->meta);
@@ -60,8 +60,8 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testMetaCanBeSetWithObject(): void {
-        $site = new Site();
-        $meta = new Meta();
+        $site       = new Site();
+        $meta       = new Meta();
         $site->meta = $meta;
 
         $this->assertInstanceOf(Meta::class, $site->meta);
@@ -69,8 +69,8 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testRelationshipsCanBeSet(): void {
-        $site = new Site();
-        $relationships = new Relationships();
+        $site                = new Site();
+        $relationships       = new Relationships();
         $site->relationships = $relationships;
 
         $this->assertInstanceOf(Relationships::class, $site->relationships);
@@ -115,10 +115,10 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesPopulatedValues(): void {
-        $site = new Site();
-        $site->attributes = ['no_index' => true];
-        $site->meta = ['test' => 'value'];
-        $relationships = new Relationships();
+        $site                = new Site();
+        $site->attributes    = ['no_index' => true];
+        $site->meta          = ['test' => 'value'];
+        $relationships       = new Relationships();
         $site->relationships = $relationships;
 
         $array = $site->toArray();

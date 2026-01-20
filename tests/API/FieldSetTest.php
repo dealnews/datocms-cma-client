@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Input\FieldSet as FieldSetInput;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\FieldSet class
@@ -47,14 +47,14 @@ class FieldSetTest extends TestCase {
     #[Group('unit')]
     public function testCreateWithArray(): void {
         $data = [
-            'type' => 'fieldset',
+            'type'       => 'fieldset',
             'attributes' => [
-                'title' => 'Contact Information',
+                'title'       => 'Contact Information',
                 'collapsible' => true,
             ],
         ];
         $expected_response = ['data' => ['id' => 'new-fieldset-id', 'type' => 'fieldset']];
-        $fieldset = $this->createFieldSetWithMock(
+        $fieldset          = $this->createFieldSetWithMock(
             'POST',
             '/item-types/model-123/fieldsets',
             [],
@@ -69,11 +69,11 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testCreateWithFieldSetInput(): void {
-        $input = new FieldSetInput();
-        $input->attributes['title'] = 'Contact Information';
+        $input                            = new FieldSetInput();
+        $input->attributes['title']       = 'Contact Information';
         $input->attributes['collapsible'] = true;
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => 'new-fieldset-id', 'type' => 'fieldset']];
 
         $mock_handler = $this->createMock(Handler::class);
@@ -83,7 +83,7 @@ class FieldSetTest extends TestCase {
             ->willReturn($expected_response);
 
         $fieldset = new FieldSet($mock_handler);
-        $result = $fieldset->create('model-123', $input);
+        $result   = $fieldset->create('model-123', $input);
 
         $this->assertEquals($expected_response, $result);
     }
@@ -95,11 +95,11 @@ class FieldSetTest extends TestCase {
     #[Group('unit')]
     public function testUpdateWithArray(): void {
         $data = [
-            'type' => 'fieldset',
+            'type'       => 'fieldset',
             'attributes' => ['title' => 'Updated Title'],
         ];
         $expected_response = ['data' => ['id' => 'fieldset-123', 'type' => 'fieldset']];
-        $fieldset = $this->createFieldSetWithMock(
+        $fieldset          = $this->createFieldSetWithMock(
             'PUT',
             '/fieldsets/fieldset-123',
             [],
@@ -114,10 +114,10 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testUpdateWithFieldSetInput(): void {
-        $input = new FieldSetInput();
+        $input                      = new FieldSetInput();
         $input->attributes['title'] = 'Updated Title';
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => 'fieldset-123', 'type' => 'fieldset']];
 
         $mock_handler = $this->createMock(Handler::class);
@@ -127,7 +127,7 @@ class FieldSetTest extends TestCase {
             ->willReturn($expected_response);
 
         $fieldset = new FieldSet($mock_handler);
-        $result = $fieldset->update('fieldset-123', $input);
+        $result   = $fieldset->update('fieldset-123', $input);
 
         $this->assertEquals($expected_response, $result);
     }
@@ -139,7 +139,7 @@ class FieldSetTest extends TestCase {
     #[Group('unit')]
     public function testList(): void {
         $expected_response = ['data' => [['id' => '1'], ['id' => '2']]];
-        $fieldset = $this->createFieldSetWithMock(
+        $fieldset          = $this->createFieldSetWithMock(
             'GET',
             '/item-types/model-123/fieldsets',
             [],
@@ -159,7 +159,7 @@ class FieldSetTest extends TestCase {
     #[Group('unit')]
     public function testRetrieve(): void {
         $expected_response = ['data' => ['id' => 'fieldset-123', 'type' => 'fieldset']];
-        $fieldset = $this->createFieldSetWithMock(
+        $fieldset          = $this->createFieldSetWithMock(
             'GET',
             '/fieldsets/fieldset-123',
             [],
@@ -179,7 +179,7 @@ class FieldSetTest extends TestCase {
     #[Group('unit')]
     public function testDelete(): void {
         $expected_response = ['data' => ['id' => 'fieldset-123', 'type' => 'fieldset']];
-        $fieldset = $this->createFieldSetWithMock(
+        $fieldset          = $this->createFieldSetWithMock(
             'DELETE',
             '/fieldsets/fieldset-123',
             [],

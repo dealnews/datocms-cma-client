@@ -2,8 +2,8 @@
 
 namespace DealNews\DatoCMS\CMA\API;
 
-use DealNews\DatoCMS\CMA\Parameters\Record as RecordParameter;
 use DealNews\DatoCMS\CMA\Input\Record as RecordInput;
+use DealNews\DatoCMS\CMA\Parameters\Record as RecordParameter;
 
 /**
  * API handler for DatoCMS record/item operations
@@ -39,7 +39,54 @@ class Record extends Base {
      */
     public function list(?RecordParameter $parameters = null): array {
         $query_params = !is_null($parameters) ? $parameters->toArray() : [];
+
         return $this->handler->execute('GET', '/items', $query_params);
+    }
+
+    /**
+     * Return all records/items with automatic pagination
+     *
+     * Automatically paginates through all records by making multiple API
+     * requests with 500-record chunks. Useful when you need to retrieve an
+     * entire dataset without manually managing pagination.
+     *
+     * @see https://www.datocms.com/docs/content-management-api/resources/item/instances
+     *
+     * @param RecordParameter|null $parameters Optional parameters for
+     *                                         filtering and sorting. Page
+     *                                         offset/limit are overridden.
+     *
+     * @return array<string, mixed> All records in `['data' => [...]]` format
+     *
+     * @throws \DealNews\DatoCMS\CMA\Exception\API     On HTTP error responses
+     * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Unknown On unexpected errors
+     */
+    public function listAll(?RecordParameter $parameters = null): array {
+        if ($parameters === null) {
+            $parameters = new RecordParameter();
+        } else {
+            $parameters = clone $parameters;
+        }
+
+        $data   = [];
+        $offset = 0;
+        $limit  = 500;
+
+        $parameters->page->limit = $limit;
+
+        do {
+            $parameters->page->offset = $offset;
+
+            $response = $this->list($parameters);
+            $records  = $response['data'] ?? [];
+
+            $data = array_merge($data, $records);
+
+            $offset += $limit;
+        } while (count($records) === $limit);
+
+        return ['data' => $data];
     }
 
     /**
@@ -60,6 +107,7 @@ class Record extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('POST', '/items', [], ['data' => $data]);
     }
 
@@ -85,9 +133,9 @@ class Record extends Base {
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/item/update
      *
-     * @param string                       $record_id The ID of the record to update
-     * @param array<string, mixed>|RecordInput $data  Updated record data; method
-     *                                                auto-wraps in {data: ...}
+     * @param string                           $record_id The ID of the record to update
+     * @param array<string, mixed>|RecordInput $data      Updated record data; method
+     *                                                    auto-wraps in {data: ...}
      *
      * @return array<string, mixed> The updated record/item
      *
@@ -99,6 +147,7 @@ class Record extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('PUT', '/items/' . $record_id, [], ['data' => $data]);
     }
 
@@ -134,6 +183,7 @@ class Record extends Base {
             }
             $query_params['version'] = $version;
         }
+
         return $this->handler->execute('GET', '/items/' . $record_id . '/references', $query_params);
     }
 
@@ -168,6 +218,7 @@ class Record extends Base {
         if ($nested) {
             $query_params['nested'] = true;
         }
+
         return $this->handler->execute('GET', '/items/' . $record_id, $query_params);
     }
 
@@ -196,12 +247,12 @@ class Record extends Base {
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/item/publish
      *
-     * @param string     $record_id              The ID of the record to publish
-     * @param bool       $recursive              Recursively publish connected items
-     *                                           (default: false)
-     * @param array<string>|null $locales        Limit publishing to these locales
-     * @param bool|null  $non_localized_content  Publish non-localized content when
-     *                                           using selective publishing
+     * @param string             $record_id             The ID of the record to publish
+     * @param bool               $recursive             Recursively publish connected items
+     *                                                  (default: false)
+     * @param array<string>|null $locales               Limit publishing to these locales
+     * @param bool|null          $non_localized_content Publish non-localized content when
+     *                                                  using selective publishing
      *
      * @return array<string, mixed> The published record/item
      *
@@ -228,12 +279,12 @@ class Record extends Base {
         if (!is_null($locales)) {
             $put_data = [
                 'data' => [
-                    'type' => 'selective_publish_operation',
+                    'type'       => 'selective_publish_operation',
                     'attributes' => [
-                        'content_in_locales' => $locales,
+                        'content_in_locales'    => $locales,
                         'non_localized_content' => $non_localized_content,
                     ],
-                ]
+                ],
             ];
         }
 
@@ -252,10 +303,10 @@ class Record extends Base {
      *
      * @see https://www.datocms.com/docs/content-management-api/resources/item/unpublish
      *
-     * @param string           $record_id The ID of the record to unpublish
-     * @param bool             $recursive Recursively unpublish connected items
-     *                                    (default: false)
-     * @param array<string>|null $locales Limit unpublishing to these locales
+     * @param string             $record_id The ID of the record to unpublish
+     * @param bool               $recursive Recursively unpublish connected items
+     *                                      (default: false)
+     * @param array<string>|null $locales   Limit unpublishing to these locales
      *
      * @return array<string, mixed> The unpublished record/item
      *
@@ -272,11 +323,11 @@ class Record extends Base {
         if (!is_null($locales)) {
             $put_data = [
                 'data' => [
-                    'type' => 'selective_unpublish_operation',
+                    'type'       => 'selective_unpublish_operation',
                     'attributes' => [
                         'content_in_locales' => $locales,
                     ],
-                ]
+                ],
             ];
         }
 
@@ -304,18 +355,18 @@ class Record extends Base {
     public function publishBulk(array $record_ids): array {
         $post_data = [
             'data' => [
-                'type' => 'item_bulk_publish_operation',
+                'type'          => 'item_bulk_publish_operation',
                 'relationships' => [
                     'items' => [
                         'data' => [],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         foreach ($record_ids as $record_id) {
             $post_data['data']['relationships']['items']['data'][] = [
                 'type' => 'item',
-                'id' => $record_id,
+                'id'   => $record_id,
             ];
         }
 
@@ -338,18 +389,18 @@ class Record extends Base {
     public function unpublishBulk(array $record_ids): array {
         $post_data = [
             'data' => [
-                'type' => 'item_bulk_unpublish_operation',
+                'type'          => 'item_bulk_unpublish_operation',
                 'relationships' => [
                     'items' => [
                         'data' => [],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         foreach ($record_ids as $record_id) {
             $post_data['data']['relationships']['items']['data'][] = [
                 'type' => 'item',
-                'id' => $record_id,
+                'id'   => $record_id,
             ];
         }
 
@@ -372,18 +423,18 @@ class Record extends Base {
     public function deleteBulk(array $record_ids): array {
         $post_data = [
             'data' => [
-                'type' => 'item_bulk_destroy_operation',
+                'type'          => 'item_bulk_destroy_operation',
                 'relationships' => [
                     'items' => [
                         'data' => [],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         foreach ($record_ids as $record_id) {
             $post_data['data']['relationships']['items']['data'][] = [
                 'type' => 'item',
-                'id' => $record_id,
+                'id'   => $record_id,
             ];
         }
 
@@ -407,21 +458,21 @@ class Record extends Base {
     public function moveToStageBulk(array $record_ids, string $stage): array {
         $post_data = [
             'data' => [
-                'type' => 'item_bulk_move_to_stage_operation',
-                'attributes' => [
+                'type'          => 'item_bulk_move_to_stage_operation',
+                'attributes'    => [
                     'stage' => $stage,
                 ],
                 'relationships' => [
                     'items' => [
                         'data' => [],
-                    ]
+                    ],
                 ],
-            ]
+            ],
         ];
         foreach ($record_ids as $record_id) {
             $post_data['data']['relationships']['items']['data'][] = [
                 'type' => 'item',
-                'id' => $record_id,
+                'id'   => $record_id,
             ];
         }
 

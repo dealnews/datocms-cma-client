@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\UploadTag;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
-use DealNews\DatoCMS\CMA\Parameters\Common as CommonParameter;
+use DealNews\DatoCMS\CMA\Parameters\UploadTag as UploadTagParameter;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\UploadTag class
@@ -61,7 +61,7 @@ class UploadTagTest extends TestCase {
 
     #[Group('unit')]
     public function testListWithParameters() {
-        $params = $this->createMock(CommonParameter::class);
+        $params = $this->createMock(UploadTagParameter::class);
         $params->method('toArray')->willReturn(['page' => ['limit' => 10]]);
 
         $expected_response = ['data' => []];
@@ -72,10 +72,117 @@ class UploadTagTest extends TestCase {
             ->with('GET', '/upload-tags', ['page' => ['limit' => 10]])
             ->willReturn($expected_response);
 
-        $tag = new UploadTag($mock_handler);
+        $tag    = new UploadTag($mock_handler);
         $result = $tag->list($params);
 
         $this->assertEquals($expected_response, $result);
+    }
+
+    // =========================================================================
+    // listAll() tests
+    // =========================================================================
+
+    #[Group('unit')]
+    public function testListAllWithNullParameters() {
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->with(
+                'GET',
+                '/upload-tags',
+                $this->callback(function ($query) {
+                    return isset($query['page']['limit']) &&
+                           $query['page']['limit'] === 500;
+                }),
+                []
+            )
+            ->willReturn(['data' => [['id' => '1'], ['id' => '2']]]);
+
+        $tag    = new UploadTag($mock_handler);
+        $result = $tag->listAll();
+
+        $this->assertEquals(['data' => [['id' => '1'], ['id' => '2']]], $result);
+    }
+
+    #[Group('unit')]
+    public function testListAllWithProvidedParameters() {
+        $params               = new UploadTagParameter();
+        $params->page->limit  = 100;
+        $params->page->offset = 50;
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->with(
+                'GET',
+                '/upload-tags',
+                $this->callback(function ($query) {
+                    return isset($query['page']['limit']) &&
+                           $query['page']['limit'] === 500;
+                }),
+                []
+            )
+            ->willReturn(['data' => [['id' => '1']]]);
+
+        $tag    = new UploadTag($mock_handler);
+        $result = $tag->listAll($params);
+
+        $this->assertEquals(['data' => [['id' => '1']]], $result);
+    }
+
+    #[Group('unit')]
+    public function testListAllSinglePage() {
+        $first_page = array_fill(0, 250, ['id' => 'tag']);
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->willReturn(['data' => $first_page]);
+
+        $tag    = new UploadTag($mock_handler);
+        $result = $tag->listAll();
+
+        $this->assertCount(250, $result['data']);
+    }
+
+    #[Group('unit')]
+    public function testListAllMultiplePages() {
+        $first_page  = array_fill(0, 500, ['id' => 'page1']);
+        $second_page = array_fill(0, 250, ['id' => 'page2']);
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->exactly(2))
+            ->method('execute')
+            ->willReturnOnConsecutiveCalls(
+                ['data' => $first_page],
+                ['data' => $second_page]
+            );
+
+        $tag    = new UploadTag($mock_handler);
+        $result = $tag->listAll();
+
+        $this->assertCount(750, $result['data']);
+    }
+
+    #[Group('unit')]
+    public function testListAllExactly500OnLastPage() {
+        $first_page  = array_fill(0, 500, ['id' => 'page1']);
+        $second_page = array_fill(0, 500, ['id' => 'page2']);
+        $third_page  = [];
+
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->exactly(3))
+            ->method('execute')
+            ->willReturnOnConsecutiveCalls(
+                ['data' => $first_page],
+                ['data' => $second_page],
+                ['data' => $third_page]
+            );
+
+        $tag    = new UploadTag($mock_handler);
+        $result = $tag->listAll();
+
+        $this->assertCount(1000, $result['data']);
     }
 
     // =========================================================================
@@ -133,7 +240,7 @@ class UploadTagTest extends TestCase {
     #[Group('unit')]
     public function testDelete() {
         $expected_response = ['data' => []];
-        $tag = $this->createUploadTagWithMock('DELETE', '/upload-tags/tag-to-delete', [], [], $expected_response);
+        $tag               = $this->createUploadTagWithMock('DELETE', '/upload-tags/tag-to-delete', [], [], $expected_response);
 
         $result = $tag->delete('tag-to-delete');
 

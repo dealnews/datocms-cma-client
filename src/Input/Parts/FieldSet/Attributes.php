@@ -99,6 +99,7 @@ class Attributes extends ValueObject {
                 unset($array['start_collapsed']);
             }
         }
+
         return $array;
     }
 }

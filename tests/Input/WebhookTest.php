@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input;
 
+use DealNews\DatoCMS\CMA\Input\Parts\Webhook\Attributes;
+use DealNews\DatoCMS\CMA\Input\Webhook;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Input\Webhook;
-use DealNews\DatoCMS\CMA\Input\Parts\Webhook\Attributes;
 
 /**
  * Tests for the Input\Webhook class
@@ -30,7 +30,7 @@ class WebhookTest extends TestCase {
 
     #[Group('unit')]
     public function testIdCanBeSet(): void {
-        $webhook = new Webhook();
+        $webhook     = new Webhook();
         $webhook->id = 'webhook-123';
 
         $this->assertEquals('webhook-123', $webhook->id);
@@ -38,9 +38,9 @@ class WebhookTest extends TestCase {
 
     #[Group('unit')]
     public function testAttributesCanBeSetWithArray(): void {
-        $webhook = new Webhook();
+        $webhook                     = new Webhook();
         $webhook->attributes['name'] = 'Test Webhook';
-        $webhook->attributes['url'] = 'https://example.com/webhook';
+        $webhook->attributes['url']  = 'https://example.com/webhook';
 
         $this->assertEquals('Test Webhook', $webhook->attributes['name']);
         $this->assertEquals('https://example.com/webhook', $webhook->attributes['url']);
@@ -48,11 +48,11 @@ class WebhookTest extends TestCase {
 
     #[Group('unit')]
     public function testAttributesCanBeSetWithObject(): void {
-        $attributes = new Attributes();
+        $attributes       = new Attributes();
         $attributes->name = 'Test Webhook';
-        $attributes->url = 'https://example.com/webhook';
+        $attributes->url  = 'https://example.com/webhook';
 
-        $webhook = new Webhook();
+        $webhook             = new Webhook();
         $webhook->attributes = $attributes;
 
         $this->assertInstanceOf(Attributes::class, $webhook->attributes);
@@ -62,7 +62,7 @@ class WebhookTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayTypeProperlySet(): void {
-        $webhook = new Webhook();
+        $webhook                     = new Webhook();
         $webhook->attributes['name'] = 'Test';
 
         $array = $webhook->toArray();
@@ -73,7 +73,7 @@ class WebhookTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyId(): void {
-        $webhook = new Webhook();
+        $webhook                     = new Webhook();
         $webhook->attributes['name'] = 'Test';
 
         $array = $webhook->toArray();
@@ -83,8 +83,8 @@ class WebhookTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesIdWhenSet(): void {
-        $webhook = new Webhook();
-        $webhook->id = 'webhook-123';
+        $webhook                     = new Webhook();
+        $webhook->id                 = 'webhook-123';
         $webhook->attributes['name'] = 'Test';
 
         $array = $webhook->toArray();

@@ -2,11 +2,11 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\ScheduledUnpublishing;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Input\ScheduledUnpublishing as ScheduledUnpublishingInput;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\ScheduledUnpublishing class
@@ -47,10 +47,10 @@ class ScheduledUnpublishingTest extends TestCase {
     #[Group('unit')]
     public function testCreateWithArray() {
         $data = [
-            'type' => 'scheduled_unpublishing',
+            'type'       => 'scheduled_unpublishing',
             'attributes' => ['unpublishing_scheduled_at' => '2030-09-01T12:00:00Z'],
         ];
-        $expected_response = ['data' => ['id' => 'scheduled-id', 'type' => 'scheduled_unpublishing']];
+        $expected_response      = ['data' => ['id' => 'scheduled-id', 'type' => 'scheduled_unpublishing']];
         $scheduled_unpublishing = $this->createScheduledUnpublishingWithMock(
             'POST',
             '/items/record-123/scheduled-unpublishing',
@@ -66,10 +66,10 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testCreateWithScheduledUnpublishingInput() {
-        $input = new ScheduledUnpublishingInput();
+        $input                                          = new ScheduledUnpublishingInput();
         $input->attributes['unpublishing_scheduled_at'] = '2030-09-01T12:00:00Z';
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => 'scheduled-id', 'type' => 'scheduled_unpublishing']];
 
         $mock_handler = $this->createMock(Handler::class);
@@ -79,7 +79,7 @@ class ScheduledUnpublishingTest extends TestCase {
             ->willReturn($expected_response);
 
         $scheduled_unpublishing = new ScheduledUnpublishing($mock_handler);
-        $result = $scheduled_unpublishing->create('record-123', $input);
+        $result                 = $scheduled_unpublishing->create('record-123', $input);
 
         $this->assertEquals($expected_response, $result);
     }
@@ -87,13 +87,13 @@ class ScheduledUnpublishingTest extends TestCase {
     #[Group('unit')]
     public function testCreateWithContentInLocales() {
         $data = [
-            'type' => 'scheduled_unpublishing',
+            'type'       => 'scheduled_unpublishing',
             'attributes' => [
                 'unpublishing_scheduled_at' => '2030-09-01T12:00:00Z',
-                'content_in_locales' => ['en', 'it'],
+                'content_in_locales'        => ['en', 'it'],
             ],
         ];
-        $expected_response = ['data' => ['id' => 'scheduled-id']];
+        $expected_response      = ['data' => ['id' => 'scheduled-id']];
         $scheduled_unpublishing = $this->createScheduledUnpublishingWithMock(
             'POST',
             '/items/record-123/scheduled-unpublishing',
@@ -109,14 +109,14 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testCreateThrowsWhenUnpublishingScheduledAtMissing() {
-        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler           = $this->createMock(Handler::class);
         $scheduled_unpublishing = new ScheduledUnpublishing($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('unpublishing_scheduled_at must be set to an ISO 8601 date/time in the \'attributes\'');
 
         $data = [
-            'type' => 'scheduled_unpublishing',
+            'type'       => 'scheduled_unpublishing',
             'attributes' => [],
         ];
         $scheduled_unpublishing->create('record-123', $data);
@@ -124,14 +124,14 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testCreateThrowsWhenUnpublishingScheduledAtEmpty() {
-        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler           = $this->createMock(Handler::class);
         $scheduled_unpublishing = new ScheduledUnpublishing($mock_handler);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('unpublishing_scheduled_at must be set to an ISO 8601 date/time in the \'attributes\'');
 
         $data = [
-            'type' => 'scheduled_unpublishing',
+            'type'       => 'scheduled_unpublishing',
             'attributes' => ['unpublishing_scheduled_at' => ''],
         ];
         $scheduled_unpublishing->create('record-123', $data);
@@ -143,7 +143,7 @@ class ScheduledUnpublishingTest extends TestCase {
 
     #[Group('unit')]
     public function testDelete() {
-        $expected_response = ['data' => ['id' => 'record-123', 'type' => 'item']];
+        $expected_response      = ['data' => ['id' => 'record-123', 'type' => 'item']];
         $scheduled_unpublishing = $this->createScheduledUnpublishingWithMock(
             'DELETE',
             '/items/record-123/scheduled-unpublishing',

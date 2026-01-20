@@ -63,6 +63,7 @@ class Page extends ValueObject {
         if ($array['limit'] === self::DEFAULT_LIMIT) {
             unset($array['limit']);
         }
+
         return $array;
     }
 }

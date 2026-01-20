@@ -2,8 +2,8 @@
 
 namespace DealNews\DatoCMS\CMA\API;
 
-use DealNews\DatoCMS\CMA\Parameters\Site as SiteParameters;
 use DealNews\DatoCMS\CMA\Input\Site as SiteInput;
+use DealNews\DatoCMS\CMA\Parameters\Site as SiteParameters;
 
 /**
  * API handler for DatoCMS site operations
@@ -60,6 +60,7 @@ class Site extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('PUT', '/site', [], ['data' => $data]);
     }
 }

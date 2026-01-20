@@ -2,12 +2,12 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\API\Site;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
-use DealNews\DatoCMS\CMA\Parameters\Site as SiteParameters;
 use DealNews\DatoCMS\CMA\Input\Site as SiteInput;
+use DealNews\DatoCMS\CMA\Parameters\Site as SiteParameters;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the API\Site class
@@ -48,7 +48,7 @@ class SiteTest extends TestCase {
     #[Group('unit')]
     public function testRetrieveWithoutParameters(): void {
         $expected_response = ['data' => ['id' => '1', 'type' => 'site']];
-        $site = $this->createSiteWithMock('GET', '/site', [], [], $expected_response);
+        $site              = $this->createSiteWithMock('GET', '/site', [], [], $expected_response);
 
         $result = $site->retrieve();
 
@@ -57,12 +57,12 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testRetrieveWithParametersContainingInclude(): void {
-        $params = new SiteParameters();
+        $params          = new SiteParameters();
         $params->include = ['item_types', 'account'];
 
-        $expected_query = ['include' => 'item_types,account'];
+        $expected_query    = ['include' => 'item_types,account'];
         $expected_response = ['data' => ['id' => '1', 'type' => 'site']];
-        $site = $this->createSiteWithMock('GET', '/site', $expected_query, [], $expected_response);
+        $site              = $this->createSiteWithMock('GET', '/site', $expected_query, [], $expected_response);
 
         $result = $site->retrieve($params);
 
@@ -76,14 +76,14 @@ class SiteTest extends TestCase {
     #[Group('unit')]
     public function testUpdateWithArray(): void {
         $data = [
-            'type' => 'site',
+            'type'       => 'site',
             'attributes' => [
                 'no_index' => true,
             ],
         ];
 
         $expected_response = ['data' => ['id' => '1', 'type' => 'site']];
-        $site = $this->createSiteWithMock('PUT', '/site', [], ['data' => $data], $expected_response);
+        $site              = $this->createSiteWithMock('PUT', '/site', [], ['data' => $data], $expected_response);
 
         $result = $site->update($data);
 
@@ -92,12 +92,12 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testUpdateWithSiteInput(): void {
-        $input = new SiteInput();
+        $input             = new SiteInput();
         $input->attributes = ['no_index' => true];
 
-        $expected_data = ['data' => $input->toArray()];
+        $expected_data     = ['data' => $input->toArray()];
         $expected_response = ['data' => ['id' => '1', 'type' => 'site']];
-        $site = $this->createSiteWithMock('PUT', '/site', [], $expected_data, $expected_response);
+        $site              = $this->createSiteWithMock('PUT', '/site', [], $expected_data, $expected_response);
 
         $result = $site->update($input);
 

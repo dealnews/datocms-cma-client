@@ -38,6 +38,7 @@ class FieldSet extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('POST', '/item-types/' . $model_id_or_api_key . '/fieldsets', [], ['data' => $data]);
     }
 
@@ -59,6 +60,7 @@ class FieldSet extends Base {
         if (!is_array($data)) {
             $data = $data->toArray();
         }
+
         return $this->handler->execute('PUT', '/fieldsets/' . $fieldset_id, [], ['data' => $data]);
     }
 

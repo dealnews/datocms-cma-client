@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Parameters;
 
+use DealNews\DatoCMS\CMA\Parameters\Site;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
-use DealNews\DatoCMS\CMA\Parameters\Site;
 
 /**
  * Tests for the Parameters\Site class
@@ -29,7 +29,7 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesIncludeWhenPopulated(): void {
-        $params = new Site();
+        $params          = new Site();
         $params->include = ['item_types'];
 
         $array = $params->toArray();
@@ -40,7 +40,7 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingIncludeWithSingleRelationship(): void {
-        $params = new Site();
+        $params          = new Site();
         $params->include = ['item_types'];
 
         $this->assertEquals(['item_types'], $params->include);
@@ -48,7 +48,7 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingIncludeWithMultipleRelationships(): void {
-        $params = new Site();
+        $params          = new Site();
         $params->include = ['item_types', 'account'];
 
         $this->assertEquals(['item_types', 'account'], $params->include);
@@ -56,7 +56,7 @@ class SiteTest extends TestCase {
 
     #[Group('unit')]
     public function testSettingIncludeWithNestedRelationships(): void {
-        $params = new Site();
+        $params          = new Site();
         $params->include = ['item_types.fields', 'item_types.singleton_item'];
 
         $this->assertEquals(['item_types.fields', 'item_types.singleton_item'], $params->include);

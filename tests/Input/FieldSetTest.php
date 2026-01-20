@@ -2,10 +2,10 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\Input;
 
-use PHPUnit\Framework\Attributes\Group;
-use PHPUnit\Framework\TestCase;
 use DealNews\DatoCMS\CMA\Input\FieldSet;
 use DealNews\DatoCMS\CMA\Input\Parts\FieldSet\Attributes;
+use PHPUnit\Framework\Attributes\Group;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Tests for the Input\FieldSet class
@@ -30,7 +30,7 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testIdCanBeSet(): void {
-        $fieldset = new FieldSet();
+        $fieldset     = new FieldSet();
         $fieldset->id = 'fieldset-123';
 
         $this->assertEquals('fieldset-123', $fieldset->id);
@@ -38,8 +38,8 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testAttributesCanBeSetWithArray(): void {
-        $fieldset = new FieldSet();
-        $fieldset->attributes['title'] = 'Contact Information';
+        $fieldset                            = new FieldSet();
+        $fieldset->attributes['title']       = 'Contact Information';
         $fieldset->attributes['collapsible'] = true;
 
         $this->assertEquals('Contact Information', $fieldset->attributes['title']);
@@ -48,11 +48,11 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testAttributesCanBeSetWithObject(): void {
-        $attributes = new Attributes();
-        $attributes->title = 'Contact Information';
+        $attributes              = new Attributes();
+        $attributes->title       = 'Contact Information';
         $attributes->collapsible = true;
 
-        $fieldset = new FieldSet();
+        $fieldset             = new FieldSet();
         $fieldset->attributes = $attributes;
 
         $this->assertInstanceOf(Attributes::class, $fieldset->attributes);
@@ -62,7 +62,7 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayTypeProperlySet(): void {
-        $fieldset = new FieldSet();
+        $fieldset                      = new FieldSet();
         $fieldset->attributes['title'] = 'Test';
 
         $array = $fieldset->toArray();
@@ -73,7 +73,7 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayExcludesEmptyId(): void {
-        $fieldset = new FieldSet();
+        $fieldset                      = new FieldSet();
         $fieldset->attributes['title'] = 'Test';
 
         $array = $fieldset->toArray();
@@ -83,8 +83,8 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesIdWhenSet(): void {
-        $fieldset = new FieldSet();
-        $fieldset->id = 'fieldset-123';
+        $fieldset                      = new FieldSet();
+        $fieldset->id                  = 'fieldset-123';
         $fieldset->attributes['title'] = 'Test';
 
         $array = $fieldset->toArray();
@@ -104,8 +104,8 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayIncludesAttributesWhenSet(): void {
-        $fieldset = new FieldSet();
-        $fieldset->attributes['title'] = 'Contact Information';
+        $fieldset                            = new FieldSet();
+        $fieldset->attributes['title']       = 'Contact Information';
         $fieldset->attributes['collapsible'] = true;
 
         $array = $fieldset->toArray();
@@ -117,15 +117,15 @@ class FieldSetTest extends TestCase {
 
     #[Group('unit')]
     public function testFullObjectSerialization(): void {
-        $attributes = new Attributes();
-        $attributes->title = 'Contact Details';
-        $attributes->hint = 'Enter contact information';
-        $attributes->position = 10;
-        $attributes->collapsible = true;
+        $attributes                  = new Attributes();
+        $attributes->title           = 'Contact Details';
+        $attributes->hint            = 'Enter contact information';
+        $attributes->position        = 10;
+        $attributes->collapsible     = true;
         $attributes->start_collapsed = false;
 
-        $fieldset = new FieldSet();
-        $fieldset->id = 'fieldset-456';
+        $fieldset             = new FieldSet();
+        $fieldset->id         = 'fieldset-456';
         $fieldset->attributes = $attributes;
 
         $array = $fieldset->toArray();

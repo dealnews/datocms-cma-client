@@ -51,6 +51,7 @@ class Role extends ValueObject {
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
+
         return ['data' => $array];
     }
 }

@@ -85,6 +85,7 @@ class Model extends ValueObject {
         if (empty($array['attributes'])) {
             unset($array['attributes']);
         }
+
         return $array;
     }
 }

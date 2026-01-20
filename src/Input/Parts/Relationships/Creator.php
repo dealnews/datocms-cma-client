@@ -23,7 +23,7 @@ class Creator extends ValueObject {
     /**
      * Creator type
      *
-     * WARNING: Must be null or one of: 'account', 'access_token', 'user', 
+     * WARNING: Must be null or one of: 'account', 'access_token', 'user',
      * 'sso_user', 'organization'
      *
      * Valid values: 'account', 'access_token', 'user', 'sso_user', 'organization'
@@ -58,6 +58,7 @@ class Creator extends ValueObject {
         if (!empty($array['type']) && !empty($array['id'])) {
             return ['data' => $array];
         }
+
         return [];
     }
 }

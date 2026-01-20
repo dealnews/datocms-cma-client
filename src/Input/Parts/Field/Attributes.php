@@ -211,6 +211,7 @@ class Attributes extends ValueObject {
                 unset($array['deep_filtering_enabled']);
             }
         }
+
         return $array;
     }
 }

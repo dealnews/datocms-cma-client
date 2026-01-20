@@ -50,10 +50,10 @@ class Events implements \JsonSerializable {
      */
     public function addEvent(string $type, array $events, array|EventFilters|null $filters = null): static {
         if (!in_array($type, self::VALID_ENTITY_TYPE)) {
-            throw new \InvalidArgumentException("Event type must be one of " . implode(", ", self::VALID_ENTITY_TYPE));
+            throw new \InvalidArgumentException('Event type must be one of ' . implode(', ', self::VALID_ENTITY_TYPE));
         }
         $event = [
-            'event_type' => $type,
+            'event_type'  => $type,
             'event_types' => $events,
         ];
         if ($filters !== null) {
@@ -63,6 +63,7 @@ class Events implements \JsonSerializable {
             $event['filters'] = $filters;
         }
         $this->events[] = $event;
+
         return $this;
     }
 

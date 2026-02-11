@@ -8,6 +8,7 @@ use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Job;
 use DealNews\DatoCMS\CMA\API\Maintenance;
 use DealNews\DatoCMS\CMA\API\Model;
+use DealNews\DatoCMS\CMA\API\ModelFilter;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\RecordVersion;
 use DealNews\DatoCMS\CMA\API\ScheduledPublication;
@@ -42,6 +43,7 @@ use Psr\Log\LogLevel;
  *
  * @property-read   Record                      $record                         API endpoint for record/item operations
  * @property-read   Model                       $model                          API endpoint for model/item-type operations
+ * @property-read   ModelFilter                 $model_filter                   API endpoint for model filter operations
  * @property-read   Upload                      $upload                         API endpoint for upload operations
  * @property-read   UploadRequest               $upload_request                 API endpoint for upload request operations
  * @property-read   UploadCollection            $upload_collection              API endpoint for upload collection (folder) operations
@@ -69,6 +71,7 @@ class Client {
     protected const PROPERTY_MAPPING = [
         'record'                 => Record::class,
         'model'                  => Model::class,
+        'model_filter'           => ModelFilter::class,
         'upload'                 => Upload::class,
         'upload_request'         => UploadRequest::class,
         'upload_collection'      => UploadCollection::class,
@@ -100,6 +103,13 @@ class Client {
      * @var Model
      */
     protected Model $model;
+
+    /**
+     * API endpoint for model filter operations
+     *
+     * @var ModelFilter
+     */
+    protected ModelFilter $model_filter;
 
     /**
      * API endpoint for upload operations

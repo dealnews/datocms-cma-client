@@ -26,6 +26,7 @@ src/
 ├── API/                    # API endpoint handlers
 │   ├── Base.php           # Abstract base for all API classes
 │   ├── Model.php          # Model/item-type CRUD operations (6 methods)
+│   ├── ModelFilter.php    # Model filter CRUD operations (5 methods)
 │   ├── Record.php         # Record/item CRUD operations (13 methods)
 │   ├── Upload.php         # Upload CRUD + helper methods (uploadFile, uploadFromUrl)
 │   ├── UploadCollection.php # Upload folder CRUD operations
@@ -49,6 +50,7 @@ src/
 │   └── Handler.php        # Guzzle wrapper with auto-retry on 429
 ├── Input/                 # Objects for create/update operations
 │   ├── Model.php          # Main input object for models
+│   ├── ModelFilter.php    # Main input object for model filters
 │   ├── Record.php         # Main input object for records
 │   ├── Upload.php         # Input for upload create/update
 │   ├── UploadCollection.php # Input for collection create/update
@@ -81,6 +83,7 @@ tests/
 ├── API/                   # Unit tests for API classes
 │   ├── BaseTest.php       # Tests Base constructor with mocked Handler
 │   ├── ModelTest.php      # Tests all 6 Model API methods
+│   ├── ModelFilterTest.php # Tests all 5 ModelFilter API methods
 │   ├── RecordTest.php     # Tests all 13 Record API methods
 │   ├── UploadTest.php     # Tests Upload API + helper methods
 │   ├── UploadCollectionTest.php
@@ -98,6 +101,7 @@ tests/
 │   └── HandlerTest.php    # Tests execute(), retry logic, caching
 ├── Input/                 # Unit tests for Input classes
 │   ├── ModelTest.php      # Tests Model input serialization
+│   ├── ModelFilterTest.php # Tests ModelFilter input serialization
 │   ├── RecordTest.php     # Tests Record input serialization
 │   ├── UploadTest.php
 │   ├── UploadCollectionTest.php
@@ -149,6 +153,10 @@ All API classes extend `API\Base`, which initializes the HTTP handler. The follo
 
 **Model API** (`API\Model`):
 - `list()`, `retrieve()`, `create()`, `update()`, `delete()`, `duplicate()`
+
+**Model Filter API** (`API\ModelFilter`):
+- `list()`, `retrieve()`, `create()`, `update()`, `delete()`
+- Saved searches to help editors quickly find records within a model
 
 **Upload API** (`API\Upload`):
 - `list()`, `retrieve()`, `create()`, `update()`, `delete()`, `references()`
@@ -213,6 +221,14 @@ $record->attributes['brand_color'] = $color;
 - `$type` — Always `'item_type'` (enforced via setter)
 - `$id` — Optional model ID
 - `$attributes` — Associative array of model configuration (name, api_key, singleton, etc.)
+
+`Input\ModelFilter` represents data for creating/updating model filters. It extends `Moonspot\ValueObjects\ValueObject` and uses:
+- `$type` — Always `'item_type_filter'` (enforced via readonly)
+- `$id` — Optional filter ID
+- `$attributes` — Filter configuration (name, filter, columns, order_by, shared)
+- `$item_type` — `Parts\Relationships\ItemType` object for the associated model
+
+**Note**: `Input\ModelFilter::toArray()` guards against recursive calls from parent by checking if `$data !== null`.
 
 ### Parameter Objects
 
@@ -450,6 +466,7 @@ public function testPublishWithSelectivePublishing() { }
 2. **Fields API**: Not implemented (cannot manage fields within models)
 3. **Webhooks**: Not implemented
 4. **Protected methods in Handler**: `autoRetry()` and `httpLogger()` are protected and cannot be directly unit tested; they are covered indirectly via integration-style tests
+5. **Model Filter pagination**: The `list()` method does not support pagination parameters (API limitation)
 
 ---
 
@@ -565,6 +582,41 @@ $params = new ModelParams();
 $params->page->limit = 50;
 
 $models = $client->model->list($params);
+```
+
+### Create a Model Filter
+
+```php
+use DealNews\DatoCMS\CMA\Client;
+use DealNews\DatoCMS\CMA\Input\ModelFilter;
+
+$client = new Client($token, $env);
+
+// Create a saved filter for draft posts
+$filter = new ModelFilter('model-id');
+$filter->attributes['name'] = 'Draft posts';
+$filter->attributes['filter'] = [
+    'query'  => 'foo bar',
+    'fields' => ['_status' => ['eq' => 'draft']],
+];
+$filter->attributes['columns'] = [
+    ['name' => '_preview', 'width' => 0.6],
+    ['name' => '_status', 'width' => 0.4],
+];
+$filter->attributes['order_by'] = '_updated_at_ASC';
+$filter->attributes['shared'] = true;
+
+$result = $client->model_filter->create($filter);
+
+// List all filters
+$filters = $client->model_filter->list();
+
+// Update a filter
+$filter->attributes['name'] = 'Updated Name';
+$client->model_filter->update('filter-id', $filter);
+
+// Delete a filter
+$client->model_filter->delete('filter-id');
 ```
 
 ### Upload a File

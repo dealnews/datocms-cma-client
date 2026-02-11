@@ -8,6 +8,7 @@ use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Job;
 use DealNews\DatoCMS\CMA\API\Maintenance;
 use DealNews\DatoCMS\CMA\API\Model;
+use DealNews\DatoCMS\CMA\API\ModelFilter;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\RecordVersion;
 use DealNews\DatoCMS\CMA\API\ScheduledPublication;
@@ -140,6 +141,7 @@ class ClientTest extends TestCase {
             ['record', Record::class],
             ['record_version', RecordVersion::class],
             ['model', Model::class],
+            ['model_filter', ModelFilter::class],
             ['fieldset', FieldSet::class],
             ['site', Site::class],
             ['upload', Upload::class],

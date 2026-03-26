@@ -2,9 +2,12 @@
 
 namespace DealNews\DatoCMS\CMA\Tests\API;
 
+use DealNews\DatoCMS\CMA\API\Job;
 use DealNews\DatoCMS\CMA\API\Upload;
 use DealNews\DatoCMS\CMA\API\UploadRequest;
+use DealNews\DatoCMS\CMA\Exception\API as APIException;
 use DealNews\DatoCMS\CMA\Exception\S3Upload;
+use DealNews\DatoCMS\CMA\Exception\Timeout;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Input\Upload as UploadInput;
 use DealNews\DatoCMS\CMA\Parameters\Upload as UploadParameter;
@@ -493,22 +496,24 @@ class UploadTest extends TestCase {
             $s3_handler_stack = HandlerStack::create($mock_s3);
             $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
-            // Mock the main handler for create()
+            // Mock the main handler for create() - returns job payload
             $mock_handler = $this->createMock(Handler::class);
             $mock_handler->expects($this->once())
                 ->method('execute')
                 ->with('POST', '/uploads', [], $this->anything())
                 ->willReturn([
                     'data' => [
-                        'id'   => 'created-upload-id',
-                        'type' => 'upload',
+                        'id'   => 'job-abc123',
+                        'type' => 'job',
                     ],
                 ]);
 
             $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
             $result = $upload->uploadFile($temp_file);
 
-            $this->assertEquals('created-upload-id', $result['data']['id']);
+            // Assert we got a job payload, not an upload
+            $this->assertEquals('job', $result['data']['type']);
+            $this->assertEquals('job-abc123', $result['data']['id']);
         } finally {
             if (file_exists($temp_file)) {
                 unlink($temp_file);
@@ -557,8 +562,8 @@ class UploadTest extends TestCase {
                 }))
                 ->willReturn([
                     'data' => [
-                        'id'   => 'created-upload-id',
-                        'type' => 'upload',
+                        'id'   => 'job-def456',
+                        'type' => 'job',
                     ],
                 ]);
 
@@ -573,6 +578,10 @@ class UploadTest extends TestCase {
             $this->assertEquals('Test Author', $captured_data['data']['attributes']['author']);
             $this->assertEquals('© 2025', $captured_data['data']['attributes']['copyright']);
             $this->assertEquals(['test', 'unit'], $captured_data['data']['attributes']['tags']);
+
+            // Assert we got a job payload
+            $this->assertEquals('job', $result['data']['type']);
+            $this->assertEquals('job-def456', $result['data']['id']);
         } finally {
             if (file_exists($temp_file)) {
                 unlink($temp_file);
@@ -652,22 +661,24 @@ class UploadTest extends TestCase {
         $s3_handler_stack = HandlerStack::create($mock_s3);
         $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
-        // Mock the main handler for create()
+        // Mock the main handler for create() - returns job payload
         $mock_handler = $this->createMock(Handler::class);
         $mock_handler->expects($this->once())
             ->method('execute')
             ->with('POST', '/uploads', [], $this->anything())
             ->willReturn([
                 'data' => [
-                    'id'   => 'created-upload-id',
-                    'type' => 'upload',
+                    'id'   => 'job-jkl012',
+                    'type' => 'job',
                 ],
             ]);
 
         $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
         $result = $upload->uploadFromUrl('https://example.com/image.jpg');
 
-        $this->assertEquals('created-upload-id', $result['data']['id']);
+        // Assert we got a job payload
+        $this->assertEquals('job', $result['data']['type']);
+        $this->assertEquals('job-jkl012', $result['data']['id']);
     }
 
     #[Group('unit')]
@@ -702,12 +713,14 @@ class UploadTest extends TestCase {
         $mock_handler = $this->createMock(Handler::class);
         $mock_handler->expects($this->once())
             ->method('execute')
-            ->willReturn(['data' => ['id' => 'upload-id', 'type' => 'upload']]);
+            ->willReturn(['data' => ['id' => 'job-mno345', 'type' => 'job']]);
 
         $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
         $result = $upload->uploadFromUrl('https://example.com/image.jpg', 'custom_name.jpg');
 
-        $this->assertEquals('upload-id', $result['data']['id']);
+        // Assert we got a job payload
+        $this->assertEquals('job', $result['data']['type']);
+        $this->assertEquals('job-mno345', $result['data']['id']);
     }
 
     #[Group('unit')]
@@ -767,7 +780,7 @@ class UploadTest extends TestCase {
 
                     return true;
                 }))
-                ->willReturn(['data' => ['id' => 'upload-id', 'type' => 'upload']]);
+                ->willReturn(['data' => ['id' => 'job-ghi789', 'type' => 'job']]);
 
             $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
             $result = $upload->uploadFile($temp_file, null, 'collection-123');
@@ -775,10 +788,410 @@ class UploadTest extends TestCase {
             // Verify collection relationship was set
             $this->assertArrayHasKey('relationships', $captured_data['data']);
             $this->assertEquals('collection-123', $captured_data['data']['relationships']['upload_collection']['data']['id']);
+
+            // Assert we got a job payload
+            $this->assertEquals('job', $result['data']['type']);
+            $this->assertEquals('job-ghi789', $result['data']['id']);
         } finally {
             if (file_exists($temp_file)) {
                 unlink($temp_file);
             }
         }
+    }
+
+    // =========================================================================
+    // uploadFileAndWait() tests
+    // =========================================================================
+
+    #[Group('unit')]
+    public function testUploadFileAndWaitSuccess() {
+        $temp_file = tempnam(sys_get_temp_dir(), 'test_upload_');
+        file_put_contents($temp_file, 'test file contents');
+
+        try {
+            // Mock the upload request
+            $mock_upload_request = $this->createMock(UploadRequest::class);
+            $mock_upload_request->expects($this->once())
+                ->method('create')
+                ->willReturn([
+                    'data' => [
+                        'id'         => '/path/to/s3/file',
+                        'type'       => 'upload_request',
+                        'attributes' => [
+                            'url'             => 'https://s3.example.com/bucket/file',
+                            'request_headers' => [],
+                        ],
+                    ],
+                ]);
+
+            // Mock the S3 client
+            $mock_s3 = new MockHandler([
+                new Response(200, [], ''),
+            ]);
+            $s3_handler_stack = HandlerStack::create($mock_s3);
+            $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+
+            // Mock the main handler to return job
+            $mock_handler = $this->createMock(Handler::class);
+            $mock_handler->expects($this->once())
+                ->method('execute')
+                ->with('POST', '/uploads', [], $this->anything())
+                ->willReturn([
+                    'data' => [
+                        'id'   => 'job-wait-123',
+                        'type' => 'job',
+                    ],
+                ]);
+
+            // Mock Job to return completed upload immediately
+            $mock_job = $this->createMock(Job::class);
+            $mock_job->expects($this->once())
+                ->method('retrieve')
+                ->with('job-wait-123')
+                ->willReturn([
+                    'data' => [
+                        'type'       => 'job-result',
+                        'id'         => 'job-wait-123',
+                        'attributes' => [
+                            'status'  => 200,
+                            'payload' => [
+                                'data' => [
+                                    'type'       => 'upload',
+                                    'id'         => 'upload-456',
+                                    'attributes' => [
+                                        'url'    => 'https://example.com/image.jpg',
+                                        'format' => 'jpg',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ]);
+
+            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+            $result = $upload->uploadFileAndWait($temp_file);
+
+            // Assert we got the upload payload, not the job
+            $this->assertEquals('upload', $result['data']['type']);
+            $this->assertEquals('upload-456', $result['data']['id']);
+        } finally {
+            if (file_exists($temp_file)) {
+                unlink($temp_file);
+            }
+        }
+    }
+
+    #[Group('unit')]
+    public function testUploadFileAndWaitAfterRetries() {
+        $temp_file = tempnam(sys_get_temp_dir(), 'test_upload_');
+        file_put_contents($temp_file, 'test file contents');
+
+        try {
+            // Mock the upload request
+            $mock_upload_request = $this->createMock(UploadRequest::class);
+            $mock_upload_request->expects($this->once())
+                ->method('create')
+                ->willReturn([
+                    'data' => [
+                        'id'         => '/path/to/s3/file',
+                        'type'       => 'upload_request',
+                        'attributes' => [
+                            'url'             => 'https://s3.example.com/bucket/file',
+                            'request_headers' => [],
+                        ],
+                    ],
+                ]);
+
+            // Mock the S3 client
+            $mock_s3 = new MockHandler([
+                new Response(200, [], ''),
+            ]);
+            $s3_handler_stack = HandlerStack::create($mock_s3);
+            $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+
+            // Mock the main handler to return job
+            $mock_handler = $this->createMock(Handler::class);
+            $mock_handler->expects($this->once())
+                ->method('execute')
+                ->willReturn([
+                    'data' => [
+                        'id'   => 'job-retry-123',
+                        'type' => 'job',
+                    ],
+                ]);
+
+            // Mock Job to return 404 twice, then success
+            $mock_job = $this->createMock(Job::class);
+            $mock_job->expects($this->exactly(3))
+                ->method('retrieve')
+                ->with('job-retry-123')
+                ->willReturnCallback(function () {
+                    static $call_count = 0;
+                    $call_count++;
+
+                    if ($call_count < 3) {
+                        throw new APIException('Not found', 404, null, '');
+                    }
+
+                    return [
+                        'data' => [
+                            'type'       => 'job-result',
+                            'id'         => 'job-retry-123',
+                            'attributes' => [
+                                'payload' => [
+                                    'data' => [
+                                        'type' => 'upload',
+                                        'id'   => 'upload-789',
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ];
+                });
+
+            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+            $result = $upload->uploadFileAndWait($temp_file, null, null, 15);
+
+            $this->assertEquals('upload', $result['data']['type']);
+            $this->assertEquals('upload-789', $result['data']['id']);
+        } finally {
+            if (file_exists($temp_file)) {
+                unlink($temp_file);
+            }
+        }
+    }
+
+    #[Group('unit')]
+    public function testUploadFileAndWaitTimeout() {
+        $temp_file = tempnam(sys_get_temp_dir(), 'test_upload_');
+        file_put_contents($temp_file, 'test file contents');
+
+        try {
+            // Mock the upload request
+            $mock_upload_request = $this->createMock(UploadRequest::class);
+            $mock_upload_request->expects($this->once())
+                ->method('create')
+                ->willReturn([
+                    'data' => [
+                        'id'         => '/path/to/s3/file',
+                        'type'       => 'upload_request',
+                        'attributes' => [
+                            'url'             => 'https://s3.example.com/bucket/file',
+                            'request_headers' => [],
+                        ],
+                    ],
+                ]);
+
+            // Mock the S3 client
+            $mock_s3 = new MockHandler([
+                new Response(200, [], ''),
+            ]);
+            $s3_handler_stack = HandlerStack::create($mock_s3);
+            $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+
+            // Mock the main handler to return job
+            $mock_handler = $this->createMock(Handler::class);
+            $mock_handler->expects($this->once())
+                ->method('execute')
+                ->willReturn([
+                    'data' => [
+                        'id'   => 'job-timeout-123',
+                        'type' => 'job',
+                    ],
+                ]);
+
+            // Mock Job to always return 404
+            $mock_job = $this->createMock(Job::class);
+            $mock_job->expects($this->atLeastOnce())
+                ->method('retrieve')
+                ->with('job-timeout-123')
+                ->willThrowException(new APIException('Not found', 404, null, ''));
+
+            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+
+            $this->expectException(Timeout::class);
+            $this->expectExceptionMessage('Job polling timeout');
+
+            $upload->uploadFileAndWait($temp_file, null, null, 1);
+        } finally {
+            if (file_exists($temp_file)) {
+                unlink($temp_file);
+            }
+        }
+    }
+
+    #[Group('unit')]
+    public function testUploadFileAndWaitValidationError() {
+        $temp_file = tempnam(sys_get_temp_dir(), 'test_upload_');
+        file_put_contents($temp_file, 'test file contents');
+
+        try {
+            // Mock the upload request
+            $mock_upload_request = $this->createMock(UploadRequest::class);
+            $mock_upload_request->expects($this->once())
+                ->method('create')
+                ->willReturn([
+                    'data' => [
+                        'id'         => '/path/to/s3/file',
+                        'type'       => 'upload_request',
+                        'attributes' => [
+                            'url'             => 'https://s3.example.com/bucket/file',
+                            'request_headers' => [],
+                        ],
+                    ],
+                ]);
+
+            // Mock the S3 client
+            $mock_s3 = new MockHandler([
+                new Response(200, [], ''),
+            ]);
+            $s3_handler_stack = HandlerStack::create($mock_s3);
+            $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+
+            // Mock the main handler to return job
+            $mock_handler = $this->createMock(Handler::class);
+            $mock_handler->expects($this->once())
+                ->method('execute')
+                ->willReturn([
+                    'data' => [
+                        'id'   => 'job-error-123',
+                        'type' => 'job',
+                    ],
+                ]);
+
+            // Mock Job to return 422 validation error
+            $mock_job = $this->createMock(Job::class);
+            $mock_job->expects($this->once())
+                ->method('retrieve')
+                ->with('job-error-123')
+                ->willThrowException(new APIException('Validation failed', 422, null, ''));
+
+            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+
+            $this->expectException(APIException::class);
+            $this->expectExceptionMessage('Validation failed');
+
+            $upload->uploadFileAndWait($temp_file);
+        } finally {
+            if (file_exists($temp_file)) {
+                unlink($temp_file);
+            }
+        }
+    }
+
+    // =========================================================================
+    // uploadFromUrlAndWait() tests
+    // =========================================================================
+
+    #[Group('unit')]
+    public function testUploadFromUrlAndWaitSuccess() {
+        // Mock the upload request
+        $mock_upload_request = $this->createMock(UploadRequest::class);
+        $mock_upload_request->expects($this->once())
+            ->method('create')
+            ->willReturn([
+                'data' => [
+                    'id'         => '/path/to/s3/file',
+                    'type'       => 'upload_request',
+                    'attributes' => [
+                        'url'             => 'https://s3.example.com/bucket/file',
+                        'request_headers' => [],
+                    ],
+                ],
+            ]);
+
+        // Mock the S3/HTTP client for both download and upload
+        $mock_s3 = new MockHandler([
+            new Response(200, [], 'downloaded file contents'),
+            new Response(200, [], ''),
+        ]);
+        $s3_handler_stack = HandlerStack::create($mock_s3);
+        $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+
+        // Mock the main handler to return job
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->willReturn([
+                'data' => [
+                    'id'   => 'job-url-123',
+                    'type' => 'job',
+                ],
+            ]);
+
+        // Mock Job to return completed upload
+        $mock_job = $this->createMock(Job::class);
+        $mock_job->expects($this->once())
+            ->method('retrieve')
+            ->with('job-url-123')
+            ->willReturn([
+                'data' => [
+                    'type'       => 'job-result',
+                    'id'         => 'job-url-123',
+                    'attributes' => [
+                        'payload' => [
+                            'data' => [
+                                'type' => 'upload',
+                                'id'   => 'upload-url-456',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+        $result = $upload->uploadFromUrlAndWait('https://example.com/image.jpg');
+
+        $this->assertEquals('upload', $result['data']['type']);
+        $this->assertEquals('upload-url-456', $result['data']['id']);
+    }
+
+    #[Group('unit')]
+    public function testUploadFromUrlAndWaitTimeout() {
+        // Mock the upload request
+        $mock_upload_request = $this->createMock(UploadRequest::class);
+        $mock_upload_request->expects($this->once())
+            ->method('create')
+            ->willReturn([
+                'data' => [
+                    'id'         => '/path/to/s3/file',
+                    'type'       => 'upload_request',
+                    'attributes' => [
+                        'url'             => 'https://s3.example.com/bucket/file',
+                        'request_headers' => [],
+                    ],
+                ],
+            ]);
+
+        // Mock the S3/HTTP client
+        $mock_s3 = new MockHandler([
+            new Response(200, [], 'downloaded file contents'),
+            new Response(200, [], ''),
+        ]);
+        $s3_handler_stack = HandlerStack::create($mock_s3);
+        $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
+
+        // Mock the main handler to return job
+        $mock_handler = $this->createMock(Handler::class);
+        $mock_handler->expects($this->once())
+            ->method('execute')
+            ->willReturn([
+                'data' => [
+                    'id'   => 'job-url-timeout',
+                    'type' => 'job',
+                ],
+            ]);
+
+        // Mock Job to always return 404
+        $mock_job = $this->createMock(Job::class);
+        $mock_job->expects($this->atLeastOnce())
+            ->method('retrieve')
+            ->willThrowException(new APIException('Not found', 404, null, ''));
+
+        $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+
+        $this->expectException(Timeout::class);
+
+        $upload->uploadFromUrlAndWait('https://example.com/image.jpg', null, null, null, 1);
     }
 }

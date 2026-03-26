@@ -8,14 +8,20 @@ use Moonspot\ValueObjects\ValueObject;
  * Filter parameters for upload list queries
  *
  * Provides filtering options specific to uploads: by IDs, file types, text
- * query, collection, and various upload-specific criteria.
+ * query, collection, and various upload-specific criteria. Supports both
+ * direct property filtering and flexible field-level filtering with operators.
  *
  * Usage:
  * ```php
+ * // Direct properties (exact match)
  * $params->filter->ids = ['id1', 'id2'];
  * $params->filter->type = 'image';
- * $params->filter->query = 'banner';
- * $params->filter->upload_collection_id = 'collection-123';
+ * $params->filter->author = 'John Doe';
+ *
+ * // Field-level filtering (with operators)
+ * $params->filter->fields->addField('width', 1000, 'gte');
+ * $params->filter->fields->addField('author', 'John', 'matches');
+ * $params->filter->fields->addField('created_at', '2025-01-01', 'gt');
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api/resources/upload/instances
@@ -84,9 +90,27 @@ class UploadFilter extends ValueObject {
     public ?string $copyright = null;
 
     /**
+     * Field-level filter conditions
+     *
+     * Allows filtering with operators (eq, neq, gt, gte, lt, lte, matches,
+     * exists, etc.) on upload attributes.
+     *
+     * @var FilterFields
+     */
+    public FilterFields $fields;
+
+    /**
+     * Initializes the fields filter object
+     */
+    public function __construct() {
+        $this->fields = new FilterFields();
+    }
+
+    /**
      * Converts filter to query parameters
      *
-     * Excludes empty values and joins array values with commas.
+     * Excludes empty values and joins array values with commas. Merges
+     * field-level filters into the output.
      *
      * @param array<string, mixed>|null $data Optional data override
      *
@@ -94,6 +118,19 @@ class UploadFilter extends ValueObject {
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
+        
+        // Handle field-level filters
+        if (isset($array['fields'])) {
+            $fields_array = $array['fields'];
+            unset($array['fields']);
+            
+            // Merge fields into array if not empty
+            if (!empty($fields_array)) {
+                $array['fields'] = $fields_array;
+            }
+        }
+        
+        // Handle other properties
         foreach ($array as $key => $value) {
             if (empty($value)) {
                 unset($array[$key]);

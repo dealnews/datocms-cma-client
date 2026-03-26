@@ -3,6 +3,7 @@
 namespace DealNews\DatoCMS\CMA\API;
 
 use DealNews\DatoCMS\CMA\Exception\S3Upload;
+use DealNews\DatoCMS\CMA\Exception\Timeout;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
 use DealNews\DatoCMS\CMA\Input\Upload as UploadInput;
 use DealNews\DatoCMS\CMA\Parameters\Upload as UploadParameter;
@@ -15,12 +16,24 @@ use GuzzleHttp\Client;
  * creating, updating, deleting, and bulk operations. Also includes helper
  * methods for the complete upload workflow (upload to S3 and register).
  *
+ * Upload Flow:
+ * - **Async**: `uploadFile()` / `uploadFromUrl()` return job payloads
+ *   immediately. Poll job status manually via Job API.
+ * - **Sync**: `uploadFileAndWait()` / `uploadFromUrlAndWait()` handle
+ *   polling automatically and return the final upload.
+ *
  * Usage:
  * ```php
  * $client = new Client($token);
- * $uploads = $client->upload->list();
- * $upload = $client->upload->uploadFile('/path/to/image.jpg');
- * $upload = $client->upload->uploadFromUrl('https://example.com/image.jpg');
+ *
+ * // Async: Get job, poll manually
+ * $job = $client->upload->uploadFile('/path/to/image.jpg');
+ * $job_id = $job['data']['id'];
+ * // ... poll $client->job->retrieve($job_id) until complete ...
+ *
+ * // Sync: Wait for completion automatically
+ * $upload = $client->upload->uploadFileAndWait('/path/to/image.jpg');
+ * $upload_id = $upload['data']['id']; // Ready to use!
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api/resources/upload
@@ -35,6 +48,13 @@ class Upload extends Base {
     protected UploadRequest $upload_request;
 
     /**
+     * API handler for job results
+     *
+     * @var Job
+     */
+    protected Job $job;
+
+    /**
      * Guzzle client for S3 uploads
      *
      * @var Client|null
@@ -44,18 +64,25 @@ class Upload extends Base {
     /**
      * Initializes the Upload API handler
      *
-     * @param Handler|null       $handler        Optional pre-configured HTTP handler
-     * @param UploadRequest|null $upload_request Optional upload request handler (for testing)
-     * @param Client|null        $s3_client      Optional Guzzle client for S3 (for testing)
+     * @param Handler|null       $handler        Optional pre-configured HTTP
+     *                                           handler
+     * @param UploadRequest|null $upload_request Optional upload request
+     *                                           handler (for testing)
+     * @param Client|null        $s3_client      Optional Guzzle client for
+     *                                           S3 (for testing)
+     * @param Job|null           $job            Optional job handler (for
+     *                                           testing)
      */
     public function __construct(
         ?Handler $handler = null,
         ?UploadRequest $upload_request = null,
-        ?Client $s3_client = null
+        ?Client $s3_client = null,
+        ?Job $job = null
     ) {
         parent::__construct($handler);
         $this->upload_request = $upload_request ?? new UploadRequest($this->handler);
         $this->s3_client      = $s3_client;
+        $this->job            = $job ?? new Job($this->handler);
     }
 
     /**
@@ -150,11 +177,16 @@ class Upload extends Base {
      * Call this after uploading the file to S3 via the upload request flow.
      * For a simpler workflow, use uploadFile() or uploadFromUrl() instead.
      *
+     * Note: This endpoint returns HTTP 202 Accepted with a job payload. The
+     * upload is processed asynchronously. To get the final upload data, poll
+     * GET /job-results/{job_id} until the job completes.
+     *
      * @see https://www.datocms.com/docs/content-management-api/resources/upload/create
      *
      * @param array<string, mixed>|UploadInput $data Upload data with path from S3
      *
-     * @return array<string, mixed> The created upload data
+     * @return array<string, mixed> Job data with structure:
+     *                              ['data' => ['type' => 'job', 'id' => '...']]
      *
      * @throws \DealNews\DatoCMS\CMA\Exception\API     On HTTP error responses
      * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
@@ -318,14 +350,20 @@ class Upload extends Base {
      * Upload a local file to DatoCMS
      *
      * Handles the complete upload flow: requests S3 permission, uploads the
-     * file to S3, and registers the upload in DatoCMS.
+     * file to S3, and initiates the async registration in DatoCMS.
+     *
+     * Note: Returns a job payload, not the final upload. The upload is
+     * processed asynchronously. To get the final upload data, poll
+     * GET /job-results/{job_id} until completion.
      *
      * @param string                    $filepath             Path to the local file
      * @param array<string, mixed>|null $metadata             Optional metadata (author,
-     *                                                        copyright, notes, tags)
+     *                                                        copyright, notes, tags,
+     *                                                        default_field_metadata)
      * @param string|null               $upload_collection_id Optional collection to add to
      *
-     * @return array<string, mixed> The created upload data (raw API response)
+     * @return array<string, mixed> Job data with structure:
+     *                              ['data' => ['type' => 'job', 'id' => '...']]
      *
      * @throws \InvalidArgumentException                   If file doesn't exist or isn't readable
      * @throws \DealNews\DatoCMS\CMA\Exception\S3Upload    On S3 upload failure
@@ -369,14 +407,22 @@ class Upload extends Base {
      * Upload a file from a remote URL to DatoCMS
      *
      * Downloads the file to a temporary location, then handles the complete
-     * upload flow: requests S3 permission, uploads to S3, and registers in DatoCMS.
+     * upload flow: requests S3 permission, uploads to S3, and initiates the
+     * async registration in DatoCMS.
+     *
+     * Note: Returns a job payload, not the final upload. The upload is
+     * processed asynchronously. To get the final upload data, poll
+     * GET /job-results/{job_id} until completion.
      *
      * @param string                    $url                  URL of the file to upload
      * @param string|null               $filename             Optional filename override
-     * @param array<string, mixed>|null $metadata             Optional metadata
+     * @param array<string, mixed>|null $metadata             Optional metadata (author,
+     *                                                        copyright, notes, tags,
+     *                                                        default_field_metadata)
      * @param string|null               $upload_collection_id Optional collection to add to
      *
-     * @return array<string, mixed> The created upload data (raw API response)
+     * @return array<string, mixed> Job data with structure:
+     *                              ['data' => ['type' => 'job', 'id' => '...']]
      *
      * @throws \InvalidArgumentException                   If URL is invalid or download fails
      * @throws \DealNews\DatoCMS\CMA\Exception\S3Upload    On S3 upload failure
@@ -414,6 +460,119 @@ class Upload extends Base {
 
         /** @phan-suppress-next-line PhanPossiblyUndeclaredVariable */
         return $result;
+    }
+
+    /**
+     * Upload a local file to DatoCMS and wait for completion
+     *
+     * Handles the complete upload flow including waiting for the background
+     * job to complete. This is a synchronous wrapper around uploadFile() that
+     * automatically polls the job result until the upload is fully processed
+     * and available in DatoCMS.
+     *
+     * Note: Jobs typically complete in 3-5 seconds but may take longer under
+     * heavy load. The default 30-second timeout should be sufficient for most
+     * cases. Increase the timeout for very large files or slow connections.
+     *
+     * @param string                    $filepath             Path to the local
+     *                                                        file
+     * @param array<string, mixed>|null $metadata             Optional metadata
+     *                                                        (author, copyright,
+     *                                                        notes, tags,
+     *                                                        default_field_metadata)
+     * @param string|null               $upload_collection_id Optional collection
+     *                                                        to add to
+     * @param int                       $timeout              Maximum seconds to
+     *                                                        wait (default: 30)
+     *
+     * @return array<string, mixed> Upload data with structure:
+     *                              ['data' => ['type' => 'upload', 'id' => '...',
+     *                               'attributes' => [...]]]
+     *
+     * @throws \InvalidArgumentException                   If file doesn't exist
+     *                                                     or isn't readable
+     * @throws \DealNews\DatoCMS\CMA\Exception\S3Upload    On S3 upload failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Timeout     If job polling
+     *                                                     exceeds timeout
+     * @throws \DealNews\DatoCMS\CMA\Exception\API         On DatoCMS API error
+     *                                                     or validation failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Decode      On JSON decode
+     *                                                     failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Unknown     On unexpected errors
+     */
+    public function uploadFileAndWait(
+        string $filepath,
+        ?array $metadata = null,
+        ?string $upload_collection_id = null,
+        int $timeout = 30
+    ): array {
+        $job_result = $this->uploadFile(
+            $filepath,
+            $metadata,
+            $upload_collection_id
+        );
+        $job_id     = $job_result['data']['id'];
+
+        return $this->pollJobUntilComplete($job_id, $timeout);
+    }
+
+    /**
+     * Upload a file from a remote URL to DatoCMS and wait for completion
+     *
+     * Downloads the file to a temporary location, then handles the complete
+     * upload flow including waiting for the background job to complete. This
+     * is a synchronous wrapper around uploadFromUrl() that automatically polls
+     * the job result until the upload is fully processed and available in
+     * DatoCMS.
+     *
+     * Note: Jobs typically complete in 3-5 seconds but may take longer under
+     * heavy load. The default 30-second timeout should be sufficient for most
+     * cases. Increase the timeout for very large files or slow connections.
+     *
+     * @param string                    $url                  URL of the file to
+     *                                                        upload
+     * @param string|null               $filename             Optional filename
+     *                                                        override
+     * @param array<string, mixed>|null $metadata             Optional metadata
+     *                                                        (author, copyright,
+     *                                                        notes, tags,
+     *                                                        default_field_metadata)
+     * @param string|null               $upload_collection_id Optional collection
+     *                                                        to add to
+     * @param int                       $timeout              Maximum seconds to
+     *                                                        wait (default: 30)
+     *
+     * @return array<string, mixed> Upload data with structure:
+     *                              ['data' => ['type' => 'upload', 'id' => '...',
+     *                               'attributes' => [...]]]
+     *
+     * @throws \InvalidArgumentException                   If URL is invalid or
+     *                                                     download fails
+     * @throws \DealNews\DatoCMS\CMA\Exception\S3Upload    On S3 upload failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Timeout     If job polling
+     *                                                     exceeds timeout
+     * @throws \DealNews\DatoCMS\CMA\Exception\API         On DatoCMS API error
+     *                                                     or validation failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Decode      On JSON decode
+     *                                                     failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Unknown     On unexpected errors
+     */
+    public function uploadFromUrlAndWait(
+        string $url,
+        ?string $filename = null,
+        ?array $metadata = null,
+        ?string $upload_collection_id = null,
+        int $timeout = 30
+    ): array {
+        $job_result = $this->uploadFromUrl(
+            $url,
+            $filename,
+            $metadata,
+            $upload_collection_id
+        );
+        $job_id     = $job_result['data']['id'];
+
+        return $this->pollJobUntilComplete($job_id, $timeout);
     }
 
     /**
@@ -566,5 +725,61 @@ class Upload extends Base {
         }
 
         return $this->s3_client;
+    }
+
+    /**
+     * Poll a job until it completes or times out
+     *
+     * Continuously polls the job result endpoint until the job completes
+     * successfully, fails with a validation error, or exceeds the timeout.
+     *
+     * @param string $job_id  Job ID to poll
+     * @param int    $timeout Maximum time to wait in seconds
+     *
+     * @return array<string, mixed> Upload payload from completed job
+     *
+     * @throws \DealNews\DatoCMS\CMA\Exception\Timeout If polling exceeds
+     *                                                  timeout
+     * @throws \DealNews\DatoCMS\CMA\Exception\API     On validation errors or
+     *                                                  other API failures
+     * @throws \DealNews\DatoCMS\CMA\Exception\Decode  On JSON decode failure
+     * @throws \DealNews\DatoCMS\CMA\Exception\Unknown On unexpected errors
+     */
+    protected function pollJobUntilComplete(
+        string $job_id,
+        int $timeout
+    ): array {
+        $start_time = microtime(true);
+        $result     = [];
+
+        while (true) {
+            $elapsed = microtime(true) - $start_time;
+
+            if ($elapsed >= $timeout) {
+                throw new Timeout(
+                    "Job polling timeout after {$elapsed}s",
+                    0,
+                    $job_id,
+                    $elapsed
+                );
+            }
+
+            try {
+                $result = $this->job->retrieve($job_id);
+                // Job complete - extract upload payload
+                break;
+            } catch (\DealNews\DatoCMS\CMA\Exception\API $e) {
+                // Check if 404 (still processing) or actual error
+                if ($e->getCode() === 404) {
+                    // Still processing, continue polling
+                    sleep(3);
+                    continue;
+                }
+                // Other errors (422 validation, etc.) - re-throw
+                throw $e;
+            }
+        }
+
+        return $result['data']['attributes']['payload'];
     }
 }

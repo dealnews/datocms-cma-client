@@ -3,6 +3,7 @@
 namespace DealNews\DatoCMS\CMA\Input\Parts\Upload;
 
 use Moonspot\ValueObjects\ValueObject;
+use stdClass;
 
 /**
  * Localized default field metadata for DatoCMS uploads
@@ -139,6 +140,9 @@ class DefaultFieldMetadata extends ValueObject {
         $result = [];
         foreach ($this->locales as $locale => $metadata) {
             $result[$locale] = array_filter($metadata, fn ($v) => !is_null($v));
+            if(empty($metadata['custom_data'])) {
+                $result[$locale]['custom_data'] = new stdClass();
+            }
         }
 
         return $result;

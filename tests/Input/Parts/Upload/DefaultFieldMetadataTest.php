@@ -232,7 +232,9 @@ class DefaultFieldMetadataTest extends TestCase {
         $this->assertArrayHasKey('alt', $array['en']);
         $this->assertArrayNotHasKey('title', $array['en']);
         $this->assertArrayNotHasKey('focal_point', $array['en']);
-        $this->assertArrayNotHasKey('custom_data', $array['en']);
+        // custom_data should be stdClass when null/empty
+        $this->assertArrayHasKey('custom_data', $array['en']);
+        $this->assertInstanceOf(\stdClass::class, $array['en']['custom_data']);
     }
 
     #[Group('unit')]
@@ -266,5 +268,42 @@ class DefaultFieldMetadataTest extends TestCase {
         $this->assertArrayHasKey('es', $array);
         $this->assertEquals('English alt', $array['en']['alt']);
         $this->assertEquals('Texto alternativo', $array['es']['alt']);
+    }
+
+    #[Group('unit')]
+    public function testToArrayReturnsStdClassForEmptyCustomData() {
+        $metadata = new DefaultFieldMetadata();
+        // Add locale with no custom_data (null)
+        $metadata->addLocale('en', 'Alt text', 'Title', null, null);
+
+        $array = $metadata->toArray();
+
+        $this->assertArrayHasKey('custom_data', $array['en']);
+        $this->assertInstanceOf(\stdClass::class, $array['en']['custom_data']);
+    }
+
+    #[Group('unit')]
+    public function testToArrayReturnsStdClassForEmptyCustomDataArray() {
+        $metadata = new DefaultFieldMetadata();
+        // Add locale with empty array for custom_data
+        $metadata->addLocale('en', 'Alt text', 'Title', null, []);
+
+        $array = $metadata->toArray();
+
+        $this->assertArrayHasKey('custom_data', $array['en']);
+        $this->assertInstanceOf(\stdClass::class, $array['en']['custom_data']);
+    }
+
+    #[Group('unit')]
+    public function testToArrayPreservesNonEmptyCustomData() {
+        $metadata = new DefaultFieldMetadata();
+        $custom_data = ['key' => 'value', 'foo' => 'bar'];
+        $metadata->addLocale('en', 'Alt text', null, null, $custom_data);
+
+        $array = $metadata->toArray();
+
+        $this->assertArrayHasKey('custom_data', $array['en']);
+        $this->assertIsArray($array['en']['custom_data']);
+        $this->assertEquals($custom_data, $array['en']['custom_data']);
     }
 }

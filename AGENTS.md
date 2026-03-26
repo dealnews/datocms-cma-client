@@ -28,7 +28,7 @@ src/
 │   ├── Model.php          # Model/item-type CRUD operations (6 methods)
 │   ├── ModelFilter.php    # Model filter CRUD operations (5 methods)
 │   ├── Record.php         # Record/item CRUD operations (13 methods)
-│   ├── Upload.php         # Upload CRUD + helper methods (uploadFile, uploadFromUrl)
+│   ├── Upload.php         # Upload CRUD + sync/async helper methods
 │   ├── UploadCollection.php # Upload folder CRUD operations
 │   ├── UploadRequest.php  # S3 upload permission requests
 │   ├── UploadSmartTag.php # Auto-detected smart tags (read-only)
@@ -45,6 +45,7 @@ src/
 │   ├── API.php            # API errors (stores response body)
 │   ├── Decode.php         # JSON decode failures
 │   ├── S3Upload.php       # S3 upload failures
+│   ├── Timeout.php        # Job polling timeouts
 │   └── Unknown.php        # Unexpected errors
 ├── HTTP/
 │   └── Handler.php        # Guzzle wrapper with auto-retry on 429
@@ -96,6 +97,7 @@ tests/
 │   ├── APITest.php
 │   ├── DecodeTest.php
 │   ├── S3UploadTest.php
+│   ├── TimeoutTest.php
 │   └── UnknownTest.php
 ├── HTTP/                  # Unit tests for HTTP layer
 │   └── HandlerTest.php    # Tests execute(), retry logic, caching
@@ -161,7 +163,8 @@ All API classes extend `API\Base`, which initializes the HTTP handler. The follo
 **Upload API** (`API\Upload`):
 - `list()`, `retrieve()`, `create()`, `update()`, `delete()`, `references()`
 - Bulk operations: `deleteBulk()`, `updateBulk()`
-- Helper methods: `uploadFile()`, `uploadFromUrl()` — handle complete upload workflow
+- **Async helpers**: `uploadFile()`, `uploadFromUrl()` — return job payloads
+- **Sync helpers**: `uploadFileAndWait()`, `uploadFromUrlAndWait()` — poll until complete
 
 **Upload Support APIs**:
 - `API\UploadRequest` — Request S3 upload permissions (`create()`)
@@ -381,6 +384,7 @@ RuntimeException
 ├── API         — HTTP errors; call getResponseBody() for details
 ├── Decode      — JSON parse failures; call getRawJson() for original
 ├── S3Upload    — S3 upload failures; call getResponseBody() for S3 error
+├── Timeout     — Job polling timeouts; call getJobId() and getElapsedTime()
 └── Unknown     — Unexpected errors (wraps original exception)
 ```
 
@@ -409,19 +413,19 @@ composer install
 
 ### Current Coverage
 
-As of 2025-12-22, test coverage is at:
+As of 2026-03-26, test coverage is at:
 
 | Metric | Coverage |
 |--------|----------|
-| **Lines** | 98.08% (459/468) |
-| **Methods** | 93.85% (61/65) |
-| **Classes** | 88.00% (22/25) |
+| **Lines** | ~89% |
+| **Methods** | ~85% |
+| **Classes** | ~84% |
 
 **Classes at 100% coverage**:
-- `API\Base`, `API\Record`
+- `API\Base`, `API\Record`, `API\Upload` (new sync methods)
 - `Client`, `Config`
 - All `DataTypes\*` classes
-- All `Exception\*` classes
+- All `Exception\*` classes (including new `Timeout`)
 - All `Input\*` classes
 - All `Parameters\*` classes
 - `HTTP\Handler` (97% lines; protected methods not directly testable)
@@ -467,6 +471,33 @@ public function testPublishWithSelectivePublishing() { }
 3. **Webhooks**: Not implemented
 4. **Protected methods in Handler**: `autoRetry()` and `httpLogger()` are protected and cannot be directly unit tested; they are covered indirectly via integration-style tests
 5. **Model Filter pagination**: The `list()` method does not support pagination parameters (API limitation)
+
+## Recent Enhancements
+
+### Synchronous Upload Methods (2026-03-26)
+
+Added `uploadFileAndWait()` and `uploadFromUrlAndWait()` methods that automatically poll job results:
+
+**Features**:
+- Configurable timeout (default 30 seconds)
+- 3-second polling interval
+- Automatic retry on HTTP 404 (job still processing)
+- Immediate error on HTTP 422 (validation failure)
+- New `Timeout` exception with job ID and elapsed time
+
+**Usage**:
+```php
+// Old: Async, returns job payload
+$job = $client->upload->uploadFile('/path/to/file.jpg');
+
+// New: Sync, returns upload payload after waiting
+$upload = $client->upload->uploadFileAndWait('/path/to/file.jpg');
+```
+
+**Implementation details**:
+- `pollJobUntilComplete()` protected helper encapsulates polling logic
+- Job API injected into Upload constructor for testability
+- Comprehensive test coverage (100% of new code)
 
 ---
 
@@ -626,11 +657,17 @@ use DealNews\DatoCMS\CMA\Client;
 
 $client = new Client($token, $env);
 
-// Simple upload from local file
-$upload = $client->upload->uploadFile('/path/to/image.jpg');
+// ============================================================
+// ASYNC: Returns job payload immediately, poll manually
+// ============================================================
 
-// Upload with metadata
-$upload = $client->upload->uploadFile('/path/to/image.jpg', [
+// Simple async upload (returns job)
+$job = $client->upload->uploadFile('/path/to/image.jpg');
+$job_id = $job['data']['id'];
+// ... poll $client->job->retrieve($job_id) until complete ...
+
+// Async upload with metadata (returns job)
+$job = $client->upload->uploadFile('/path/to/image.jpg', [
     'author'    => 'John Doe',
     'copyright' => '© 2025',
     'tags'      => ['banner', 'hero'],
@@ -640,8 +677,42 @@ $upload = $client->upload->uploadFile('/path/to/image.jpg', [
     ],
 ]);
 
-// Upload from URL
-$upload = $client->upload->uploadFromUrl('https://example.com/image.jpg');
+// Async upload from URL (returns job)
+$job = $client->upload->uploadFromUrl('https://example.com/image.jpg');
+
+// ============================================================
+// SYNC: Waits for job completion, returns upload payload
+// ============================================================
+
+// Simple sync upload (waits up to 30 seconds by default)
+$upload = $client->upload->uploadFileAndWait('/path/to/image.jpg');
+$upload_id = $upload['data']['id']; // Ready to use!
+
+// Sync upload with custom timeout
+$upload = $client->upload->uploadFileAndWait(
+    '/path/to/image.jpg',
+    ['author' => 'Jane'],
+    'collection-id',
+    60  // 60 second timeout
+);
+
+// Sync upload from URL
+$upload = $client->upload->uploadFromUrlAndWait(
+    'https://example.com/image.jpg',
+    'custom-name.jpg',  // Optional filename
+    ['tags' => ['hero']],
+    null,               // No collection
+    45                  // 45 second timeout
+);
+
+// Handle timeout exceptions
+try {
+    $upload = $client->upload->uploadFileAndWait('/large-file.mp4', null, null, 30);
+} catch (\DealNews\DatoCMS\CMA\Exception\Timeout $e) {
+    echo "Timeout after " . $e->getElapsedTime() . " seconds\n";
+    echo "Job ID: " . $e->getJobId() . "\n";
+    // Could continue polling manually with $client->job->retrieve($e->getJobId())
+}
 ```
 
 ### List and Filter Uploads
@@ -650,14 +721,50 @@ $upload = $client->upload->uploadFromUrl('https://example.com/image.jpg');
 use DealNews\DatoCMS\CMA\Parameters\Upload as UploadParams;
 
 $params = new UploadParams();
+
+// ============================================================
+// Direct property filtering (simple exact matches)
+// ============================================================
 $params->filter->type = 'image';
 $params->filter->query = 'banner';
 $params->filter->tags = ['hero', 'featured'];
+$params->filter->author = 'John Doe';
+$params->filter->copyright = '© 2025';
+
+// ============================================================
+// Field-level filtering (with operators)
+// ============================================================
+$params->filter->fields->addField('width', 1000, 'gte');
+$params->filter->fields->addField('height', 500, 'gte');
+$params->filter->fields->addField('size', 5000000, 'lt');
+$params->filter->fields->addField('author', 'John%', 'matches');
+$params->filter->fields->addField('created_at', '2025-01-01', 'gt');
+$params->filter->fields->addField('is_image', true, 'eq');
+
+// ============================================================
+// Combine both patterns
+// ============================================================
+$params->filter->type = 'image';  // Direct property
+$params->filter->fields->addField('width', 1920, 'gte');  // With operator
+
+// Other parameters
 $params->order_by->addOrderByField('created_at', 'DESC');
 $params->page->limit = 25;
 
 $uploads = $client->upload->list($params);
 ```
+
+**Available field operators**:
+- `eq` - Equal to
+- `neq` - Not equal to
+- `lt` - Less than
+- `lte` - Less than or equal
+- `gt` - Greater than
+- `gte` - Greater than or equal
+- `matches` - Pattern matching (use `%` as wildcard)
+- `exists` - Field exists/not exists
+- `in` - Value in list
+- `not_in` - Value not in list
 
 ### Manage Upload Collections
 

@@ -6,6 +6,7 @@ use DealNews\DatoCMS\CMA\Input\Parts\Upload\Attributes;
 use DealNews\DatoCMS\CMA\Input\Upload;
 use PHPUnit\Framework\Attributes\Group;
 use PHPUnit\Framework\TestCase;
+use stdClass;
 
 /**
  * Tests for the Input\Upload class
@@ -141,8 +142,8 @@ class UploadTest extends TestCase {
         $array = $upload->toArray();
 
         $this->assertEquals([
-            'en' => ['alt' => 'English alt'],
-            'es' => ['alt' => 'Spanish alt'],
+            'en' => ['alt' => 'English alt', 'custom_data' => new StdClass()],
+            'es' => ['alt' => 'Spanish alt', 'custom_data' => new StdClass()],
         ], $array['attributes']['default_field_metadata']);
     }
 }

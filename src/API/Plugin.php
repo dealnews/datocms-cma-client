@@ -10,7 +10,10 @@ use DealNews\DatoCMS\CMA\Input\Plugin as PluginInput;
  * Usage:
  * ```php
  * $client = new Client($token);
- * $plugin = $client->plugin->create(['package_name' => 'npm-package-name']);
+ * $plugin = $client->plugin->create([
+ *     'type' => 'plugin',
+ *     'attributes' => ['package_name' => 'npm-package-name'],
+ * ]);
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api/resources/plugin

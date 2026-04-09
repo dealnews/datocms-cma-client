@@ -8,6 +8,7 @@ use DealNews\DatoCMS\CMA\API\FieldSet;
 use DealNews\DatoCMS\CMA\API\Job;
 use DealNews\DatoCMS\CMA\API\Maintenance;
 use DealNews\DatoCMS\CMA\API\Model;
+use DealNews\DatoCMS\CMA\API\Plugin;
 use DealNews\DatoCMS\CMA\API\ModelFilter;
 use DealNews\DatoCMS\CMA\API\Record;
 use DealNews\DatoCMS\CMA\API\RecordVersion;
@@ -60,6 +61,7 @@ use Psr\Log\LogLevel;
  * @property-read   Webhook                     $webhook                        API endpoint for webhook operations
  * @property-read   Job                         $job                            API endpoint for job result operations
  * @property-read   Maintenance                 $maintenance                    API endpoint for maintenance mode operations
+ * @property-read   Plugin                      $plugin                         API endpoint for plugin operations
  */
 class Client {
 
@@ -86,6 +88,7 @@ class Client {
         'record_version'         => RecordVersion::class,
         'webhook_call'           => WebhookCall::class,
         'webhook'                => Webhook::class,
+        'plugin'                 => Plugin::class,
         'job'                    => Job::class,
         'maintenance'            => Maintenance::class,
     ];
@@ -229,6 +232,13 @@ class Client {
      * @var Maintenance
      */
     protected Maintenance $maintenance;
+
+    /**
+     * API endpoint for plugin operations
+     *
+     * @var Plugin
+     */
+    protected Plugin $plugin;
 
     /**
      * @param string|null          $apiToken    API Token for your DatoCMS project

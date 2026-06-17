@@ -2,6 +2,7 @@
 
 namespace DealNews\DatoCMS\CMA\API;
 
+use DealNews\DatoCMS\CMA\Config;
 use DealNews\DatoCMS\CMA\Exception\S3Upload;
 use DealNews\DatoCMS\CMA\Exception\Timeout;
 use DealNews\DatoCMS\CMA\HTTP\Handler;
@@ -64,8 +65,12 @@ class Upload extends Base {
     /**
      * Initializes the Upload API handler
      *
+     * A handler or a config instance must be provided.
+     *
      * @param Handler|null       $handler        Optional pre-configured HTTP
      *                                           handler
+     * @param Config|null        $config         Optional pre-configured Config
+     *                                           instance
      * @param UploadRequest|null $upload_request Optional upload request
      *                                           handler (for testing)
      * @param Client|null        $s3_client      Optional Guzzle client for
@@ -75,11 +80,12 @@ class Upload extends Base {
      */
     public function __construct(
         ?Handler $handler = null,
+        ?Config $config = null,
         ?UploadRequest $upload_request = null,
         ?Client $s3_client = null,
         ?Job $job = null
     ) {
-        parent::__construct($handler);
+        parent::__construct($handler, $config);
         $this->upload_request = $upload_request ?? new UploadRequest($this->handler);
         $this->s3_client      = $s3_client;
         $this->job            = $job ?? new Job($this->handler);

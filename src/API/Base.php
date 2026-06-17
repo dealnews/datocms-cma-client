@@ -26,20 +26,22 @@ abstract class Base {
     /**
      * Initializes the API handler with an HTTP handler
      *
-     * If no handler is provided, creates one using configuration from
-     * the Config singleton.
+     * Either a handler or a config instance must be provided.
      *
-     * @param Handler|null $handler Optional pre-configured HTTP handler
+     * @param Handler|null  $handler Optional pre-configured HTTP handler
+     * @param Config|null   $config  Optional pre-configured Config instance
+     *
+     * @throws \RuntimeException If neither a handler nor a config instance is provided
      */
-    public function __construct(?Handler $handler = null) {
+    public function __construct(?Handler $handler = null, ?Config $config = null) {
         if (!empty($handler)) {
             $this->handler = $handler;
-        } else {
-            $apiToken    = Config::init()->apiToken;
-            $environment = Config::init()->environment;
-            $base_url    = Config::init()->base_url;
-            $logger      = Config::init()->logger;
-            $log_level   = Config::init()->log_level;
+        } elseif (!empty($config)) {
+            $apiToken    = $config->apiToken;
+            $environment = $config->environment;
+            $base_url    = $config->base_url;
+            $logger      = $config->logger;
+            $log_level   = $config->log_level;
 
             $this->handler = Handler::init(
                 $apiToken,
@@ -48,6 +50,8 @@ abstract class Base {
                 $log_level,
                 $base_url
             );
+        } else {
+            throw new \RuntimeException('Either a Handler or a Config instance must be provided.');
         }
     }
 

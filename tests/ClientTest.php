@@ -34,21 +34,15 @@ use Psr\Log\LogLevel;
  */
 class ClientTest extends TestCase {
 
-    protected function setUp(): void {
-        parent::setUp();
-        Config::reset();
+    private function getClientConfig(Client $client): Config {
+        $reflection = new \ReflectionClass($client);
+        return $reflection->getProperty('config')->getValue($client);
     }
-
-    protected function tearDown(): void {
-        parent::tearDown();
-        Config::reset();
-    }
-
 
     #[Group('unit')]
     public function testConstructorSetsApiToken() {
         $client = new Client('my-api-token');
-        $config = Config::init();
+        $config = $this->getClientConfig($client);
 
         $this->assertEquals('my-api-token', $config->apiToken);
     }
@@ -56,7 +50,7 @@ class ClientTest extends TestCase {
     #[Group('unit')]
     public function testConstructorSetsEnvironment() {
         $client = new Client('token', 'sandbox');
-        $config = Config::init();
+        $config = $this->getClientConfig($client);
 
         $this->assertEquals('sandbox', $config->environment);
     }
@@ -65,7 +59,7 @@ class ClientTest extends TestCase {
     public function testConstructorSetsLogger() {
         $logger = $this->createMock(LoggerInterface::class);
         $client = new Client('token', null, $logger);
-        $config = Config::init();
+        $config = $this->getClientConfig($client);
 
         $this->assertSame($logger, $config->logger);
     }
@@ -73,7 +67,7 @@ class ClientTest extends TestCase {
     #[Group('unit')]
     public function testConstructorSetsLogLevel() {
         $client = new Client('token', null, null, LogLevel::DEBUG);
-        $config = Config::init();
+        $config = $this->getClientConfig($client);
 
         $this->assertEquals(LogLevel::DEBUG, $config->log_level);
     }
@@ -81,7 +75,7 @@ class ClientTest extends TestCase {
     #[Group('unit')]
     public function testConstructorSetsBaseUrl() {
         $client = new Client('token', null, null, LogLevel::INFO, 'https://proxy.example.com');
-        $config = Config::init();
+        $config = $this->getClientConfig($client);
 
         $this->assertEquals('https://proxy.example.com', $config->base_url);
     }
@@ -98,7 +92,7 @@ class ClientTest extends TestCase {
             'https://custom.api.com'
         );
 
-        $config = Config::init();
+        $config = $this->getClientConfig($client);
 
         $this->assertEquals('full-token', $config->apiToken);
         $this->assertEquals('production', $config->environment);
@@ -108,31 +102,25 @@ class ClientTest extends TestCase {
     }
 
     #[Group('unit')]
-    public function testConstructorWithNullParametersUsesConfigDefaults() {
-        // Set values in config first
-        $config              = Config::init();
-        $config->apiToken    = 'existing-token';
-        $config->environment = 'existing-env';
+    public function testConstructorWithNoArgsReadsFromEnvironment() {
+        putenv('DN_DATOCMS_API_TOKEN=env-token');
+        putenv('DN_DATOCMS_ENVIRONMENT=env-environment');
 
-        // Create client with nulls - should preserve existing config
         $client = new Client();
+        $config = $this->getClientConfig($client);
 
-        $this->assertEquals('existing-token', $config->apiToken);
-        $this->assertEquals('existing-env', $config->environment);
+        $this->assertEquals('env-token', $config->apiToken);
+        $this->assertEquals('env-environment', $config->environment);
+
+        putenv('DN_DATOCMS_API_TOKEN');
+        putenv('DN_DATOCMS_ENVIRONMENT');
     }
-
 
     #[Group('unit')]
     #[DataProvider('provideMagicMethods')]
     public function testGetMagicMethod(string $property, string $expected_class) {
-        // Set values in config first
-        $config              = Config::init();
-        $config->apiToken    = 'existing-token';
-        $config->environment = 'existing-env';
-
-        $client = new Client();
-
-        $class = $client->$property;
+        $client = new Client('test-token');
+        $class  = $client->$property;
         $this->assertInstanceOf($expected_class, $class);
     }
 

@@ -508,7 +508,7 @@ class UploadTest extends TestCase {
                     ],
                 ]);
 
-            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
+            $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client);
             $result = $upload->uploadFile($temp_file);
 
             // Assert we got a job payload, not an upload
@@ -567,7 +567,7 @@ class UploadTest extends TestCase {
                     ],
                 ]);
 
-            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
+            $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client);
             $result = $upload->uploadFile($temp_file, [
                 'author'    => 'Test Author',
                 'copyright' => '© 2025',
@@ -619,7 +619,7 @@ class UploadTest extends TestCase {
             $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
             $mock_handler = $this->createMock(Handler::class);
-            $upload       = new Upload($mock_handler, $mock_upload_request, $s3_client);
+            $upload       = new Upload($mock_handler, null, $mock_upload_request, $s3_client);
 
             $this->expectException(S3Upload::class);
             $this->expectExceptionMessage('S3 upload failed with status 403');
@@ -673,7 +673,7 @@ class UploadTest extends TestCase {
                 ],
             ]);
 
-        $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
+        $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client);
         $result = $upload->uploadFromUrl('https://example.com/image.jpg');
 
         // Assert we got a job payload
@@ -715,7 +715,7 @@ class UploadTest extends TestCase {
             ->method('execute')
             ->willReturn(['data' => ['id' => 'job-mno345', 'type' => 'job']]);
 
-        $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
+        $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client);
         $result = $upload->uploadFromUrl('https://example.com/image.jpg', 'custom_name.jpg');
 
         // Assert we got a job payload
@@ -733,7 +733,7 @@ class UploadTest extends TestCase {
         $s3_client        = new Client(['handler' => $s3_handler_stack, 'http_errors' => false]);
 
         $mock_handler = $this->createMock(Handler::class);
-        $upload       = new Upload($mock_handler, null, $s3_client);
+        $upload       = new Upload($mock_handler, null, null, $s3_client);
 
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Failed to download file');
@@ -782,7 +782,7 @@ class UploadTest extends TestCase {
                 }))
                 ->willReturn(['data' => ['id' => 'job-ghi789', 'type' => 'job']]);
 
-            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client);
+            $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client);
             $result = $upload->uploadFile($temp_file, null, 'collection-123');
 
             // Verify collection relationship was set
@@ -868,7 +868,7 @@ class UploadTest extends TestCase {
                     ],
                 ]);
 
-            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+            $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client, $mock_job);
             $result = $upload->uploadFileAndWait($temp_file);
 
             // Assert we got the upload payload, not the job
@@ -949,7 +949,7 @@ class UploadTest extends TestCase {
                     ];
                 });
 
-            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+            $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client, $mock_job);
             $result = $upload->uploadFileAndWait($temp_file, null, null, 15);
 
             $this->assertEquals('upload', $result['data']['type']);
@@ -1007,7 +1007,7 @@ class UploadTest extends TestCase {
                 ->with('job-timeout-123')
                 ->willThrowException(new APIException('Not found', 404, null, ''));
 
-            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+            $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client, $mock_job);
 
             $this->expectException(Timeout::class);
             $this->expectExceptionMessage('Job polling timeout');
@@ -1066,7 +1066,7 @@ class UploadTest extends TestCase {
                 ->with('job-error-123')
                 ->willThrowException(new APIException('Validation failed', 422, null, ''));
 
-            $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+            $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client, $mock_job);
 
             $this->expectException(APIException::class);
             $this->expectExceptionMessage('Validation failed');
@@ -1139,7 +1139,7 @@ class UploadTest extends TestCase {
                 ],
             ]);
 
-        $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+        $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client, $mock_job);
         $result = $upload->uploadFromUrlAndWait('https://example.com/image.jpg');
 
         $this->assertEquals('upload', $result['data']['type']);
@@ -1188,7 +1188,7 @@ class UploadTest extends TestCase {
             ->method('retrieve')
             ->willThrowException(new APIException('Not found', 404, null, ''));
 
-        $upload = new Upload($mock_handler, $mock_upload_request, $s3_client, $mock_job);
+        $upload = new Upload($mock_handler, null, $mock_upload_request, $s3_client, $mock_job);
 
         $this->expectException(Timeout::class);
 

@@ -18,7 +18,7 @@ use Psr\Log\LogLevel;
  *
  * Usage:
  * ```php
- * $config = Config::init();
+ * $config = new Config();
  * $config->apiToken = 'your-token';
  * echo $config->apiToken;
  * ```
@@ -30,15 +30,6 @@ use Psr\Log\LogLevel;
  * @property    string|null             $log_level          PSR-3 log level for API request/response logging
  */
 class Config {
-
-    /**
-     * Singleton instance
-     *
-     * Nullable to allow the reset() method to clear the instance for testing.
-     *
-     * @var Config|null
-     */
-    protected static ?Config $instance = null;
 
     /**
      * DatoCMS API token for authentication
@@ -78,7 +69,7 @@ class Config {
     /**
      * Initializes configuration from environment variables
      */
-    protected function __construct() {
+    public function __construct() {
         $this->apiToken    = $this->getEnvVariable('DN_DATOCMS_API_TOKEN');
         $this->environment = $this->getEnvVariable('DN_DATOCMS_ENVIRONMENT');
         $this->base_url    = $this->getEnvVariable('DN_DATOCMS_BASE_URL');
@@ -87,7 +78,6 @@ class Config {
             $this->log_level = $log_level;
         }
     }
-
 
     /**
      * Magic setter for configuration properties
@@ -133,32 +123,6 @@ class Config {
         }
 
         return null;
-    }
-
-
-    /**
-     * Returns the singleton configuration instance
-     *
-     * Creates a new instance on first call, reading from environment variables.
-     * Subsequent calls return the same instance.
-     *
-     * @return self The singleton Config instance
-     */
-    public static function init(): self {
-        if (empty(self::$instance)) {
-            self::$instance = new self();
-        }
-
-        return self::$instance;
-    }
-
-    /**
-     * Resets the singleton instance (for testing purposes only)
-     *
-     * @return void
-     */
-    public static function reset(): void {
-        self::$instance = null;
     }
 
     /**

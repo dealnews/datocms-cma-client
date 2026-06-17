@@ -22,6 +22,7 @@ class BaseTest extends TestCase {
         // Use reflection to verify the handler was set
         $reflection     = new \ReflectionClass($record);
         $property       = $reflection->getProperty('handler');
+        $property->setAccessible(true);
         $actual_handler = $property->getValue($record);
 
         $this->assertSame($mock_handler, $actual_handler);
@@ -39,6 +40,7 @@ class BaseTest extends TestCase {
         // Use reflection to verify a Handler was created
         $reflection     = new \ReflectionClass($record);
         $property       = $reflection->getProperty('handler');
+        $property->setAccessible(true);
         $actual_handler = $property->getValue($record);
 
         $this->assertInstanceOf(Handler::class, $actual_handler);
@@ -56,6 +58,7 @@ class BaseTest extends TestCase {
         // without more complex mocking, but we verify it's the correct type)
         $reflection     = new \ReflectionClass($record);
         $property       = $reflection->getProperty('handler');
+        $property->setAccessible(true);
         $actual_handler = $property->getValue($record);
 
         $this->assertInstanceOf(Handler::class, $actual_handler);

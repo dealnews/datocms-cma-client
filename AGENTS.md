@@ -208,7 +208,7 @@ All API classes extend `API\Base`, which initializes the HTTP handler. The follo
 - Automatic retry on HTTP 429 (rate limit) with configurable delay
 - Request/response logging via PSR-3 logger
 - JSON encoding/decoding with custom exceptions
-- Instance caching via `init()` (keyed by token, environment, base_url)
+- Instance caching via `init()` (keyed by token, environment, base_url, log_level, and logger class name)
 
 **Constructor signature**:
 ```php
@@ -302,7 +302,7 @@ Test files mirror `src/` structure under `tests/`.
 
 ### Handler Instance Caching
 
-`HTTP\Handler` caches instances keyed by token/environment/base_url. Tests that construct a `Handler` directly should call `Handler::reset()` in setUp/tearDown to avoid cross-test contamination:
+`HTTP\Handler` caches instances keyed by token, environment, base_url, log_level, and logger class name (sha256 of all five). Tests that construct a `Handler` directly should call `Handler::reset()` in setUp/tearDown to avoid cross-test contamination:
 
 ```php
 protected function setUp(): void {

@@ -9,8 +9,8 @@ use DealNews\DatoCMS\CMA\HTTP\Handler;
  * Abstract base class for all API endpoint handlers
  *
  * Provides common initialization of the HTTP handler with authentication
- * and configuration from the Config singleton. Extend this class to create
- * new API endpoint handlers.
+ * and configuration from a per-instance Config object. Extend this class
+ * to create new API endpoint handlers.
  *
  * @see \DealNews\DatoCMS\CMA\API\Record for an implementation example
  */

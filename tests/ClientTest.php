@@ -36,7 +36,9 @@ class ClientTest extends TestCase {
 
     private function getClientConfig(Client $client): Config {
         $reflection = new \ReflectionClass($client);
-        return $reflection->getProperty('config')->getValue($client);
+        $property   = $reflection->getProperty('config');
+        $property->setAccessible(true);
+        return $property->getValue($client);
     }
 
     #[Group('unit')]
@@ -106,14 +108,16 @@ class ClientTest extends TestCase {
         putenv('DN_DATOCMS_API_TOKEN=env-token');
         putenv('DN_DATOCMS_ENVIRONMENT=env-environment');
 
-        $client = new Client();
-        $config = $this->getClientConfig($client);
+        try {
+            $client = new Client();
+            $config = $this->getClientConfig($client);
 
-        $this->assertEquals('env-token', $config->apiToken);
-        $this->assertEquals('env-environment', $config->environment);
-
-        putenv('DN_DATOCMS_API_TOKEN');
-        putenv('DN_DATOCMS_ENVIRONMENT');
+            $this->assertEquals('env-token', $config->apiToken);
+            $this->assertEquals('env-environment', $config->environment);
+        } finally {
+            putenv('DN_DATOCMS_API_TOKEN');
+            putenv('DN_DATOCMS_ENVIRONMENT');
+        }
     }
 
     #[Group('unit')]

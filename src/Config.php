@@ -6,15 +6,19 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 /**
- * Singleton configuration manager for DatoCMS API settings
+ * Per-instance configuration for the DatoCMS API client
  *
- * Reads configuration from environment variables on initialization:
+ * Reads configuration from environment variables on construction:
  * - DN_DATOCMS_API_TOKEN: API token for authentication
  * - DN_DATOCMS_ENVIRONMENT: DatoCMS environment name
  * - DN_DATOCMS_BASE_URL: Custom base URL (for proxies)
  * - DN_DATOCMS_LOG_LEVEL: PSR-3 log level
  *
- * Properties can also be set directly via magic setter after initialization.
+ * Constructor arguments passed via Client override the environment variables.
+ * Each Client instance holds its own Config, so multiple clients with different
+ * tokens can coexist without interfering with one another.
+ *
+ * Properties can also be set directly via magic setter after construction.
  *
  * Usage:
  * ```php

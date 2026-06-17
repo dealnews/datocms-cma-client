@@ -94,6 +94,13 @@ class Client {
     ];
 
     /**
+     * Settings for this instance
+     *
+     * @var Config
+     */
+    protected Config $config;
+
+    /**
      * API endpoint for record/item operations
      *
      * @var Record
@@ -254,22 +261,22 @@ class Client {
         string $log_level = LogLevel::INFO,
         ?string $base_url = null
     ) {
-        $config = Config::init();
+        $this->config = new Config();
 
         if (!is_null($apiToken)) {
-            $config->apiToken = $apiToken;
+            $this->config->apiToken = $apiToken;
         }
         if (!is_null($environment)) {
-            $config->environment = $environment;
+            $this->config->environment = $environment;
         }
         if (!is_null($logger)) {
-            $config->logger = $logger;
+            $this->config->logger = $logger;
         }
         if (!is_null($log_level)) {
-            $config->log_level = $log_level;
+            $this->config->log_level = $log_level;
         }
         if (!is_null($base_url)) {
-            $config->base_url = $base_url;
+            $this->config->base_url = $base_url;
         }
     }
 
@@ -310,7 +317,7 @@ class Client {
 
         if (!empty($classname)) {
             if (empty($this->$name)) {
-                $this->$name = new $classname();
+                $this->$name = new $classname(null, $this->config);
             }
 
             return $this->$name;

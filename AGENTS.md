@@ -10,7 +10,7 @@
 
 **Namespace**: `DealNews\DatoCMS\CMA`
 
-**PHP Version**: Requires PHP 8.4+
+**PHP Version**: Requires PHP 8.2+
 
 **Key Dependencies**:
 - `guzzlehttp/guzzle` ^7.10 — HTTP client
@@ -19,20 +19,48 @@
 
 ---
 
+## Key Commands
+
+- **Test all**: `composer test`
+- **Test single file**: `composer test -- tests/API/RecordTest.php`
+- **Lint**: `composer lint`
+- **Lint fixer**: `composer fix`
+
+---
+
+## Workflow
+
+- Run `composer fix` after modifying any PHP files to apply code style fixes.
+- All tests must pass (`composer test`) after code changes with no PHPUnit deprecation warnings.
+
+---
+
 ## Directory Structure
 
 ```
 src/
-├── API/                    # API endpoint handlers
-│   ├── Base.php           # Abstract base for all API classes
+├── API/                    # API endpoint handlers (all extend Base.php)
+│   ├── Base.php           # Abstract base: accepts Handler or Config, initializes HTTP handler
+│   ├── Environment.php    # Environment CRUD operations
+│   ├── Field.php          # Field CRUD operations
+│   ├── FieldSet.php       # Fieldset CRUD operations
+│   ├── Job.php            # Job result retrieval
+│   ├── Maintenance.php    # Maintenance mode operations
 │   ├── Model.php          # Model/item-type CRUD operations (6 methods)
 │   ├── ModelFilter.php    # Model filter CRUD operations (5 methods)
+│   ├── Plugin.php         # Plugin CRUD operations
 │   ├── Record.php         # Record/item CRUD operations (13 methods)
+│   ├── RecordVersion.php  # Record version retrieval
+│   ├── ScheduledPublication.php   # Scheduled publication operations
+│   ├── ScheduledUnpublishing.php  # Scheduled unpublishing operations
+│   ├── Site.php           # Site/project settings operations
 │   ├── Upload.php         # Upload CRUD + sync/async helper methods
 │   ├── UploadCollection.php # Upload folder CRUD operations
 │   ├── UploadRequest.php  # S3 upload permission requests
 │   ├── UploadSmartTag.php # Auto-detected smart tags (read-only)
-│   └── UploadTag.php      # User-defined upload tags CRUD
+│   ├── UploadTag.php      # User-defined upload tags CRUD
+│   ├── Webhook.php        # Webhook CRUD operations
+│   └── WebhookCall.php    # Webhook call log retrieval
 ├── DataTypes/             # Value objects for DatoCMS field types
 │   ├── Common.php         # Abstract base with localization support
 │   ├── Scalar.php         # Simple string/int/float/bool values
@@ -78,7 +106,7 @@ src/
 │       ├── Page.php
 │       └── UploadFilter.php # Upload-specific filter options
 ├── Client.php             # Main entry point
-└── Config.php             # Singleton configuration
+└── Config.php             # Per-instance configuration (reads env vars on construct)
 
 tests/
 ├── API/                   # Unit tests for API classes
@@ -118,8 +146,8 @@ tests/
 │   ├── UploadCollectionTest.php
 │   └── Parts/
 │       └── UploadFilterTest.php
-├── ClientTest.php         # Tests Client constructor and config integration
-├── ConfigTest.php         # Tests singleton, env vars, magic methods
+├── ClientTest.php         # Tests Client constructor and per-instance config
+├── ConfigTest.php         # Tests instance-based config, env vars, magic methods
 └── bootstrap.php          # Autoloader setup
 ```
 
@@ -136,13 +164,15 @@ $client = new Client($apiToken, $environment);
 $records = $client->record->list();
 ```
 
-### Configuration: `Config` (Singleton)
+### Configuration: `Config`
 
-Configuration is managed via a singleton that reads from environment variables:
+`Config` is a plain instantiable class — each `Client` creates its own instance, so multiple clients with different tokens coexist without interference. On construction it reads from environment variables:
 - `DN_DATOCMS_API_TOKEN` — API token
 - `DN_DATOCMS_ENVIRONMENT` — DatoCMS environment name
 - `DN_DATOCMS_BASE_URL` — Custom base URL (for proxies)
 - `DN_DATOCMS_LOG_LEVEL` — PSR-3 log level
+
+Constructor arguments override env vars. There is no `Config::init()` or `Config::reset()` static method.
 
 ### API Layer
 
@@ -178,7 +208,7 @@ All API classes extend `API\Base`, which initializes the HTTP handler. The follo
 - Automatic retry on HTTP 429 (rate limit) with configurable delay
 - Request/response logging via PSR-3 logger
 - JSON encoding/decoding with custom exceptions
-- Instance caching via `init()` (keyed by token, environment, base_url)
+- Instance caching via `init()` (keyed by token, environment, base_url, log_level, and logger class name)
 
 **Constructor signature**:
 ```php
@@ -253,22 +283,13 @@ Used for filtering/sorting/paginating API requests.
 
 ### Style Rules (Must Follow)
 
-1. **Brace style**: 1TBS (opening brace on same line)
-2. **Variables/properties**: `snake_case`
-3. **Line length**: Should not exceed 80 characters
-4. **Arrays**: Short syntax only (`[]` not `array()`)
-5. **Type declarations**: Use for all parameters and return types
-6. **Visibility**: Use `protected` over `private` unless instructed otherwise
-7. **Single return point**: Prefer one return statement per method
-8. **No pass-by-reference**: Avoid `&$param` in function signatures
-
-### PHPDoc Requirements
-
-All classes and public methods should have docblocks. Include:
-- `@param` with type and description
-- `@return` with type and description
-- `@throws` for any exceptions
-- `@see` for external documentation links
+- 1TBS bracing style
+- snake_case variables
+- Protected visibility by default
+- Single return point preference
+- Class-based API (no bare functions)
+- Dependency injection is handled by optional parameters passed to class constructors (unless specified, otherwise)
+- Complete PHPDoc coverage
 
 ### Testing Patterns
 
@@ -279,23 +300,23 @@ Tests use PHPUnit 11 with attributes:
 
 Test files mirror `src/` structure under `tests/`.
 
-### Singleton Reset Methods
+### Handler Instance Caching
 
-Both `Config` and `HTTP\Handler` use singleton/instance caching patterns. For testing, use the `reset()` methods to clear cached state between tests:
+`HTTP\Handler` caches instances keyed by token, environment, base_url, log_level, and logger class name (sha256 of all five). Tests that construct a `Handler` directly should call `Handler::reset()` in setUp/tearDown to avoid cross-test contamination:
 
 ```php
 protected function setUp(): void {
     parent::setUp();
-    Config::reset();      // Clears Config singleton
-    Handler::reset();     // Clears Handler instance cache
+    Handler::reset();
 }
 
 protected function tearDown(): void {
     parent::tearDown();
-    Config::reset();
     Handler::reset();
 }
 ```
+
+`Config` is a plain class with no static state — just instantiate `new Config()` in tests; no reset needed.
 
 ### Mocking HTTP Requests
 
@@ -467,56 +488,8 @@ public function testPublishWithSelectivePublishing() { }
 ## Known Limitations
 
 1. **Structured Text**: Not yet implemented in DataTypes
-2. **Fields API**: Not implemented (cannot manage fields within models)
-3. **Webhooks**: Not implemented
-4. **Protected methods in Handler**: `autoRetry()` and `httpLogger()` are protected and cannot be directly unit tested; they are covered indirectly via integration-style tests
-5. **Model Filter pagination**: The `list()` method does not support pagination parameters (API limitation)
-
-## Recent Enhancements
-
-### Synchronous Upload Methods (2026-03-26)
-
-Added `uploadFileAndWait()` and `uploadFromUrlAndWait()` methods that automatically poll job results:
-
-**Features**:
-- Configurable timeout (default 30 seconds)
-- 3-second polling interval
-- Automatic retry on HTTP 404 (job still processing)
-- Immediate error on HTTP 422 (validation failure)
-- New `Timeout` exception with job ID and elapsed time
-
-**Usage**:
-```php
-// Old: Async, returns job payload
-$job = $client->upload->uploadFile('/path/to/file.jpg');
-
-// New: Sync, returns upload payload after waiting
-$upload = $client->upload->uploadFileAndWait('/path/to/file.jpg');
-```
-
-**Implementation details**:
-- `pollJobUntilComplete()` protected helper encapsulates polling logic
-- Job API injected into Upload constructor for testability
-- Comprehensive test coverage (100% of new code)
-
----
-
-## Bug Fixes Made During Testing
-
-### Handler::init() Parameter Mismatch (Fixed)
-
-The `Handler::init()` static method was passing `$base_url` as the 3rd constructor argument, but the constructor expects `$logger` as the 3rd argument. This caused a `TypeError` when using `init()` with a custom base URL.
-
-**Fix**: Updated `init()` to pass parameters in correct order:
-```php
-// Before (broken)
-new self($apiToken, $environment, $base_url);
-
-// After (fixed)
-new self($apiToken, $environment, null, LogLevel::INFO, $base_url);
-```
-
----
+2. **Protected methods in Handler**: `autoRetry()` and `httpLogger()` are protected and cannot be directly unit tested; they are covered indirectly via integration-style tests
+3. **Model Filter pagination**: The `list()` method does not support pagination parameters (API limitation)
 
 ## Extension Points
 

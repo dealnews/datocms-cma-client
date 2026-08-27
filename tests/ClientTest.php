@@ -38,6 +38,7 @@ class ClientTest extends TestCase {
         $reflection = new \ReflectionClass($client);
         $property   = $reflection->getProperty('config');
         $property->setAccessible(true);
+
         return $property->getValue($client);
     }
 

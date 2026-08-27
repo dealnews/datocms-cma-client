@@ -2,9 +2,9 @@
 
 namespace DealNews\DatoCMS\CMA\Input;
 
-use Moonspot\ValueObjects\ValueObject;
 use DealNews\DatoCMS\CMA\Input\Parts\Plugin\PrivateAttributes;
 use DealNews\DatoCMS\CMA\Input\Parts\Plugin\PublicAttributes;
+use Moonspot\ValueObjects\ValueObject;
 
 /**
  * Input object for creating and updating DatoCMS plugin settings
@@ -51,6 +51,7 @@ class Plugin extends ValueObject {
                 unset($array['attributes']);
             }
         }
+
         return $array;
     }
 

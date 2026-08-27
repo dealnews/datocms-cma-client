@@ -16,6 +16,7 @@ use Moonspot\ValueObjects\ValueObject;
  * $params->filter->fields->addField('status', 'published', 'eq');
  * $params->filter->fields->addField('created_at', '2025-01-01', 'gt');
  * $params->filter->fields->addField('title', 'Hello', 'matches');
+ *  $params->filter->fields->addField('title', 'Hello', 'matches', false);
  * ```
  *
  * @see https://www.datocms.com/docs/content-management-api/resources/item/instances
@@ -41,8 +42,17 @@ class FilterFields extends ValueObject {
     public function addField(
         string $field_name,
         mixed $value,
-        string $operator = 'eq'
+        string $operator = 'eq',
+        ?bool $case_sensitive = null
     ): FilterFields {
+        if ($operator === 'matches') {
+            $value = [
+                'pattern' => $value,
+            ];
+            if ($case_sensitive !== null) {
+                $value['case_sensitive'] = $case_sensitive;
+            }
+        }
         $this->fields[$field_name][$operator] = $value;
 
         return $this;

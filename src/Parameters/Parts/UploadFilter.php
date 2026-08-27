@@ -118,18 +118,18 @@ class UploadFilter extends ValueObject {
      */
     public function toArray(?array $data = null): array {
         $array = parent::toArray($data);
-        
+
         // Handle field-level filters
         if (isset($array['fields'])) {
             $fields_array = $array['fields'];
             unset($array['fields']);
-            
+
             // Merge fields into array if not empty
             if (!empty($fields_array)) {
                 $array['fields'] = $fields_array;
             }
         }
-        
+
         // Handle other properties
         foreach ($array as $key => $value) {
             if (empty($value)) {

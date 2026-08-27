@@ -53,6 +53,7 @@ class PrivateAttributes extends ValueObject {
                 unset($array['permissions']);
             }
         }
+
         return $array;
     }
 }

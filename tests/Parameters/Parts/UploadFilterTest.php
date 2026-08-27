@@ -205,7 +205,7 @@ class UploadFilterTest extends TestCase {
 
         $this->assertArrayHasKey('fields', $array);
         $this->assertEquals(['gte' => 1000], $array['fields']['width']);
-        $this->assertEquals(['matches' => 'John'], $array['fields']['author']);
+        $this->assertEquals(['matches' => ['pattern' => 'John']], $array['fields']['author']);
         $this->assertEquals(['gt' => '2025-01-01'], $array['fields']['created_at']);
     }
 
@@ -252,7 +252,7 @@ class UploadFilterTest extends TestCase {
     #[Group('unit')]
     public function testFieldsChaining() {
         $filter = new UploadFilter();
-        
+
         $result = $filter->fields->addField('width', 1000, 'gte')
                                   ->addField('height', 500, 'gte');
 

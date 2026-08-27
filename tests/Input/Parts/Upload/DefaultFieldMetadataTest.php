@@ -296,7 +296,7 @@ class DefaultFieldMetadataTest extends TestCase {
 
     #[Group('unit')]
     public function testToArrayPreservesNonEmptyCustomData() {
-        $metadata = new DefaultFieldMetadata();
+        $metadata    = new DefaultFieldMetadata();
         $custom_data = ['key' => 'value', 'foo' => 'bar'];
         $metadata->addLocale('en', 'Alt text', null, null, $custom_data);
 

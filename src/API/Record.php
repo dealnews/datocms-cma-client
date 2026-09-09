@@ -175,7 +175,7 @@ class Record extends Base {
     ): array {
         $query_params = [];
         if ($nested) {
-            $query_params['nested'] = true;
+            $query_params['nested'] = 'true';
         }
         if (!empty($version)) {
             if (!in_array($version, ['published', 'current'])) {
@@ -216,7 +216,7 @@ class Record extends Base {
             'version' => $version,
         ];
         if ($nested) {
-            $query_params['nested'] = true;
+            $query_params['nested'] = 'true';
         }
 
         return $this->handler->execute('GET', '/items/' . $record_id, $query_params);

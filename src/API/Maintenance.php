@@ -51,7 +51,7 @@ class Maintenance extends Base {
     public function activate(bool $force = false): array {
         $query_params = [];
         if ($force) {
-            $query_params['force'] = true;
+            $query_params['force'] = 'true';
         }
 
         return $this->handler->execute('PUT', '/maintenance-mode/activate', $query_params);

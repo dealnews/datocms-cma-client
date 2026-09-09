@@ -268,7 +268,7 @@ class Upload extends Base {
     ): array {
         $query_params = [];
         if ($nested) {
-            $query_params['nested'] = true;
+            $query_params['nested'] = 'true';
         }
         if (!empty($version)) {
             if (!in_array($version, ['published', 'current', 'published-or-current'])) {

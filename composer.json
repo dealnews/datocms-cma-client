@@ -15,7 +15,7 @@
     },
     "require": {
         "php": "^8.2",
-        "guzzlehttp/guzzle": "^7.10",
+        "guzzlehttp/guzzle": "^7.15.2 || ^8.1",
         "moonspot/value-objects": "^2.3",
         "psr/log": "^3.0"
     },
